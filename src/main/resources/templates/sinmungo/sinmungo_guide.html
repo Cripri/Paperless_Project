@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>민원상담 안내</title>
+  <link rel="stylesheet" th:href="@{/header-footer/css/header-footer.css}">
+  <link rel="stylesheet" th:href="@{/sinmungo/css/sinmungo_guide.css}">
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script th:src="@{/portal/js/header.js}"></script>
+</head>
+<body>
+  <!-- header -->
+  <div th:replace="fragments/header :: header"></div>
+  <!-- header -->
+
+  <div class="container">
+    <h1 class="page-title">민원상담 안내</h1>
+
+    <div class="section">
+      <h2>민원상담이란?</h2>
+      <div class="content">
+        <p><strong>민원상담은</strong> 상담신청인이 법령·제도·절차 등 행정업무에 관하여 민원신청과 관련된 궁금증을 해소하도록 도와주는 "과정"입니다.</p>
+
+        <p class="sub-title">&lt; 상담 &gt; 과 &lt; 민원 &gt; 의 차이</p>
+        <p>※ “상담”이란 민원신청을 하기 전에 관련 법령·제도·절차 등을 문의하거나, 민원을 담당하는 기관을 안내받고자 할 때 신청합니다.</p>
+
+        <ul>
+          <li><strong>민원</strong>이란 국민이 행정기관에 대하여 처분 등 특정한 행위를 요구하는 것을 의미합니다.<br>즉, 행정기관으로 민원을 제기하는 것</li>
+          <li>행정기관·법령·제도·절차 등 행정업무에 관한 해석 요구</li>
+          <li>정책사업의 방향설정 및 운영에 관해 건의한 것</li>
+          <li>행정기관의 위법·부당한 처분이나 소극적인 처분 및 불합리한 행정제도로 국민의 권리를 침해하거나 국민에게 불편 또는 부담을 주는 사항에 대해 시정요구 또는 고충민원을 제기하는 것</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>정부합동민원센터 상담 사례</h2>
+      <div class="content">
+        <p class="sub-title">&lt; 상담 사례 &gt;</p>
+        <div class="example">
+          <ol>
+            <li>
+              <strong>일반민원 상담사례</strong>
+              <ul>
+                <li>인·허가 신청 또는 법률관계 확인 절차에 관한 문의<br>예) 관리지역 내 근린생활시설 건축허가 절차는? / 부당하게 건축 허가를 지체할 수 있나?</li>
+                <li>행정기관의 업무에 관한 일반 질의 또는 문의<br>예) 심재지역 경우 내부민원담당 수리접수는 언제까지? / 지자체장의 경우에도 심급하여야 접수할 수 있는지?</li>
+                <li>행정제도 및 운영의 개선에 관한 건의<br>예) 현행 제도의 문제점을 지적하고 개선을 건의하는 건의문 하고 싶어요!</li>
+                <li>기타: 행정기관의 처분이나 소극적 행정에 대한 불만족, 형식요건 등에 대한 상담·설명을 요구하거나 일상생활에서의 불편해소 차원의 문의</li>
+              </ul>
+            </li>
+            <li>
+              <strong>고충민원 상담사례</strong>
+              <ul>
+                <li>행정기관의 위법·부당하거나 소극적 처분으로 인한 불편에 관한 질의 및 문의<br>예) 불합리한 행정제도로 인하여 국민의 권리가 침해되고 국민에게 불편 또는 부담을 주는 사항에 관해 문의 / 보건복지법 신청 거부 시 구제 방법을 알고 싶어요! / 자동차 세금부과 오류 및 이의제기 방법은?</li>
+              </ul>
+            </li>
+            <li>
+              <strong>다수의 기관 업무와 관련된 민원에 관한 질의·의견</strong>
+              <ul>
+                <li>부당한 행정처리 개선을 위한 문의<br>예) 여러 지자체와 관련한 하천구역 주변 정비 추진에 대해 문의</li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>정부합동민원센터 상담서비스 특징</h2>
+      <div class="content">
+        <p class="sub-title">&lt; 정부합동민원센터의 상담관 &gt;</p>
+        <ul>
+          <li>각 부처 파견공무원</li>
+          <li>정부합동민원센터에는 11개 부처 16명의 상담관이 있습니다.</li>
+          <li>행정경험 풍부한 일반 전문가</li>
+          <li>정부합동민원센터에는 대민상담을 제공하는 변호사, 세무사, 노무사가 있고, 전화상담을 제공하는 전직공무원(행정사, 행정지도사, 세관회계사, 사회복지사, 법무사)이 있습니다.</li>
+        </ul>
+
+        <p class="sub-title">&lt; 정부합동민원센터가 제공하는 상담서비스 &gt;</p>
+        <ol>
+          <li>대면상담: 상담관과 신청인이 서로 얼굴을 마주보고 하는 상담으로 서울청사별관 세종상담실이 있습니다.</li>
+          <li>온라인상담: 국민신문고(www.epeople.go.kr) 또는 정부합동민원센터 홈페이지(www.counseling.go.kr)를 통해 신청하고 답변을 확인할 수 있는 상담입니다.</li>
+          <li>전화상담: 국민콜110(국번없이 110)을 통해 전문상담관과 전화로 상담이 이루어지는 상담입니다.</li>
+          <li>방문상담: 국민콜110 상담사, (전직)훈련공무원 등과 협업을 통해 이루어지는 상담입니다.</li>
+          <li>찾아가는 상담: 정부합동민원센터 상담관이 지역주민, 노인회, 사회단체 등 지역에 직접 찾아가 상담을 진행하는 서비스입니다.</li>
+          <li>이동상담: 이동상담 차량을 이용해 지역 주민을 찾아가 상담을 제공합니다.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- <div class="info-box">
+      ▶ 더 자세한 사항은 <a href="#">고객센터 &gt; 자주하는 질문 &gt; 민원</a>에서 확인하세요!
+    </div> -->
+  </div>
+
+  <!-- footer -->
+  <div th:replace="fragments/footer :: footer"></div>
+  <!-- footer -->
+
+</body>
+</html>

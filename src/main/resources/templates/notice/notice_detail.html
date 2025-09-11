@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>공지사항 상세</title>
+  <link rel="stylesheet" th:href="@{/header-footer/css/header-footer.css}">
+  <link rel="stylesheet" th:href="@{/notice/css/notice_detail.css}">
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script th:src="@{/portal/js/header.js}"></script>
+</head>
+<body>
+
+  <!-- header -->
+  <div th:replace="fragments/header :: header"></div>
+  <!-- header -->
+
+  <div class="container">
+    <div class="page-actions">
+      <a href="javascript:window.print()" class="btn">🖨 인쇄</a>
+    </div>
+
+    <h1 class="page-title">공지사항</h1>
+
+    <!-- 상단 정보 영역 -->
+    <table class="head-table">
+      <tr>
+        <th>제목</th>
+        <td class="title">[안내] 시스템 점검에 따른 서비스 일시 중단</td>
+      </tr>
+      <tr>
+        <th>작성자</th>
+        <td>관리자</td>
+      </tr>
+      <tr>
+        <th>공지일</th>
+        <td>2025-09-10</td>
+      </tr>
+      <tr>
+        <th>조회</th>
+        <td>123</td>
+      </tr>
+    </table>
+
+    <!-- 본문 내용 -->
+    <div class="content-box">
+      안녕하세요. 새울전자민원창구입니다.<br><br>
+      안정적인 서비스 제공을 위해 다음과 같이 시스템 점검을 진행합니다.<br>
+      - 일시: 2025-09-12(금) 00:00 ~ 03:00<br>
+      - 영향: 점검 시간 동안 서비스 이용 일시 중단<br><br>
+      이용에 불편을 드려 죄송합니다. 더 나은 서비스로 보답하겠습니다.
+    </div>
+
+    <!-- 첨부파일 -->
+    <div class="attach">
+      <strong>첨부파일</strong>
+      <ul>
+        <li><a href="#">점검안내_공지.pdf</a> (245KB)</li>
+      </ul>
+    </div>
+
+    <!-- 이전/다음글 -->
+    <table class="nav-table">
+      <tr>
+        <th>이전글</th>
+        <td><a href="#">추석 연휴 고객센터 운영 안내</a></td>
+      </tr>
+      <tr>
+        <th>다음글</th>
+        <td><a href="#">9월 신규 기능 업데이트 안내</a></td>
+      </tr>
+    </table>
+
+    <div class="actions">
+      <a href="#" class="btn">목록</a>
+      <a href="#" class="btn btn-primary">수정</a>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <div th:replace="fragments/footer :: footer"></div>
+  <!-- footer -->
+
+</body>
+</html>

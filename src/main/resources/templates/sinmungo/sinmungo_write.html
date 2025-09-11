@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>신문고 등록</title>
+  <link rel="stylesheet" th:href="@{/header-footer/css/header-footer.css}">
+  <link rel="stylesheet" th:href="@{/sinmungo/css/sinmungo_write.css}">
+  <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"></script>
+  <script th:src="@{/portal/js/header.js}"></script>
+</head>
+
+<body class="site">
+
+  <!-- header -->
+  <div th:replace="fragments/header :: header"></div>
+  <!-- header -->
+  <div class="container">
+    <div class="help-top"><a href="#">상담민원 작성안내</a></div>
+    <h1 class="page-title">상담민원 신청</h1>
+
+
+    <div class="form-card">
+      <table class="form-table">
+        <tr>
+          <th class="req">제목</th>
+          <td colspan="3"><input type="text" class="input" placeholder="제목을 입력하세요"></td>
+        </tr>
+        <tr>
+          <th class="req">공개여부</th>
+          <td colspan="3">
+            <div class="options">
+              <label><input type="radio" name="openYn" value="OPEN" checked> 공개</label>
+              <label><input type="radio" name="openYn" value="PRIVATE"> 비공개</label>
+              <label><input type="radio" name="openYn" value="CONTENT"> 내용공개</label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>휴대폰 번호</th>
+          <td>
+            <div class="row">
+              <div class="col"><input type="text" class="input" placeholder="'-'을 제외한 휴대전화 숫자만 입력해 주세요."></div>
+            </div>
+          </td>
+          <th>전화번호</th>
+          <td>
+            <div class="row">
+              <div class="col"><input type="text" class="input" placeholder="'-'을 제외한 전화번호 숫자만 입력해 주세요."></div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>주소</th>
+          <td colspan="3">
+            <div class="row addr-row">
+              <input type="text" class="input addr-input" placeholder="도로명 주소 또는 지번 주소">
+              <button type="button" class="btn addr-btn">주소검색</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>별도 결과통지여부</th>
+          <td colspan="3">
+            <div class="options">
+              <label><input type="checkbox" name="noticeBoard" checked> 게시판 답변</label>
+              <label><input type="checkbox" name="noticeEmail"> 전자우편(E-MAIL)</label>
+              <label><input type="checkbox" name="noticeSms"> 휴대전화 문자메시지(SMS)</label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th class="req">내용</th>
+          <td colspan="3">
+            <textarea class="textarea" placeholder="민원 내용을 상세히 입력해 주세요."></textarea>
+          </td>
+        </tr>
+        <tr>
+          <th>첨부파일</th>
+          <td colspan="3">
+            <div class="hint">첨부파일 총 용량은 최대 6MByte이며, 시스템 상태에 따라 6Mbyte 이하로 등록될 수 있습니다.</div>
+            <div class="file-line">
+              <label class="btn btn-link">파일 선택<input type="file" hidden></label>
+              <div class="file-name">선택된 파일 없음</div>
+              <button type="button" class="btn">X 취소</button>
+            </div>
+            <div class="file-line">
+              <label class="btn btn-link">파일 선택<input type="file" hidden></label>
+              <div class="file-name">선택된 파일 없음</div>
+              <button type="button" class="btn">X 취소</button>
+            </div>
+            <div class="file-line">
+              <label class="btn btn-link">파일 선택<input type="file" hidden></label>
+              <div class="file-name">선택된 파일 없음</div>
+              <button type="button" class="btn">X 취소</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>개인정보 동의</th>
+          <td colspan="3">
+            <label class="agree">
+              <input type="checkbox" name="agree"> 개인정보 수집 및 이용*에 동의합니다.
+              <a href="#">? 개인정보 수집 및 이용안내 자세히 보기</a>
+            </label>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+
+    <div class="actions">
+      <button type="button" class="btn btn-cancel">취소</button>
+      <button type="button" class="btn">목록</button>
+      <button type="button" class="btn btn-warn">임시저장</button>
+      <button type="submit" class="btn btn-primary">등록</button>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <div th:replace="fragments/footer :: footer"></div>
+  <!-- footer -->
+
+  <script>
+    document.querySelectorAll('.file-line input[type=file]').forEach(function (inp) {
+      inp.addEventListener('change', function () {
+        var name = this.files && this.files.length ? this.files[0].name : '선택된 파일 없음';
+        this.closest('.file-line').querySelector('.file-name').textContent = name;
+      });
+    });
+    document.querySelectorAll('.file-line .btn:not(.btn-link)').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var line = this.closest('.file-line');
+        var file = line.querySelector('input[type=file]');
+        file.value = '';
+        line.querySelector('.file-name').textContent = '선택된 파일 없음';
+      });
+    });
+  </script>
+</body>
+
+<!-- <body class="site">
+
+  <main id="content" class="container">
+    <h1 class="page-title">신문고 등록</h1>
+
+    <form class="form">
+      <div class="row">
+        <label for="title">제목</label>
+        <input id="title" name="title" placeholder="신문고 제목을 입력하세요" required />
+      </div>
+      <div class="row">
+        <label for="category">분류</label>
+        <select id="category" name="category">
+          <option>도로/교통</option>
+          <option>환경/청소</option>
+          <option>복지/보건</option>
+          <option>기타</option>
+        </select>
+      </div>
+      <div class="row">
+        <label for="content">내용</label>
+        <textarea id="content" name="content" rows="8" placeholder="내용을 입력하세요" required></textarea>
+      </div>
+      <div class="row">
+        <label for="file">첨부</label>
+        <input id="file" type="file" />
+      </div>
+      <div class="controls">
+        <button class="btn primary" type="submit">제출</button>
+        <a href="javascript:history.back()" class="btn">취소</a>
+      </div>
+    </form>
+
+  </main>
+
+</body> -->
+
+</html>

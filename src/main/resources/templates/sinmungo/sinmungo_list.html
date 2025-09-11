@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>신문고 게시판</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+  <link rel="stylesheet" th:href="@{/header-footer/css/header-footer.css}">
+  <link rel="stylesheet" th:href="@{/sinmungo/css/sinmungo_list.css}">
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script th:src="@{/portal/js/header.js}"></script>
+</head>
+<body>
+
+  <!-- header -->
+  <div th:replace="fragments/header :: header"></div>
+  <!-- header -->
+
+  <div class="main-area">
+    <div class="main-container">
+      <div class="dataset-header-area"><h1>신문고</h1></div>
+
+      <!-- 검색 바 -->
+      <div class="search-area">
+        <div class="content-search-top-area">
+          <label class="accessibility-hidden" for="pt_field">검색종류</label>
+          <select id="pt_field" name="pt_field" style="width:100px;" title="검색종류">
+            <option value="">제목</option>
+            <option value="">내용</option>
+            <option value="">접수번호</option>
+          </select>
+
+          <label class="accessibility-hidden" for="srhKeyword">검색어입력</label>
+          <input type="text" name="pt_keyword" id="srhKeyword" class="input-keyword" style="width: 200px;" title="검색어">
+
+          <label class="accessibility-hidden" for="pt_dept">부서종류</label>
+          <select id="pt_dept" name="pt_dept" style="width:150px;" title="부서종류">
+            <option value="" selected>전체</option>
+            <option value="">공릉1동</option>
+            <option value="">상계10동</option>
+            <option value="">상계9동</option>
+            <option value="">상계8동</option>
+            <option value="">상계3.4동</option>
+          </select>
+
+          <label class="accessibility-hidden" for="pt_deal_state">처리상태</label>
+          <select id="pt_deal_state" name="pt_deal_state" style="width:120px;" title="처리상태">
+            <option value="">답변여부(전체)</option>
+            <option value="">접수</option>
+            <option value="">처리중</option>
+            <option value="">완료</option>
+          </select>
+
+          <label class="accessibility-hidden" for="pageSize">조회개수</label>
+          <select id="pageSize" name="pageSize" style="width:70px;" title="조회개수">
+            <option value="10">10개</option>
+            <option value="20" selected>20개</option>
+            <option value="30">30개</option>
+            <option value="40">40개</option>
+            <option value="50">50개</option>
+          </select>
+
+          <a class="search-area-btn search-btn" href="#">조회 <span class="material-symbols-outlined" style="font-size:16px;vertical-align:-3px;">search</span></a>
+        </div>
+      </div>
+
+      <!-- 상단 설명 -->
+      <div class="content-explain">
+        <div class="tablecnt-area">
+          <div class="title">신문고 게시판 <span style="font-size:13px; font-weight:400; color:#000;">(총 9797건)</span></div>
+          <!-- <a class="btn_info" href="#">민원상담 안내보기</a> -->
+        </div>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성일</th>
+            <th>답변여부(처리기한)</th>
+            <th>조회</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-num">293899</td>
+            <td class="td-list"><a href="#">화랑대 사거리 자량정체</a></td>
+            <td class="td-name">곽○○</td>
+            <td class="td-date">2025-09-09</td>
+            <td class="td-answer"><span class="state recv">접수</span></td>
+            <td class="td-state">0</td>
+          </tr>
+          <tr>
+            <td class="td-num">293854</td>
+            <td class="td-list"><a href="#">노인시설의 임금 체불 및 동사자 인권침해, 직장 내 괴롭힘 진정서 올립니다.</a></td>
+            <td class="td-name">차○○</td>
+            <td class="td-date">2025-09-08</td>
+            <td class="td-answer"><span class="state proc">처리중</span><br>(2025-09-16 18:00)</td>
+            <td class="td-state">7</td>
+          </tr>
+          <tr>
+            <td class="td-num">293530</td>
+            <td class="td-list"><a href="#">파크골프장 복구</a></td>
+            <td class="td-name">김○○</td>
+            <td class="td-date">2025-09-05</td>
+            <td class="td-answer"><span class="state proc">처리중</span><br>(2025-09-15 18:00)</td>
+            <td class="td-state">15</td>
+          </tr>
+          <tr>
+            <td class="td-num">293247</td>
+            <td class="td-list"><a href="#">주민 불편 신고 및 문의 <span class="badge blue">첨부</span></a></td>
+            <td class="td-name">전○○</td>
+            <td class="td-date">2025-08-31</td>
+            <td class="td-answer"><span class="state done">답변완료</span><br>(2025-09-10 18:00)</td>
+            <td class="td-state">14</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 페이징 -->
+      <div class="paging" id="navigator">
+        <a href="#" class="page-btn prev" title="이전 페이지"><span class="material-symbols-outlined">chevron_left</span></a>
+        <a href="#" class="page-btn active">1</a>
+        <a href="#" class="page-btn">2</a>
+        <a href="#" class="page-btn">3</a>
+        <a href="#" class="page-btn">4</a>
+        <a href="#" class="page-btn">5</a>
+        <a href="#" class="page-btn">6</a>
+        <a href="#" class="page-btn">7</a>
+        <a href="#" class="page-btn">8</a>
+        <a href="#" class="page-btn">9</a>
+        <a href="#" class="page-btn">10</a>
+        <a href="#" class="page-btn next" title="다음 페이지"><span class="material-symbols-outlined">chevron_right</span></a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- footer -->
+  <div th:replace="fragments/footer :: footer"></div>
+  <!-- footer -->
+
+</body>
+</html>

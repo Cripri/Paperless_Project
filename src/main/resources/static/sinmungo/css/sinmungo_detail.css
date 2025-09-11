@@ -1,0 +1,153 @@
+body {
+  background: #fff;
+  color: #333;
+  font-family: "맑은 고딕", "Malgun Gothic", sans-serif;
+}
+
+.site {
+  margin: 0;
+}
+
+.container {
+  width: 1170px;
+  max-width: 96%;
+  margin: 30px auto 80px;
+}
+
+.page-actions {
+  text-align: right;
+  margin-bottom: 12px;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 6px 0 18px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #dfdfdf;
+  border-radius: 6px;
+}
+
+.section {
+  margin-top: 26px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 22px 0 10px;
+}
+
+.kv-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 2px solid #9dc14f;
+}
+
+.kv-table th,
+.kv-table td {
+  padding: 12px 14px;
+  border: 1px solid #dfdfdf;
+  font-size: 14px;
+}
+
+.kv-table thead th {
+  background: #f7f7f7;
+  text-align: left;
+}
+
+.kv-table .label {
+  width: 140px;
+  background: #f7f7f7;
+  font-weight: 700;
+  text-align: left;
+}
+
+.kv-table .value {
+  background: #fff;
+}
+
+.content-box {
+  border: 1px solid #dfdfdf;
+  border-top: 0;
+  padding: 16px 14px;
+  line-height: 1.8;
+}
+
+.answer-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 2px solid #9dc14f;
+}
+
+.answer-table th,
+.answer-table td {
+  padding: 12px 14px;
+  border: 1px solid #dfdfdf;
+  font-size: 14px;
+}
+
+.answer-table th {
+  background: #f7f7f7;
+  text-align: center;
+}
+
+.btn {
+  display: inline-block;
+  min-width: 88px;
+  height: 36px;
+  line-height: 36px;
+  padding: 0 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #333;
+  text-decoration: none;
+  text-align: center;
+  font-weight: 700;
+  transition: .2s;
+}
+
+.btn:hover {
+  background: #f2f2f2;
+}
+
+.btn-primary {
+  background: #9dc14f;
+  border-color: #9dc14f;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.95);
+}
+
+.btn-ghost {
+  background: #fff;
+  border-color: #ccc;
+  color: #333;
+}
+
+.action-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* 인쇄 숨김/표시 */
+@media print {
+
+  .action-bar,
+  .page-actions {
+    display: none;
+  }
+
+  .container {
+    margin: 0;
+    width: 100%;
+  }
+}

@@ -1,0 +1,103 @@
+body {
+  background: #fff;
+  color: #333;
+  font-family: "맑은 고딕", "Malgun Gothic", sans-serif;
+  margin: 0;
+}
+
+.container {
+  width: 1170px;
+  max-width: 96%;
+  margin: 28px auto 80px;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 6px 0 18px;
+}
+
+.notice-box {
+  border: 1px solid #e1e1e1;
+  background: #fafafa;
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.notice-box ul {
+  margin: 0;
+  padding-left: 20px;
+  line-height: 1.8;
+}
+
+.total {
+  font-weight: 700;
+  margin: 16px 0;
+}
+
+.list-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 2px solid #9dc14f;
+}
+
+.list-table th,
+.list-table td {
+  padding: 12px 14px;
+  border: 1px solid #e1e1e1;
+  font-size: 14px;
+  text-align: center;
+}
+
+.list-table th {
+  background: #f7f7f7;
+  font-weight: 700;
+}
+
+.list-table td.title {
+  text-align: left;
+}
+
+.list-table td.empty {
+  text-align: center;
+  padding: 40px 0;
+  color: #666;
+}
+
+.paging {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  text-align: center;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.page-btn:hover {
+  background: #f2f2f2;
+}
+
+.page-btn.active {
+  background: #9dc14f;
+  color: #fff;
+  border-color: #9dc14f;
+}
+
+.page-btn.prev,
+.page-btn.next {
+  font-size: 20px;
+}

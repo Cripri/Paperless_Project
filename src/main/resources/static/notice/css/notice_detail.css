@@ -1,0 +1,138 @@
+body {
+  background: #fff;
+  color: #333;
+  font-family: "맑은 고딕", "Malgun Gothic", sans-serif;
+  margin: 0;
+}
+
+.container {
+  width: 1170px;
+  max-width: 96%;
+  margin: 28px auto 80px;
+}
+
+
+.page-actions {
+  text-align: right;
+  margin-bottom: 12px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  height: 36px;
+  line-height: 1;
+  padding: 0 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+  text-decoration: none;
+  font-weight: 700;
+  transition: .2s;
+}
+
+.btn:hover {
+  background: #f2f2f2;
+}
+
+.btn-primary {
+  background: #9dc14f;
+  border-color: #9dc14f;
+  color: #fff;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 6px 0 18px;
+}
+
+.head-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 2px solid #9dc14f;
+}
+
+.head-table th,
+.head-table td {
+  padding: 12px 14px;
+  border: 1px solid #e1e1e1;
+  font-size: 14px;
+}
+
+.head-table th {
+  width: 120px;
+  background: #f7f7f7;
+  text-align: left;
+  font-weight: 700;
+}
+
+.head-table .title {
+  font-size: 18px;
+  font-weight: 700;
+  background: #fff;
+}
+
+.content-box {
+  border: 1px solid #e1e1e1;
+  border-top: 0;
+  padding: 22px 18px;
+  line-height: 1.8;
+}
+
+.attach {
+  border: 1px solid #e1e1e1;
+  border-top: 0;
+  padding: 14px 18px;
+  background: #fafafa;
+}
+
+.attach ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.attach a {
+  color: #2a69ac;
+  text-decoration: underline;
+}
+
+.nav-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 18px;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.nav-table th,
+.nav-table td {
+  padding: 10px 12px;
+  border-top: 1px solid #e1e1e1;
+  border-bottom: 1px solid #e1e1e1;
+  font-size: 14px;
+}
+
+.nav-table th {
+  width: 120px;
+  background: #f7f7f7;
+  text-align: left;
+}
+
+.nav-table td a {
+  color: #333;
+  text-decoration: none;
+}
+
+.nav-table td a:hover {
+  text-decoration: underline;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
