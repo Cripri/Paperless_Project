@@ -1,13 +1,13 @@
-package kd.papperless;
+package kd.paperless;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PapperlessApplication {
+public class PaperlessApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PapperlessApplication.class, args);
+		SpringApplication.run(PaperlessApplication.class, args);
 	}
 
 }
