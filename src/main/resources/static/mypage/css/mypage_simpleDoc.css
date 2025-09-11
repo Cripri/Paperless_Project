@@ -1,5 +1,9 @@
+body {
+  margin: 0;
+}
+
 ul {
-    list-style: none;
+  list-style: none;
 }
 
 /* 콘텐츠 제목 */
@@ -11,7 +15,8 @@ ul {
 }
 
 #container {
-    max-width: 1170px;
+  max-width: 1170px;
+  margin: 0 auto;
 }
 
 fieldset {
@@ -24,6 +29,7 @@ fieldset {
   border-image: initial;
   padding: 14px;
 }
+
 /* 검색 박스 */
 .bbs-search {
   background-color: rgb(251, 251, 251);
@@ -35,15 +41,18 @@ fieldset {
   border-image: initial;
   padding: 0.14rem;
 }
+
 .bbs-search .input-area {
   flex: 1;
   width: calc(100% - 2.23rem);
   display: flex;
   gap: 8px;
 }
-.bbs-search .input-area .form-control + .form-control {
+
+.bbs-search .input-area .form-control+.form-control {
   margin-left: 9px;
 }
+
 .select-length2 .form-control-keyword {
   width: calc(100% - 318px) !important;
 }
@@ -54,6 +63,7 @@ fieldset {
   border: 1px solid #ccc;
   font-size: 14px;
 }
+
 .bbs-search .form-control-keyword {
   max-width: 400px;
   max-height: 40px;
@@ -70,10 +80,12 @@ fieldset {
   margin-left: 10px;
   line-height: 5px;
 }
+
 .btn-primary {
   background-color: #5942d0;
   color: #fff;
 }
+
 .btn-outline-light {
   background-color: #fff;
   border-color: #ccc;
@@ -85,6 +97,7 @@ fieldset {
   margin: 10px 0;
   font-size: 14px;
 }
+
 .list-info .total strong {
   color: #5942d0;
 }
@@ -94,7 +107,9 @@ fieldset {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  margin-bottom: 30px;
 }
+
 .table th,
 .table td {
   border: 1px solid #ddd;
@@ -102,11 +117,13 @@ fieldset {
   text-align: center;
   font-size: 14px;
 }
+
 .table thead th {
   background-color: #f8f9fa;
   font-weight: 500;
   border-bottom: 2px solid #5942d0;
 }
+
 .table .nodata {
   padding: 20px;
   color: #888;

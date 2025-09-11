@@ -1,5 +1,9 @@
+body {
+  margin: 0;
+}
+
 ul {
-    list-style: none;
+  list-style: none;
 }
 
 /* 콘텐츠 제목 */
@@ -10,8 +14,10 @@ ul {
   color: #222;
 }
 
-#container, .txt_box {
-    max-width: 1170px;
+#container,
+.txt_box {
+  max-width: 1170px;
+  margin: 0 auto;
 }
 
 /* 테이블 스타일 */
@@ -63,7 +69,8 @@ ul {
 }
 
 .text-red02 {
-  color: #d9534f; /* 붉은색 강조 */
+  color: #d9534f;
+  /* 붉은색 강조 */
 }
 
 /* 버튼 스타일 */
@@ -84,6 +91,7 @@ ul {
 .btn-blue {
   background: #5942d0;
   color: #fff;
+  margin-bottom: 20px;
 }
 
 .redDot {
@@ -108,6 +116,7 @@ ul {
   color: #333;
   text-decoration: none;
 }
+
 .btn-gray:hover {
   background: #e2e2e2;
 }
@@ -118,6 +127,7 @@ ul {
   color: #fff;
   text-decoration: none;
 }
+
 .btn-darkgray:hover {
   background: #333;
 }
@@ -127,6 +137,7 @@ ul {
   margin-right: 12px;
   font-size: 14px;
 }
+
 .input_radio {
   margin-right: 4px;
 }
