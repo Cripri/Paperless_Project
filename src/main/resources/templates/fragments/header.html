@@ -1,0 +1,151 @@
+<div th:fragment="header">
+  <div id="header">
+    <div id="h-top">
+      <ul>
+        <li><a href="">나의민원조회</a></li>
+        <li><a href="">로그인</a></li>
+      </ul>
+    </div>
+    <div id="h-middle">
+      <div class="title">
+        <a href="">노원구</a>
+        |
+        <a href="">
+          <img src="/images/log_head.png" width="173" height="53" alt="새올전자민원창구">
+        </a>
+      </div>
+      <div class="menu">
+        <ul class="menu-list">
+          <li><a href="javascript:void(0)">고객센터</a></li>
+          <li><a href="javascript:void(0)">내 민원</a></li>
+          <li><a href="javascript:void(0)">노원신문고</a></li>
+          <li><a href="javascript:void(0)">쉬운 민원</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="allmenu" class="menu-container" style="display: none;">
+      <div class="all-menu">
+        <div class="menu-back">
+          <img src="/images/bg_img2.png" alt="">
+        </div>
+        <div class="sub-menu">
+
+          <span class="dot-line"></span>
+
+          <div class="menu">
+            <ul class="all-menu-list">
+              <li>
+                <a href="">민원마법사 안내</a>
+              </li>
+              <li>
+                <a href="">민원마법사 신청</a>
+              </li>
+            </ul>
+          </div>
+
+          <span class="dot-line"></span>
+
+          <div class="menu">
+            <ul class="all-menu-list">
+              <li>
+                <a href="">신문고 안내</a>
+              </li>
+              <li>
+                <a href="">신문고 게시판</a>
+              </li>
+              <li>
+                <a href="">신문고 작성</a>
+              </li>
+            </ul>
+          </div>
+
+          <span class="dot-line"></span>
+
+          <div class="menu">
+            <ul class="all-menu-list">
+              <li>
+                <a href="">내 민원</a>
+              </li>
+              <li>
+                <a href="">처리현황</a>
+              </li>
+            </ul>
+          </div>
+
+          <span class="dot-line"></span>
+
+          <div class="menu">
+            <ul class="all-menu-list">
+              <li>
+                <a href="">공지사항</a>
+              </li>
+              <li>
+                <a href="">조직도</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(document).ready(function () {
+      $(".menu-list > li").on({
+        mouseenter: function () {
+          $(".menu-list > li").find("span").removeClass("selected");
+          $(".menu-list > li").removeClass("selected");
+          $(this).find("span").addClass("selected");
+          $(this).addClass("selected");
+          if (!$("#allmenu").is(':animated')) {
+            $("#allmenu").slideDown();
+          }
+        },
+        mouseout: function () {
+          $("#allmenu").on('mouseleave', function () {
+            $(".menu-list > li").find("span").removeClass("selected");
+            $(".menu-list > li").removeClass("selected");
+            $("#allmenu").hide();
+          });
+        }, focusin: function () {
+          $(".menu-list > li").find("span").removeClass("selected");
+          $(".menu-list > li").removeClass("selected");
+          $(this).find("span").addClass("selected");
+          $(this).addClass("selected");
+          if (!$("#allmenu").is(':animated')) {
+            $("#allmenu").slideDown();
+          }
+        },
+        click: function () {
+          var hrefurl = $(this).find("a").attr("href");
+          location.href = hrefurl;
+        }
+      });
+
+      $(".all-menu-list > li ").on({
+        click: function () {
+          var hrefurl = $(this).find("a").attr("href");
+          location.href = hrefurl;
+        },
+        focusin: function () {
+          $(".menu-list > li").find("span").removeClass("selected");
+          $(".menu-list > li").removeClass("selected");
+          $(this).find("span").addClass("selected");
+          $(this).addClass("selected");
+          if (!$("#allmenu").is(':animated')) {
+            $("#allmenu").slideDown();
+          }
+        }
+      });
+
+      $(".all-menu > div > div.menu:last-child > ul > li:last-child").on({
+        focusout: function () {
+          $(".menu-list > li").find("span").removeClass("selected");
+          $(".menu-list > li").removeClass("selected");
+          $("#allmenu").hide();
+        }
+      });
+
+
+    });
+  </script>
+</div>
