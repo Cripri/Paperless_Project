@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>공지사항</title>
+  <link rel="stylesheet" th:href="@{/header-footer/css/header-footer.css}">
+  <link rel="stylesheet" th:href="@{/notice/css/notice.css}">
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script th:src="@{/portal/js/header.js}"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+</head>
+
+<body class="site">
+
+  <!-- header -->
+  <div th:replace="fragments/header :: header"></div>
+  <!-- header -->
+
+  <div class="container">
+    <h1 class="page-title">공지사항</h1>
+
+    <div class="notice-box">
+      <ul>
+        <li>새울전자민원창구에서 알려드리는 공지사항입니다.</li>
+        <li>시민 여러분께 새로운 소식과 정보를 신속하게 알려드리겠습니다.</li>
+      </ul>
+    </div>
+
+    <div class="total">총 <strong>0</strong> 건</div>
+
+    <table class="list-table">
+      <thead>
+        <tr>
+          <th style="width:80px">번호</th>
+          <th>제목</th>
+          <th style="width:120px">공지일</th>
+          <th style="width:80px">조회</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="4" class="empty">등록된 공지사항이 없습니다.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="paging" id="navigator">
+      <a href="" class="page-btn prev" title="이전 페이지">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </a>
+
+      <a href="" class="page-btn active">1</a>
+      <!-- <a href="" class="page-btn">2</a>
+      <a href="" class="page-btn">3</a>
+      <a href="" class="page-btn">4</a>
+      <a href="" class="page-btn">5</a>
+      <a href="" class="page-btn">6</a>
+      <a href="" class="page-btn">7</a>
+      <a href="" class="page-btn">8</a>
+      <a href="" class="page-btn">9</a>
+      <a href="" class="page-btn">10</a> -->
+
+      <a href="" class="page-btn next" title="다음 페이지">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <div th:replace="fragments/footer :: footer"></div>
+  <!-- footer -->
+
+</body>
+
+</html>

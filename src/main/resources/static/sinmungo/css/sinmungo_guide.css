@@ -1,0 +1,91 @@
+body {
+  background: #fff;
+  color: #333;
+  font-family: "맑은 고딕", "Malgun Gothic", sans-serif;
+  margin: 0;
+}
+
+.container {
+  width: 1170px;
+  max-width: 96%;
+  margin: 28px auto 80px;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 6px 0 24px;
+  text-align: center;
+}
+
+.section { 
+  border:1px solid #dcdcdc; 
+  border-top:2px solid #9dc14f;
+  border-radius:4px; 
+  margin-bottom:28px; 
+  overflow:hidden; 
+}
+.section h2 { 
+  background:#f9faf7;
+  padding:12px 16px; 
+  font-size:18px; 
+  font-weight:700; 
+  border-bottom:1px solid #dcdcdc; 
+  color:#2a4d00;
+}
+
+.section .content {
+  padding: 18px 20px;
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+.content strong {
+  font-weight: 700;
+}
+
+.content ul {
+  margin: 0;
+  padding-left: 20px;
+  line-height: 1.8;
+}
+
+.content li {
+  margin-bottom: 6px;
+}
+
+.content p {
+  margin: 0 0 12px;
+}
+
+.sub-title { 
+  font-weight:700; 
+  color:#2a4d00;
+  margin:18px 0 8px; 
+}
+
+.example {
+  margin: 12px 0;
+}
+
+.example ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.example ol li {
+  margin-bottom: 12px;
+}
+
+.info-box {
+  border: 1px solid #dcdcdc;
+  background: #f7f9fc;
+  padding: 12px 16px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.info-box a {
+  color: #2a69ac;
+  text-decoration: underline;
+}
