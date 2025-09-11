@@ -9,6 +9,6 @@ public class MainController {
 
     @GetMapping(value = {"/index", "/", "home"})
     public String home() {
-        return "/main/main";
+        return "/main/intro";
     }
 }
