@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지</title>
+    <link rel="stylesheet" href="/mypage/css/mypage_myInfoEdit.css">
+</head>
+
+<body>
+    <div id="container">
+        <article id="content">
+            <div class="content-header">
+                <h2 class="content-title">나의 정보관리</h2>
+            </div>
+            <div class="content-body" id="printArea">
+                <form name="f_regi" method="post" enctype="multipart/form-data" action=""
+                    onsubmit="return checkForm(this);">
+                    <input type="hidden" name="programId" value="userMember" />
+                    <input type="hidden" name="menuNo" value="200700" />
+                    <div class="table_wrap">
+                        <div class="table_type03">
+                            <table class="none_head write_table">
+                                <colgroup>
+                                    <col style="width:15%;">
+                                    <col style="width:85%;">
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <th>아이디</th>
+                                        <td>(유저ID)</td>
+                                    </tr>
+                                    <tr>
+                                        <th><label for="pw">비밀번호</label></th>
+                                        <td><input type="password" id="pw" name="password" value="" class="input_txt" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="gray_bg_box">
+                        <p class="normal_txt align-c">외부로부터 [ <strong class="text-red02">(유저ID)</strong> ]님의 정보를 안전하게
+                            보호하기 위해 비밀번호를 다시 한 번 확인 합니다.</p>
+                        <p class="normal_txt align-c">항상 비밀번호는 타인에게 노출되지 않도록 주의해 주세요.</p>
+
+                    </div>
+                    <div class="btn_set center_btn">
+                        <button type="submit" class="btn btn-sm btn-blue">확인</button>
+                    </div>
+                </form>
+            </div>
+            <div class="content-footer"></div>
+        </article>
+    </div>
+
+    <div class="txt_box">
+        <form name="f_regi" method="post" enctype="multipart/form-data" action="/portal/member/update.do"
+            onsubmit="return checkForm(this);">
+            <input type="hidden" name="programId" value="userMember" />
+            <input type="hidden" name="memberType" value="1" />
+            <input type="hidden" name="delState" value="1" />
+            <input type="hidden" name="menuNo" value="" />
+            <input type="hidden" name="userId" value="" />
+
+            <input type="hidden" name="dupInfoSave" id="dupInfoSave" value="" />
+            <input type="hidden" name="userKey" id="userKey"
+                value="" />
+            <input type="hidden" name="dupInfo" id="dupInfo"
+                value="" />
+            <input type="hidden" name="userBirthday" id="userBirthday" value="" />
+            <input type="hidden" name="sex" id="sex" value="" />
+
+            <h2 class="login_tit no_bg align-c top20">아이디(ID) 정보</h2>
+            <p class="small_txt align-r"><span class="text-red02">필수입력 (*)</span> 표시는 필수적으로 입력하셔야 합니다.</p>
+            <div class="table_wrap">
+                <div class="table_type03">
+                    <table class="none_head write_table">
+                        <colgroup>
+                            <col style="width:15%;">
+                            <col style="width:85%;">
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>아이디</th>
+                                <td>(유저ID)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 개인정보 S -->
+            <h2 class="login_tit no_bg align-c top20">개인정보</h2>
+            <div class="table_wrap">
+                <div class="table_type03">
+                    <table class="none_head write_table">
+                        <colgroup>
+                            <col style="width:15%;">
+                            <col style="width:85%;">
+                        </colgroup>
+                        <tbody>
+
+                            <tr>
+                                <th><label for="userName"><span class="redDot">*</span> 사용자 이름</label></th>
+                                <td>
+                                    유저이름
+                                    <input type="hidden" id="userName" name="userName" value="" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><label for="userPhone1"> 자택전화</label></th>
+                                <td>
+
+                                    <select id="userPhone1" name="userPhone1" class="input_select" title="자택전화 지역번호">
+                                        <option value="">선택</option>
+                                        <option value="02">02</option>
+                                        <option value="051">051</option>
+                                        <option value="053">053</option>
+                                        <option value="032">032</option>
+                                        <option value="062">062</option>
+                                        <option value="042">042</option>
+                                        <option value="052">052</option>
+                                        <option value="044">044</option>
+                                        <option value="031">031</option>
+                                        <option value="033">033</option>
+                                        <option value="043">043</option>
+                                        <option value="041">041</option>
+                                        <option value="063">063</option>
+                                        <option value="061">061</option>
+                                        <option value="054">054</option>
+                                        <option value="055">055</option>
+                                        <option value="064">064</option>
+                                        <option value="070">070</option>
+                                        <option value="010">010</option>
+                                    </select>
+                                    <s>-</s>
+                                    <input type="text" numberOnly id="userPhone2" name="userPhone2" value=""
+                                        class="input_txt tel" title="자택전화 중간 4자리" />
+                                    <s>-</s>
+                                    <input type="text" numberOnly id="userPhone3" name="userPhone3" value=""
+                                        class="input_txt tel" title="자택전화 끝 4자리" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><label for="userMobile1"><span class="redDot">*</span> 휴대전화</label></th>
+                                <td>
+                                    <span>010</span>
+                                    <s>-</s>
+                                    <input type="text" numberOnly id="userMobile2" name="userMobile2" value=""
+                                        class="input_txt tel" title="휴대전화 중간자리 입력" />
+                                    <s>-</s>
+                                    <input type="text" numberOnly id="userMobile3" name="userMobile3" value=""
+                                        class="input_txt tel" title="휴대전화 끝 4자리 입력" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="redDot">*</span> 주소</th>
+                                <td>
+                                    <p>
+                                        <a href="/postSearch/jusoPopup.jsp?gubun=1"
+                                            onclick="execDaumPostcode()"
+                                            target="_blank" rel="noreferrer" title="새창열림"
+                                            class="btn btn-sm btn-gray">우편번호찾기</a>
+                                        <label for="postNo" class="hidden">우편번호</label>
+                                        <input type="text" id="postNo" name="postNo" value=""
+                                            class="input_txt w50 post_s">
+                                    </p>
+                                    <p>
+                                        <label for="address1" class="hidden">기본주소</label>
+                                        <input type="text" id="address1" value=""
+                                            name="address1" class="input_txt w99per add03" />
+                                    </p>
+                                    <p>
+                                        <label for="address2" class="hidden">주소상세정보</label>
+                                        <input type="text" id="address2" value="" name="address2"
+                                            class="input_txt w99per add03" />
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><label for="userEmail"><span class="redDot">*</span> 이메일</label></th>
+                                <td>
+
+                                    <input type="text" id="userEmail1" name="userEmail1" value=""
+                                        class="input_txt" title="이메일 아이디" />
+                                    @
+                                    <input type="text" id="userEmail2" name="userEmail2" value=""
+                                        class="input_txt" title="이메일 도메인" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 중랑구 알림서비스 -->
+            <h2 class="bu_t1 top20">중랑구 알림서비스</h2>
+            <div class="table_wrap">
+                <div class="table_type03">
+                    <table class="none_head write_table">
+                        <colgroup>
+                            <col style="width:15%;">
+                            <col style="width:65%;">
+                            <col style="width:20%;">
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th><label for="newsReceive1"><span class="redDot">*</span> 이메일 수신여부</label></th>
+                                <td>
+                                    <p>
+                                        중랑구청에서 발간하는 각종 소식을 받아보시겠습니까?<br />
+                                    </p>
+                                </td>
+                                <td>
+                                    <span class="label_box">
+                                        <input type="radio" id="newsReceive1" name="newsReceive" value="Y"
+                                            class="input_radio" /> <label for="newsReceive1">예</label>
+                                    </span>
+                                    <span class="label_box">
+                                        <input type="radio" id="newsReceive2" name="newsReceive" value="N"
+                                            class="input_radio" checked="checked" /> <label
+                                            for="newsReceive2">아니오</label>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><label for="smsReceive1"><span class="redDot">*</span> 문자 수신여부</label></th>
+                                <td>
+                                    <p>
+                                        중랑구청 SMS서비스를 신청하시겠습니까?<br />
+                                        * SMS는 개인정보 연락처란에 휴대폰 번호의 등록이 필요하며, 해당 휴대폰 번호로 서비스 됩니다
+                                    </p>
+                                </td>
+                                <td>
+                                    <span class="label_box">
+                                        <input type="radio" id="smsReceive1" name="smsReceive" value="Y"
+                                            class="input_radio" /> <label for="smsReceive1">예</label>
+                                    </span>
+                                    <span class="label_box">
+                                        <input type="radio" id="smsReceive2" name="smsReceive" value="N"
+                                            class="input_radio" checked="checked" /> <label
+                                            for="smsReceive2">아니오</label>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="btn_set center_btn">
+                <button type="submit" class="btn btn-sm btn-blue">수정</button>
+                <a href="" class="btn btn-sm btn-darkgray">수정취소</a>
+            </div>
+        </form>
+    </div>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        function execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var roadAddr = data.roadAddress; // 도로명 주소 변수
+                var extraRoadAddr = ''; // 참고 항목 변수
+
+                // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                    extraRoadAddr += data.bname;
+                }
+                // 건물명이 있고, 공동주택일 경우 추가한다.
+                if(data.buildingName !== '' && data.apartment === 'Y'){
+                   extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                }
+                // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                if(extraRoadAddr !== ''){
+                    extraRoadAddr = ' (' + extraRoadAddr + ')';
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById("postNo").value = data.zonecode; // 우편번호
+                document.getElementById("address1").value = roadAddr;    // 도로명 주소
+                document.getElementById("address2").value = ""; // 상세 주소 (추가항목)
+                
+                // 참고항목 문자열이 있을 경우 해당 필드에 넣는다.
+                if(roadAddr !== ''){
+                    document.getElementById("address2").value = extraRoadAddr;
+                } else {
+                    document.getElementById("address2").value = '';
+                }
+            }
+        }).open();
+    }
+    </script>
+
+<script>
+// 폼 전송 이벤트 가로채기
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("#printArea form"); // 첫 번째 비밀번호 확인 폼
+    const txtBox = document.querySelector(".txt_box");
+    const container = document.querySelector("#container");
+
+    // 처음에는 txt_box 숨기기
+    txtBox.style.display = "none";
+
+    form.addEventListener("submit", function (e) {
+        e.preventDefault(); // 실제 전송 막기
+
+        const pw = document.getElementById("pw").value.trim();
+        if (pw === "") {
+            alert("비밀번호를 입력해주세요.");
+            return;
+        }
+
+        // AJAX 테스트용 (실제 서버 요청 대신)
+        // 여기서는 setTimeout으로 응답을 흉내냄
+        setTimeout(() => {
+            // 비밀번호가 "1234"면 성공이라고 가정
+            if (pw === "1234") {
+                // alert("비밀번호 확인 성공!");
+                container.style.display = "none";
+                txtBox.style.display = "block"; // 숨겨진 txt_box 표시
+            } else {
+                alert("비밀번호가 올바르지 않습니다.");
+            }
+        }, 500); // 0.5초 후 응답 흉내
+    });
+});
+</script>
+<!-- 일단 아직 db 없어서 나중에 db연결하고 써먹겠슨 -->
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(function () {
+    // 처음에는 txt_box 숨기기
+    $(".txt_box").hide();
+
+    // 비밀번호 확인 폼 submit 이벤트
+    $("#container form").on("submit", function (e) {
+        e.preventDefault(); // 기본 제출 막기
+
+        var pw = $("#pw").val();
+
+        if (!pw) {
+            alert("비밀번호를 입력해주세요.");
+            return false;
+        }
+
+        $.ajax({
+            url: "/portal/member/checkPw.do", // ★ 서버의 비밀번호 확인 API 주소
+            type: "POST",
+            data: { password: pw, userId: "ruby3163" },
+            success: function (res) {
+                // 서버 응답이 true/false라고 가정
+                if (res === "OK" || res.success) {
+                    // 비밀번호 맞음 → .txt_box 보여주기
+                    $("#container").hide();
+                    $(".txt_box").fadeIn();
+                } else {
+                    alert("비밀번호가 올바르지 않습니다.");
+                }
+            },
+            error: function () {
+                alert("서버와 통신 중 오류가 발생했습니다.");
+            }
+        });
+    });
+});
+</script> -->
+</body>
+
+</html>

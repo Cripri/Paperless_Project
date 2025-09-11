@@ -1,0 +1,96 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background: #f5f5f5;
+    padding: 40px;
+}
+
+#container {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.content-header {
+    border-bottom: 1px solid #ddd;
+    padding: 20px;
+}
+
+.content-title {
+    margin: 0;
+    font-size: 20px;
+}
+
+.tab-menu {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+}
+
+.tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #888;
+    transition: all 0.3s;
+}
+
+.tab.active {
+    color: #000;
+    border-bottom: 3px solid #5942d0;
+}
+
+.form-section {
+    display: none;
+    padding: 20px;
+}
+
+.form-section.active {
+    display: block;
+}
+
+.table_wrap {
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    width: 25%;
+    padding: 10px 5px;
+    vertical-align: top;
+}
+
+td {
+    padding: 10px 5px;
+}
+
+.input_txt {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.btn_set {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    color: white;
+    background-color: #5942d0;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.redDot {
+    color: red;
+}
