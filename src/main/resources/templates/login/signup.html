@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="/signup/css/signup.css">
+</head>
+
+<body>
+    <div id="container">
+        <h2>회원정보 입력</h2>
+        <p><span class="redDot">*</span> 표시는 필수 항목입니다.</p>
+
+        <form>
+            <table>
+                <tr>
+                    <th>이름</th>
+                    <td><input type="text" value=""></td>
+                </tr>
+                <tr>
+                    <th>생년월일</th>
+                    <td><input type="text" value=""></td>
+                </tr>
+                <tr>
+                    <th>아이디 <span class="redDot">*</span></th>
+                    <td>
+                        <input type="text">
+                        <button type="button" class="btn btn-gray btn-sm">중복확인</button>
+                    </td>
+                </tr>
+                <tr>
+                    <th>비밀번호 <span class="redDot">*</span></th>
+                    <td>
+                        <input type="password">
+                        <p style="font-size:12px; color:#555;">
+                            * 영대문자, 영소문자, 숫자 및 특수문자 2종류 이상 포함시 10자리 이상 입력하십시오.<br>
+                            * 영대문자, 영소문자, 숫자 및 특수문자 3종류 이상 포함시 최소 8자리 이상으로 입력하세요.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <th>비밀번호 확인 <span class="redDot">*</span></th>
+                    <td><input type="password"></td>
+                </tr>
+                <tr>
+                    <th>휴대폰번호 <span class="redDot">*</span></th>
+                    <td>
+                        010 -
+                        <input type="text" size="4"> -
+                        <input type="text" size="4">
+                        <span style="font-size:12px; color:#777;">※ 분실된 회원정보 찾기 및 알림 등에 사용됩니다.</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>전화번호</th>
+                    <td>
+                        <select>
+                            <option>선택</option>
+                            <option>02</option>
+                            <option>031</option>
+                        </select> -
+                        <input type="text" size="4"> -
+                        <input type="text" size="4">
+                    </td>
+                </tr>
+                <tr>
+                    <th>이메일</th>
+                    <td>
+                        <input type="text"> @
+                        <input type="text" value="naver.com">
+                        <select>
+                            <option>naver.com</option>
+                            <option>gmail.com</option>
+                            <option>daum.net</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>주소 <span class="redDot">*</span></th>
+                    <td>
+                        <input type="text" id="postNo" placeholder="우편번호" readonly>
+                        <button type="button" class="btn btn-gray btn-sm" onclick="execDaumPostcode()">우편번호
+                            검색</button><br><br>
+                        <input type="text" id="address1" style="width:400px;" placeholder="기본주소" readonly><br><br>
+                        <input type="text" id="address2" style="width:400px;" placeholder="상세주소">
+                    </td>
+                </tr>
+            </table>
+
+            <div class="btn-set">
+                <button type="submit" class="btn btn-blue">회원가입</button>
+                <button type="reset" class="btn btn-gray">가입취소</button>
+            </div>
+        </form>
+    </div>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        function execDaumPostcode() {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    document.getElementById("postNo").value = data.zonecode; // 우편번호
+                    document.getElementById("address1").value = data.roadAddress; // 기본주소
+                    document.getElementById("address2").value = ""; // 상세주소는 직접 입력
+                }
+            }).open();
+        }
+    </script>
+</body>
+
+</html>

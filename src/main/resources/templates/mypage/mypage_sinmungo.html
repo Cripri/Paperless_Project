@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지</title>
+    <link rel="stylesheet" href="/mypage/css/mypage_sinmungo.css">
+</head>
+
+<body>
+    <div id="container">
+        <article id="content">
+            <div class="content-header">
+                <h2 class="content-title">신문고</h2>
+            </div>
+            <div class="content-body" id="printArea">
+                <form class="bbs-search" id="dataForm" name="dataForm" action="">
+                    <input type="hidden" name="q_cvplSn" id="q_cvplSn" value="">
+                    <input type="hidden" id="q_cvplCtgryCode" name="q_cvplCtgryCode" value="">
+                    <fieldset>
+                        <!-- <legend class="sr-only">검색조건입력</legend> -->
+                        <div class="input-area select-length2">
+                            <select class="form-control" title="검색분류" id="q_searchTy" name="q_searchTy">
+                                <option value="1001">제목</option>
+                                <option value="1002">내용</option>
+                            </select>
+                            <input type="text" id="q_searchVal" name="q_searchVal"
+                                class="form-control form-control-keyword" title="검색어" value=""/>
+                        </div>
+                        <div class="btn-area">
+                            <span class="col">
+                                <button type="submit" class="btn btn-lg btn-primary">검색</button>
+                            </span>
+                            <span class="col">
+                                <button type="reset" class="btn btn-lg btn-outline-light">초기화</button>
+                            </span>
+                        </div>
+                    </fieldset>
+                    <input type="hidden" name="q_rowPerPage" id="q_rowPerPage" value="10" />
+                    <input type="hidden" name="q_currPage" id="q_currPage" value="1" />
+                    <input type="hidden" name="q_sortName" id="q_sortName" value="" />
+                    <input type="hidden" name="q_sortOrder" id="q_sortOrder" value="" />
+                </form>
+                <div class="list-info">
+                    <div class="float-left">
+                        <p class="total">
+                            총 <strong>0</strong>
+                            건 (1/1page)
+                        </p>
+                    </div>
+                </div>
+                <table class="table table-list" style="table-layout: fixed">
+                    <!-- 나의민원의 목록이며 번호, 구분, 민원제목, 답변여부, 등록일, 담당자에 대한 정보 제공 -->
+                    <colgroup>
+                        <col style="width: 7%">
+                        <col style="width: 15%;">
+                        <col>
+                        <col style="width: 10%;">
+                        <col style="width: 13%;">
+                        <col style="width: 10%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th scope="col">번호</th>
+                            <th scope="col">구분</th>
+                            <th scope="col">민원제목</th>
+                            <th scope="col">답변여부</th>
+                            <th scope="col">등록일</th>
+                            <th scope="col">담당자</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="6" class="nodata">게시물이 없습니다.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- 페이징은 원창님한테 받아서 돌려쓰기로 함 -->
+            </div>
+    </div>
+    <div class="content-footer"></div>
+    </article>
+    </div>
+</body>
+</html>
