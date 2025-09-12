@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>민원 작성</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/paperless/css/search.css">
+</head>
+<body>
+  <div class="wrap">
+    <h1>민원 작성</h1>
+
+    <!-- 검색 -->
+    <form class="search-bar" id="search-form" role="search" aria-label="민원 검색">
+      <input id="search-input" type="search" placeholder="원하는 민원명을 입력하세요 (예: 전입신고, 등본, 여권 재발급)" autocomplete="off" />
+      <button type="submit" class="btn primary">검색</button>
+    </form>
+
+    <!-- 자주찾는 민원 -->
+    <section class="section">
+      <h2>자주찾는 민원</h2>
+      <div class="quick-grid">
+        <a class="quick-btn"      href="/minwon/residentregistration">주민등록등본</a>
+        <a class="quick-btn--alt quick-btn" href="/minwon/residentregistration">주민등록초본</a>
+        <a class="quick-btn"      href="/minwon/move/transfer">전입신고</a>
+        <a class="quick-btn--alt quick-btn" href="/minwon/certificates/family">가족관계증명서</a>
+        <a class="quick-btn"      href="/minwon/passport/reissue">여권 재발급</a>
+        <a class="quick-btn--alt quick-btn" href="/minwon/id/reissue">주민등록증 재발급</a>
+      </div>
+    </section>
+
+    <!-- 툴바 (표시개수/정렬) -->
+    <div class="toolbar">
+      <div class="tool-left">
+        <label for="page-size" class="sr-only">표시 개수</label>
+        <select id="page-size" class="select">
+          <option value="10">10개씩 보기</option>
+          <option value="20">20개씩 보기</option>
+          <option value="50">50개씩 보기</option>
+        </select>
+
+        <label for="sort-by" class="sr-only">정렬</label>
+        <select id="sort-by" class="select">
+          <option value="latest">최신순</option>
+          <option value="name">이름순</option>
+        </select>
+      </div>
+      <div class="tool-right">
+        <span id="result-count" class="count">총 0건</span>
+      </div>
+    </div>
+
+    <!-- 목록 -->
+    <div id="list" class="list" role="list"></div>
+
+    <!-- 페이지네이션 -->
+    <div class="pager">
+      <button id="prev" class="btn" type="button">이전</button>
+      <span id="page-info" class="page-info">1 / 1</span>
+      <button id="next" class="btn" type="button">다음</button>
+    </div>
+  </div>
+
+  <script src="/paperless/js/search.js"></script>
+</body>
+</html>
