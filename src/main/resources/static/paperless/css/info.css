@@ -1,0 +1,260 @@
+/* ===== 공통 설정 (타이포/색/레이아웃) ===== */
+.info-page {
+  --max: 1120px;
+  --g: 24px;
+  --ink: #0f172a;
+  --muted: #667085;
+  --line: #e5e7eb;
+  --soft: #f7f9fc;
+  --primary: #0b5fff;     /* 포인트 파랑 */
+  --primary-ink: #0b3ea9; /* 진한 파랑 */
+  --yes: #0ea5e9;         /* YES 쪽 강조 */
+  --no: #ef4444;          /* NO 쪽 강조 */
+  --radius: 12px;
+  --shadow: 0 8px 24px rgba(2,6,23,.07);
+  font-family: "Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",
+               system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  color: var(--ink);
+}
+
+.info-page #subTit,
+.info-page #txt {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 18px 20px;
+}
+
+/* ===== 서브 타이틀 ===== */
+.info-page #subTit.share h3 {
+  font-size: clamp(22px, 2.6vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--primary);
+}
+
+/* ===== 인트로 박스 (국민신문고는…) ===== */
+.info-page .customer_top .cT_box {
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(16px, 2.2vw, 24px);
+}
+
+.info-page .customer_top .cT_box > strong {
+  display: block;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--primary-ink);
+  margin-bottom: 10px;
+}
+.info-page .customer_top .cT_box > p {
+  line-height: 1.8;
+  color: #1f2937;
+}
+
+/* ===== 이미지/도식 영역 (설명 카드) ===== */
+.info-page .imgArea .nV_img {
+  margin-top: 16px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(14px, 2.2vw, 20px);
+  min-height: 200px; /* 실제 이미지 대신 설명 카드 */
+}
+
+.info-page .imgArea .altBox h4 {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 6px 0 10px;
+  padding-left: 10px;
+  border-left: 4px solid var(--primary);
+}
+.info-page .imgArea .altBox ul {
+  margin: 0; padding-left: 0;
+}
+.info-page .imgArea .altBox li {
+  list-style: none;
+  position: relative;
+  padding-left: 1.05em;
+  margin: 6px 0;
+  line-height: 1.7;
+}
+.info-page .imgArea .altBox li::before {
+  content: "•";
+  position: absolute; left: 0; top: 0;
+  color: var(--primary);
+}
+
+/* ===== 본문 섹션 타이틀 ===== */
+.info-page #txt > h4 {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 24px 0 12px;
+  padding-left: 10px;
+  border-left: 4px solid var(--primary);
+}
+
+/* ===== 카드 그리드: (민원/제안/생각함/예산낭비/Q&A) ===== */
+.info-page .withdraw_guide.type_1 {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  margin: 12px 0 8px;
+  padding: 0;
+}
+@media (max-width: 1080px) {
+  .info-page .withdraw_guide.type_1 { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 640px) {
+  .info-page .withdraw_guide.type_1 { grid-template-columns: repeat(1, 1fr); }
+}
+
+.info-page .withdraw_guide.type_1 > li {
+  list-style: none;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  position: relative;
+}
+
+/* 아이콘 원형 배지 (유니코드 사용) */
+.info-page .withdraw_guide.type_1 > li::before {
+  content: "💬";
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: #eef2ff;
+  color: #4338ca;
+  font-size: 20px;
+}
+.info-page .withdraw_guide.type_1 > li.icon_1::before { content: "📄"; }
+.info-page .withdraw_guide.type_1 > li.icon_2::before { content: "💡"; }
+.info-page .withdraw_guide.type_1 > li.icon_3::before { content: "💸"; }
+.info-page .withdraw_guide.type_1 > li.icon_4::before { content: "🗣️"; }
+.info-page .withdraw_guide.type_1 > li.icon_5::before { content: "❓"; }
+
+.info-page .withD_box strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 2px;
+  color: var(--primary-ink);
+}
+.info-page .withD_box b {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 6px;
+}
+.info-page .withD_box p {
+  font-size: 14px;
+  line-height: 1.75;
+  color: #374151;
+}
+
+/* ===== YES / NO 비교 박스 ===== */
+.info-page .yesorno_box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--g);
+  margin-top: 14px;
+}
+@media (max-width: 960px) {
+  .info-page .yesorno_box { grid-template-columns: 1fr; }
+}
+
+.info-page .yesorno_box .box_wrap {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(14px, 2.2vw, 20px);
+  position: relative;
+}
+
+/* 좌측 상단 라벨 (Yes/No) */
+.info-page .yesorno_box .box_wrap .tit {
+  position: absolute;
+  top: 10px; left: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 6px 10px;
+  border-radius: 999px;
+  color: #fff;
+}
+.info-page .yesorno_box .box_wrap .tit.no  { background: var(--no); }
+.info-page .yesorno_box .box_wrap .tit.yes { background: var(--yes); }
+
+/* 내부 3칸 카드 */
+.info-page .yesorno_box .yn_box {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 12px;
+}
+@media (max-width: 1080px) {
+  .info-page .yesorno_box .yn_box { grid-template-columns: 1fr; }
+}
+.info-page .yesorno_box .yn_box > div {
+  border: 1px dashed #dbe3f7;
+  border-radius: 10px;
+  background: #f8fafc;
+  padding: 14px;
+}
+.info-page .yesorno_box .yn_box > div strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 6px;
+  color: #0b3a7f;
+}
+.info-page .yesorno_box .yn_box > div p {
+  font-size: 14px;
+  line-height: 1.75;
+  color: #374151;
+}
+
+/* ===== 프린트 친화 ===== */
+@media print {
+  .info-page #subTit, .info-page #txt { padding: 0; }
+  .info-page .customer_top .cT_box,
+  .info-page .imgArea .nV_img,
+  .info-page .withdraw_guide.type_1 > li,
+  .info-page .yesorno_box .box_wrap { box-shadow: none; }
+}
+
+
+.btn-area {
+  text-align: center;
+  margin: 40px 0 60px;
+}
+
+/* 민원 작성하러 가기 버튼 */
+.btn-go {
+  display: inline-block;
+  padding: 14px 30px;
+  background-color: var(--primary-ink); /* 사이트 메인 푸른색 */
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 10px;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: background-color 0.25s, transform 0.15s;
+}
+
+.btn-go:hover {
+  background-color: var(--primary); /* hover 시 더 밝은 파랑 */
+  transform: translateY(-2px);
+}
