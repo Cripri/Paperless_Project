@@ -173,12 +173,12 @@ ul.all-menu-list>li:hover a {
 
 /* ===== FOOTER ===== */
 #footer {
-  position: absolute;
+  position: relative;
   width: 100%;
   height: 120px;
   border-top: 1px solid #dfdfdf;
   background: #fff;
-  left: 1px;
+  left: 0;
 }
 
 .footer-container {
