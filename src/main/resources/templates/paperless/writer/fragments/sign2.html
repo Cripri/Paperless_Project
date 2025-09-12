@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>서명하기</title>
+  <style>
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif; margin:16px; }
+    .wrap { display:flex; gap:12px; align-items:flex-start; }
+    canvas { border:1px solid #ddd; border-radius:8px; width:420px; height:240px; }
+    .col { display:flex; flex-direction:column; gap:8px; }
+    button { padding:8px 12px; border:1px solid #ddd; border-radius:8px; background:#fff; cursor:pointer; }
+    button:hover { background:#f7f7f7; }
+  </style>
+</head>
+<body>
+  <h3>서명 입력</h3>
+  <div class="wrap">
+    <canvas id="canvas" width="840" height="480"></canvas>
+    <div class="col">
+      <button id="clear">지우기</button>
+      <button id="save">저장</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 5;
+
+    let drawing = false;
+    function getPos(e){
+      const rect = canvas.getBoundingClientRect();
+      if (e.touches && e.touches[0]) {
+        return { x: (e.touches[0].clientX - rect.left) * (canvas.width / rect.width),
+                 y: (e.touches[0].clientY - rect.top)  * (canvas.height / rect.height) };
+      } else {
+        return { x: (e.clientX - rect.left) * (canvas.width / rect.width),
+                 y: (e.clientY - rect.top)  * (canvas.height / rect.height) };
+      }
+    }
+    function start(e){ drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }
+    function move(e){
+      if(!drawing) return;
+      const p = getPos(e);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      e.preventDefault();
+    }
+    function end(){ drawing = false; }
+
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', end);
+
+    canvas.addEventListener('touchstart', start, {passive:false});
+    canvas.addEventListener('touchmove', move, {passive:false});
+    window.addEventListener('touchend', end);
+
+    document.getElementById('clear').addEventListener('click', () => {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+    });
+
+    document.getElementById('save').addEventListener('click', () => {
+      const dataUrl = canvas.toDataURL('image/png');
+      if (window.opener) {
+        window.opener.postMessage({ type: 'SIGN_DONE', dataUrl }, '*');
+      }
+      window.close();
+    });
+  </script>
+</body>
+</html>

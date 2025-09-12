@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+  <!-- Stub fragments: replace with your actual components -->
+  <th:block th:fragment="Text(label, name, val, placeholder)">
+    <div class="inline">
+      <input type="text" th:id="${name}" th:name="${name}" th:value="${val}" th:placeholder="${placeholder}" />
+    </div>
+  </th:block>
+  <th:block th:fragment="Rrn(label, frontName, backName, frontVal, backVal)">
+    <div class="inline">
+      <input type="text" th:name="${frontName}" th:value="${frontVal}" style="width:100px;" maxlength="6" /> -
+      <input type="password" th:name="${backName}" th:value="${backVal}" style="width:100px;" maxlength="7" />
+    </div>
+  </th:block>
+</body>
+</html>

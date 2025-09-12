@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>주민등록등본 신청 결과</title>
+  <style>
+    :root { --border:#e5e7eb; --text:#111827; --muted:#6b7280; --ok:#059669; --bg:#f9fafb; }
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif; color:var(--text); margin:0; background:var(--bg); }
+    main { max-width: 980px; margin: 24px auto; padding: 0 16px; }
+    h2 { margin: 12px 0 8px; }
+    .banner { background:#ecfdf5; border:1px solid #a7f3d0; color:#065f46; padding:12px 14px; border-radius:10px; display:flex; align-items:center; gap:10px; }
+    .section { background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px; margin:16px 0; }
+    .grid { display:grid; grid-template-columns: 180px 1fr; gap:10px 18px; }
+    .label { color:#374151; font-weight:600; }
+    .muted { color: var(--muted); }
+    .kv { padding:8px 0; border-bottom:1px dashed var(--border); }
+    .kv:last-child { border-bottom:0; }
+    .actions { display:flex; gap:10px; justify-content:flex-end; padding-top:6px; }
+    button, .btn { appearance:none; border:1px solid var(--border); background:#fff; border-radius:10px; padding:8px 14px; cursor:pointer; }
+    .btn.primary { background:#111827; color:#fff; border-color:#111827; }
+    .sig { width:260px; height:140px; border:1px solid var(--border); background:#fff; object-fit:contain; border-radius:8px; }
+    .chips { display:flex; flex-wrap:wrap; gap:8px; }
+    .chip { border:1px solid var(--border); border-radius:999px; padding:4px 10px; font-size:12px; background:#fff; }
+    .warn { color:#b45309; }
+    .hr { height:1px; background:var(--border); margin:10px 0 6px; }
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <div class="banner" th:if="${saved} == true">
+    <strong>✅ 신청이 저장되었습니다.</strong>
+    <span class="muted">접수 정보는 아래와 같습니다.</span>
+  </div>
+
+  <h2>주민등록등본 신청 결과</h2>
+  <p class="muted">아래 내용을 확인해 주세요. 필요 시 다시 작성하거나 인쇄할 수 있습니다.</p>
+
+  <!-- 기본 정보 요약 -->
+  <section class="section">
+    <h3>① 신청인 기본정보</h3>
+    <div class="grid">
+      <div class="label">성명</div>
+      <div class="kv" th:text="${form.applicantName} ?: '-'">홍길동</div>
+
+      <div class="label">주민등록번호</div>
+      <div class="kv" th:text="|${form.rrnFront ?: '------'}-*******|">000000-*******</div>
+
+      <div class="label">주소</div>
+      <div class="kv" th:text="${form.address} ?: '-'">서울특별시 ...</div>
+
+      <div class="label">연락처</div>
+      <div class="kv" th:text="${form.phone} ?: '-'">010-1234-5678</div>
+
+      <div class="label">수수료 면제</div>
+      <div class="kv" th:text="${form.feeExempt} ? '예' : '아니오'">아니오</div>
+
+      <div class="label" th:if="${form.feeExempt}">면제 사유</div>
+      <div class="kv" th:if="${form.feeExempt}" th:text="${form.feeExemptReason} ?: '-'">국가유공자</div>
+
+      <div class="label">서명 이미지</div>
+      <div class="kv">
+        <img class="sig" th:if="${form.signatureBase64}" th:src="${form.signatureBase64}" alt="서명 미리보기"/>
+        <span class="muted" th:unless="${form.signatureBase64}">서명이 첨부되지 않았습니다.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 포함 범위 요약 -->
+  <section class="section">
+    <h3>② 등본 포함 범위</h3>
+    <div class="grid">
+      <div class="label">포함 방식</div>
+      <div class="kv" th:text="${form.includeAll} == 'ALL' ? '전부포함' : '부분선택'">부분선택</div>
+    </div>
+
+    <!-- 부분선택 상세 -->
+    <div th:if="${form.includeAll} == 'PART'">
+      <div class="hr"></div>
+      <div class="grid">
+        <div class="label">주소 변동사항</div>
+        <div class="kv">
+          <span th:switch="${form.addressHistoryMode}">
+            <span th:case="'ALL'">전체 포함</span>
+            <span th:case="'RECENT'">최근 <b th:text="${form.addressHistoryYears} ?: 0"></b>년 포함</span>
+            <span th:case="'CUSTOM'">직접 입력</span>
+            <span th:case="*">-</span>
+          </span>
+        </div>
+
+        <div class="label">세대 구성사유</div>
+        <div class="kv" th:text="${form.includeHouseholdReason} ? '포함' : '미포함'">미포함</div>
+
+        <div class="label">세대 구성일자</div>
+        <div class="kv" th:text="${form.includeHouseholdDate} ? '포함' : '미포함'">미포함</div>
+
+        <div class="label">발생일/신고일</div>
+        <div class="kv" th:text="${form.includeOccurReportDates} ? '포함' : '미포함'">미포함</div>
+
+        <div class="label">변동사유</div>
+        <div class="kv">
+          <span th:switch="${form.changeReasonScope}">
+            <span th:case="'NONE'">미포함</span>
+            <span th:case="'HOUSEHOLD'">세대만</span>
+            <span th:case="'ALL_MEMBERS'">세대원 전부</span>
+            <span th:case="*">-</span>
+          </span>
+        </div>
+
+        <div class="label">교부대상자 외 이름</div>
+        <div class="kv" th:text="${form.includeOtherNames} ? '포함' : '미포함'">미포함</div>
+
+        <div class="label">주민등록번호 뒷자리</div>
+        <div class="kv">
+          <span th:switch="${form.rrnBackInclusion}">
+            <span th:case="'NONE'">미포함</span>
+            <span th:case="'SELF'">본인만</span>
+            <span th:case="'HOUSEHOLD'">세대원도</span>
+            <span th:case="*">-</span>
+          </span>
+        </div>
+
+        <div class="label">세대주와의 관계</div>
+        <div class="kv" th:text="${form.includeRelationshipToHead} ? '포함' : '미포함'">미포함</div>
+
+        <div class="label">동거인</div>
+        <div class="kv" th:text="${form.includeCohabitants} ? '포함' : '미포함'">미포함</div>
+      </div>
+    </div>
+
+    <!-- 전부포함 표시 -->
+    <div th:if="${form.includeAll} == 'ALL'">
+      <div class="hr"></div>
+      <div class="chips">
+        <span class="chip">전부포함</span>
+        <span class="chip muted">세부항목 선택은 무시됨</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="actions">
+    <a class="btn" th:href="@{/residentregistration/form}">다시 작성</a>
+    <button class="btn" type="button">제출</button>
+    <a class="btn primary" th:href="@{/residentregistration/pdf}" onclick="if(this.getAttribute('href').endsWith('/pdf')){return true;} alert('PDF 생성 기능은 추후 연결됩니다.'); return false;">PDF로 받기</a>
+  </div>
+</main>
+</body>
+</html>
