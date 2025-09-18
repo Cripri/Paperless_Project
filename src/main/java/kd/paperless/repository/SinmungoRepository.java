@@ -34,4 +34,10 @@ public interface SinmungoRepository extends JpaRepository<Sinmungo, Long> {
       @Param("searchType") String searchType,
       Pageable pageable);
 
+  @Query("select max(s.smgId) from Sinmungo s where s.smgId < :id")
+  Long findPrevId(@Param("id") Long id);
+
+  @Query("select min(s.smgId) from Sinmungo s where s.smgId > :id")
+  Long findNextId(@Param("id") Long id);
+
 }

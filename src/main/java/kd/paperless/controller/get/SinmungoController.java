@@ -86,7 +86,7 @@ public class SinmungoController {
             @RequestParam(required = false) String postcode,
             @RequestParam(required = false) String addr1,
             @RequestParam(required = false) String addr2
-            // TODO: 파일!
+    // TODO: 파일!
     ) {
         Sinmungo s = new Sinmungo();
         s.setTitle(title.trim());
@@ -131,6 +131,15 @@ public class SinmungoController {
                 : org.springframework.web.util.HtmlUtils.htmlEscape(item.getAdminAnswer())
                         .replace("\n", "<br>");
 
+        Long prevId = sinmungoRepository.findPrevId(smgId);
+        Long nextId = sinmungoRepository.findNextId(smgId);
+
+        Sinmungo prev = (prevId != null) ? sinmungoRepository.findById(prevId).orElse(null) : null;
+        Sinmungo next = (nextId != null) ? sinmungoRepository.findById(nextId).orElse(null) : null;
+
+        model.addAttribute("prev", prev);
+        model.addAttribute("next", next);
+
         model.addAttribute("it", item);
         model.addAttribute("contentHtml", contentHtml);
         model.addAttribute("adminAnswerHtml", adminAnswerHtml);
@@ -140,6 +149,9 @@ public class SinmungoController {
         model.addAttribute("keyword", keyword == null ? "" : keyword);
         model.addAttribute("status", status == null ? "" : status);
         model.addAttribute("searchType", (searchType == null || searchType.isBlank()) ? "title" : searchType);
+
+        model.addAttribute("prev", prev);
+        model.addAttribute("next", next);
 
         return "sinmungo/sinmungo_detail";
     }

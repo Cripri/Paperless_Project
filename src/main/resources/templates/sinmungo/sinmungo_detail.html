@@ -16,9 +16,9 @@
   <!-- header -->
 
   <div class="container">
-    <div class="page-actions">
+    <!-- <div class="page-actions">
       <a href="javascript:window.print()" class="btn btn-ghost">🖨 인쇄</a>
-    </div>
+    </div> -->
 
     <h1 class="page-title">공개 상담민원</h1>
 
@@ -101,7 +101,7 @@
           <th>접수번호</th>
           <td th:text="${it.smgId}">-</td>
         </tr>
-        
+
         <tr>
           <th>전화번호</th>
           <td colspan="3" th:text="${it.telNum != null ? '-' : '-'}">&nbsp;</td>
@@ -110,6 +110,27 @@
           <td colspan="4" style="height:160px; line-height:1.8; background:#fff;" th:utext="${#strings.isEmpty(adminAnswerHtml) ? 
                      '담당부서에서 처리중입니다.<br><br>처리기한 내 답변 예정입니다.' : adminAnswerHtml}">
             답변
+          </td>
+        </tr>
+      </table>
+
+      <table class="nav-table">
+        <tr>
+          <th>이전글</th>
+          <td>
+            <a th:if="${prev != null}" th:href="@{/sinmungo/detail/{id}(id=${prev.smgId},
+                   page=${page}, size=${size},
+                   keyword=${keyword}, status=${status}, searchType=${searchType})}" th:text="${prev.title}">이전글</a>
+            <span th:if="${prev == null}">없음</span>
+          </td>
+        </tr>
+        <tr>
+          <th>다음글</th>
+          <td>
+            <a th:if="${next != null}" th:href="@{/sinmungo/detail/{id}(id=${next.smgId},
+                   page=${page}, size=${size},
+                   keyword=${keyword}, status=${status}, searchType=${searchType})}" th:text="${next.title}">다음글</a>
+            <span th:if="${next == null}">없음</span>
           </td>
         </tr>
       </table>
