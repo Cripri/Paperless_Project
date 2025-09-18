@@ -101,3 +101,13 @@ body {
 .page-btn.next {
   font-size: 20px;
 }
+
+.list-table a { color: #333; text-decoration: none; }
+.list-table a:hover { text-decoration: underline; }
+
+.list-table td.title {
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

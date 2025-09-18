@@ -16,85 +16,130 @@
   <!-- header -->
 
   <div class="container">
-    <div class="page-actions">
+    <!-- <div class="page-actions">
       <a href="javascript:window.print()" class="btn btn-ghost">🖨 인쇄</a>
-    </div>
+    </div> -->
 
     <h1 class="page-title">공개 상담민원</h1>
 
-    <!-- 상단 요약 표 -->
     <section class="section">
       <table class="kv-table">
         <colgroup>
-          <col style="width:140px"><col>
-          <col style="width:140px"><col>
-          <col style="width:140px"><col style="width:120px">
+          <col style="width:140px">
+          <col>
+          <col style="width:140px">
+          <col>
+          <col style="width:140px">
+          <col style="width:120px">
         </colgroup>
         <tr>
           <th class="label">목록번호</th>
-          <td class="value">293350</td>
+          <td class="value" th:text="${it.smgId}">293350</td>
+
           <th class="label">제목</th>
-          <td class="value" colspan="3">파크골프장 복구</td>
+          <td class="value" colspan="3" th:text="${it.title}">파크골프장 복구</td>
         </tr>
         <tr>
           <th class="label">작성자</th>
-          <td class="value">김○○</td>
+          <td class="value" th:text="${it.writerId}">김○○</td>
+
           <th class="label">작성일</th>
-          <td class="value">2025-09-05 15:48:31</td>
+          <td class="value"
+            th:text="${it.createdAt != null ? #temporals.format(it.createdAt, 'yyyy-MM-dd HH:mm:ss') : ''}">
+            2025-09-05 15:48:31
+          </td>
+
           <th class="label">조회수</th>
-          <td class="value">11</td>
+          <td class="value" th:text="${it.viewCount}">11</td>
         </tr>
         <tr>
           <th class="label">공개여부</th>
           <td class="value">내용공개</td>
+
           <th class="label">결과통지여부</th>
-          <td class="value" colspan="3">게시판답변, 휴대전화 문자메시지(SMS)</td>
+          <td class="value" colspan="3">
+            <span th:text="${#strings.equalsIgnoreCase(it.noticeSms, 'Y') 
+                ? '게시판답변, 휴대전화 문자메시지(SMS)' 
+                : '게시판답변'}">
+              게시판답변
+            </span>
+          </td>
         </tr>
       </table>
-      <div class="content-box">
-        지난 폭우로 인해 생활체육시설(파크골프장) 담장이 무너졌고 잔디는 흔적조차 찾아 볼 수 없을 정도로 훼손되어 방치되어 있어<br>
-        구민들이 매우 안타깝게 바라보고 있습니다.<br>
-        매일 당현천을 걸으며 노원구민으로서 매우 만족하고 있습니다. 그러나 파크골프장의 복구 지연은 왠지 불편함을 느낍니다.<br>
-        일전 또는 원정으로 파크골프장을 이용하면서 너무 아쉬움이 남습니다. 노원구민이면 누구나 이용가능한 생활체육시설인 파크골프장이<br>
-        구민의 건강과 행복을 추구할 수 있게 우리 파크골프장이 어서 빨리 복무안료 되기를 희망합니다.
+
+      <div class="content-box" th:utext="${contentHtml}">
+        본문
       </div>
     </section>
 
-    <!-- 상담답변 -->
     <section class="section">
       <h2 class="section-title">상담답변</h2>
       <table class="answer-table">
         <colgroup>
-          <col style="width:140px"><col>
-          <col style="width:140px"><col style="width:220px">
+          <col style="width:140px">
+          <col>
+          <col style="width:140px">
+          <col style="width:220px">
         </colgroup>
         <tr>
           <th>담당부서</th>
-          <td>문화도시행정국 체육도시과</td>
+          <td>
+            <span th:text="${it.adminId != null ? '관리자ID: ' + it.adminId : '-'}">미지정</span>
+          </td>
+
           <th>답변일자</th>
-          <td><!-- 등록 시 표시 -->&nbsp;</td>
+          <td th:text="${it.answerDate != null ? #temporals.format(it.answerDate, 'yyyy-MM-dd HH:mm:ss') : '-'}">&nbsp;
+          </td>
         </tr>
+
         <tr>
           <th>작성자</th>
-          <td>남○○</td>
+          <td>
+            <span th:text="${it.adminId != null ? '관리자이름' : '-'}">-</span>
+          </td>
+
           <th>접수번호</th>
-          <td>202509051548310353</td>
+          <td th:text="${it.smgId}">-</td>
         </tr>
+
         <tr>
           <th>전화번호</th>
-          <td colspan="3">&nbsp;</td>
+          <td colspan="3" th:text="${it.telNum != null ? '-' : '-'}">&nbsp;</td>
         </tr>
         <tr>
-          <td colspan="4" style="height:160px; line-height:1.8; background:#fff;">
-            귀하의 민원은 담당부서(문화도시행정국 체육도시과)에서 처리중입니다.<br><br>
-            처리기한은 2025-09-15 18:00:00 까지이며, 최대한 빠르게 답변드리겠습니다.<br><br>
-            감사합니다.
+          <td colspan="4" style="height:160px; line-height:1.8; background:#fff;" th:utext="${#strings.isEmpty(adminAnswerHtml) ? 
+                     '담당부서에서 처리중입니다.<br><br>처리기한 내 답변 예정입니다.' : adminAnswerHtml}">
+            답변
+          </td>
+        </tr>
+      </table>
+
+      <table class="nav-table">
+        <tr>
+          <th>이전글</th>
+          <td>
+            <a th:if="${prev != null}" th:href="@{/sinmungo/detail/{id}(id=${prev.smgId},
+                   page=${page}, size=${size},
+                   keyword=${keyword}, status=${status}, searchType=${searchType})}" th:text="${prev.title}">이전글</a>
+            <span th:if="${prev == null}">없음</span>
+          </td>
+        </tr>
+        <tr>
+          <th>다음글</th>
+          <td>
+            <a th:if="${next != null}" th:href="@{/sinmungo/detail/{id}(id=${next.smgId},
+                   page=${page}, size=${size},
+                   keyword=${keyword}, status=${status}, searchType=${searchType})}" th:text="${next.title}">다음글</a>
+            <span th:if="${next == null}">없음</span>
           </td>
         </tr>
       </table>
 
       <div class="action-bar">
-        <a href="javascript:history.back()" class="btn btn-primary">목록</a>
+        <a class="btn btn-primary" th:href="@{/sinmungo/list(
+         page=${page}, size=${size},
+         keyword=${keyword}, status=${status}, searchType=${searchType}
+       )}">목록</a>
       </div>
     </section>
   </div>

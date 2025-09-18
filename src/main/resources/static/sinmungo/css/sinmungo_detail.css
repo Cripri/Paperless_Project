@@ -138,16 +138,35 @@ body {
   margin-top: 16px;
 }
 
-/* 인쇄 숨김/표시 */
-@media print {
+.nav-table {
+  width: 100%;
+  border-top: 1px solid #ddd;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 14px;
+}
 
-  .action-bar,
-  .page-actions {
-    display: none;
-  }
+.nav-table th {
+  width: 100px;
+  background: #f7f7f7;
+  border-bottom: 1px solid #eee;
+  padding: 10px;
+  text-align: center;
+  font-weight: 700;
+  color: #333;
+}
 
-  .container {
-    margin: 0;
-    width: 100%;
-  }
+.nav-table td {
+  border-bottom: 1px solid #eee;
+  padding: 10px 14px;
+  text-align: left;
+}
+
+.nav-table a {
+  color: #333;
+  text-decoration: none;
+}
+
+.nav-table a:hover {
+  text-decoration: underline;
 }
