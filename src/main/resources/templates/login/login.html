@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인 페이지</title>
     <link rel="stylesheet" href="/login/css/login.css">
 </head>
+
 <body>
     <div id="wrapper">
         <div class="wrap">
@@ -15,10 +17,12 @@
                 </div>
                 <h1 class="title-box"><span class="title">노원구청<em>통합로그인</em></span></h1>
                 <div class="desc-box">
-                    <p><span>노원구청 홈페이지에 방문해주신 여러분을 환영합니다.</span><br/>
-                    <em class="em-sky">회원가입 및 로그인</em>을 하시면 회원님들에게 제공되는 신청, 접수 등 다양한 콘텐츠를 이용하실 수 있습니다. <br>
-                    회원가입을 하지 않고 휴대폰본인인증, 아이핀인증을 하는 경우 <em class="em-sky">게시판 글쓰기 등으로 이용이 제한</em>됩니다.</p>
-                    <span><span class="skip">안내사항</span> 정보통신망 이용촉진 및 정보보호 등에 관한 법률 제44조의5(게시판 이용자의 본인 확인) 및 전자정부법 시행령 제12조(민원인 등의 본인 확인)</span>
+                    <p><span>노원구청 홈페이지에 방문해주신 여러분을 환영합니다.</span><br />
+                        <em class="em-sky">회원가입 및 로그인</em>을 하시면 회원님들에게 제공되는 신청, 접수 등 다양한 콘텐츠를 이용하실 수 있습니다. <br>
+                        회원가입을 하지 않고 휴대폰본인인증, 아이핀인증을 하는 경우 <em class="em-sky">게시판 글쓰기 등으로 이용이 제한</em>됩니다.
+                    </p>
+                    <span><span class="skip">안내사항</span> 정보통신망 이용촉진 및 정보보호 등에 관한 법률 제44조의5(게시판 이용자의 본인 확인) 및 전자정부법 시행령
+                        제12조(민원인 등의 본인 확인)</span>
                 </div>
             </header>
             <div id="container">
@@ -27,7 +31,7 @@
                         <ul class="form-list clearfix">
                             <li class="form-item n01">
                                 <span class="form-title">회원 로그인</span>
-                                <form action="" id="loginForm" method="post">
+                                <form action="/login" id="loginForm" method="post">
                                     <div class="login-inp-box">
                                         <div class="login-inp id">
                                             <label for="userId"></label>
@@ -35,15 +39,17 @@
                                         </div>
                                         <div class="login-inp userPasswd">
                                             <label for="password"></label>
-                                            <input type="password" name="password" id="password" class="password-input" placeholder="비밀번호 입력">
+                                            <input type="password" name="password" id="password" class="password-input"
+                                                placeholder="비밀번호 입력">
                                             <button type="button" name="pw-hide" id="pw-hide" class="btn-view">
-                                            <span class="skip">비밀번호 표시 안함</span>
-                                        </button>
+                                                <span class="skip">비밀번호 표시 안함</span>
+                                            </button>
                                         </div>
                                         <button type="submit" class="login-inp-btn">로그인</button>
                                         <div class="find-wrap clearfix">
                                             <a href="/signup" class="find-anchor">회원가입</a>
-                                            <a href="/findAccount" class="find-anchor" onclick="openFindPopup(event)">아이디/비밀번호 찾기</a>
+                                            <a href="/findAccount" class="find-anchor"
+                                                onclick="openFindPopup(event)">아이디/비밀번호 찾기</a>
                                         </div>
                                     </div>
                                 </form>
@@ -51,8 +57,10 @@
                             <li class="form-item n02">
                                 <span class="form-title">SNS 로그인</span>
                                 <div class="btn-box">
-                                    <button type="button" class="check-btn naver" onclick="onNaverLogin()">네이버 간편 로그인</button>
-                                    <button type="button" class="check-btn kakao" onclick="onKakaoLogin()">카카오 간편 로그인</button>
+                                    <button type="button" class="check-btn naver" onclick="onNaverLogin()">네이버 간편
+                                        로그인</button>
+                                    <button type="button" class="check-btn kakao" onclick="onKakaoLogin()">카카오 간편
+                                        로그인</button>
                                     <p class="login-caution">
                                         SNS로그인을 사용하시려면 회원가입이 필수이며, <em class="em-pink">최초 1회 계정인증</em>이 필요합니다
                                     </p>
@@ -79,7 +87,8 @@
                 <div class="footer-inner">
                     <div class="footer-info">
                         <p class="address">[01689] 서울시 노원구 노해로 437(상계동)</p>
-                        <p class="tel">TEL <span>02-2116-3114 (120 다산콜센터로 연결)</span> <em>|</em> <span>02-2116-3000,3301 (야간,공휴일/당직실)</span> <em>|</em> <span>FAX 02-2116-4666</span></p>
+                        <p class="tel">TEL <span>02-2116-3114 (120 다산콜센터로 연결)</span> <em>|</em> <span>02-2116-3000,3301
+                                (야간,공휴일/당직실)</span> <em>|</em> <span>FAX 02-2116-4666</span></p>
                     </div>
                     <div class="copyright">
                         <p>
@@ -98,19 +107,48 @@
         }
 
         function onNaverLogin() {
-        const clientId = 'PEnFelOXlfDdetDwx5mv'; // 네이버에서 발급받은 Client ID
-        const redirectUri = 'http://localhost:9050/oauth/naver/callback';
-        const state = Math.random().toString(36).substring(2, 15); // CSRF 방지용
+            const clientId = 'PEnFelOXlfDdetDwx5mv'; // 네이버에서 발급받은 Client ID
+            const redirectUri = 'http://localhost:9050/oauth/naver/callback';
+            const state = Math.random().toString(36).substring(2, 15); // CSRF 방지용
 
-        const naverAuthUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
+            const naverAuthUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
 
-        window.location.href = naverAuthUrl;
+            window.location.href = naverAuthUrl;
         }
 
         function onKakaoLogin() {
-        // 서버에서 로그인 리다이렉션을 처리
-        window.location.href = '/oauth/kakao/login';
+            // 서버에서 로그인 리다이렉션을 처리
+            window.location.href = '/oauth/kakao/login';
         }
+
+        (function () {
+            const btn = document.getElementById('pw-hide');
+            const input = document.getElementById('password');
+            const label = btn.querySelector('.skip'); // 화면낭독용 텍스트
+
+            function togglePw() {
+                const nowShow = !btn.classList.contains('view'); // 보이기 전환 여부
+                // 1) input type 토글
+                input.type = nowShow ? 'text' : 'password';
+                // 2) 아이콘(스프라이트) 토글
+                btn.classList.toggle('view', nowShow);
+                // 3) 접근성 텍스트/상태
+                label.textContent = nowShow ? '비밀번호 표시 중 (클릭하면 숨김)' : '비밀번호 표시 안함';
+                btn.setAttribute('aria-pressed', String(nowShow));
+                btn.setAttribute('aria-label', nowShow ? '비밀번호 숨기기' : '비밀번호 보이기');
+            }
+
+            // 클릭으로 토글
+            btn.addEventListener('click', togglePw);
+            // 키보드(Enter/Space)도 지원
+            btn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    togglePw();
+                }
+            });
+        })();
     </script>
 </body>
+
 </html>

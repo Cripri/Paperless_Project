@@ -3,7 +3,6 @@ package kd.paperless.controller.get;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-
 @Controller
 public class MainController {
 
@@ -11,4 +10,10 @@ public class MainController {
     public String home() {
         return "/main/intro";
     }
+
+    @GetMapping("/main/portal")
+    public String portal() {
+        return "main/portal"; 
+    }
+    
 }

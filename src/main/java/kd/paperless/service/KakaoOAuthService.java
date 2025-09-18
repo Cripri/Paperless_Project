@@ -1,4 +1,4 @@
-package kd.paperless.controller.service;
+package kd.paperless.service;
 
 import java.util.Map;
 

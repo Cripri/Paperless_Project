@@ -12,64 +12,64 @@
         <h2>회원정보 입력</h2>
         <p><span class="redDot">*</span> 표시는 필수 항목입니다.</p>
 
-        <form>
+        <form action="/signup" method="post">
             <table>
                 <tr>
-                    <th>이름</th>
-                    <td><input type="text" value=""></td>
+                    <th>이름 <span class="redDot">*</span></th>
+                    <td><input type="text" name="userName" placeholder="홍길동"></td>
                 </tr>
                 <tr>
-                    <th>생년월일</th>
-                    <td><input type="text" value=""></td>
+                    <th>생년월일 <span class="redDot">*</span></th>
+                    <td><input type="text" name="userBirth" id="userBirth" maxlength="10" placeholder="YYYY-MM-DD"></td>
                 </tr>
                 <tr>
                     <th>아이디 <span class="redDot">*</span></th>
                     <td>
-                        <input type="text">
-                        <button type="button" class="btn btn-gray btn-sm">중복확인</button>
+                        <input type="text" name="loginId">
+                        <button type="button" class="btn btn-gray btn-sm" onclick="checkDup()">중복확인</button>
                     </td>
                 </tr>
                 <tr>
                     <th>비밀번호 <span class="redDot">*</span></th>
                     <td>
-                        <input type="password">
+                        <input type="password" name="password">
                         <p style="font-size:12px; color:#555;">
                             * 영대문자, 영소문자, 숫자 및 특수문자 2종류 이상 포함시 10자리 이상 입력하십시오.<br>
-                            * 영대문자, 영소문자, 숫자 및 특수문자 3종류 이상 포함시 최소 8자리 이상으로 입력하세요.
+                            <!-- * 영대문자, 영소문자, 숫자 및 특수문자 3종류 이상 포함시 최소 8자리 이상으로 입력하세요. -->
                         </p>
                     </td>
                 </tr>
                 <tr>
                     <th>비밀번호 확인 <span class="redDot">*</span></th>
-                    <td><input type="password"></td>
+                    <td><input type="password" name="passwordConfirm"></td>
                 </tr>
                 <tr>
                     <th>휴대폰번호 <span class="redDot">*</span></th>
                     <td>
                         010 -
-                        <input type="text" size="4"> -
-                        <input type="text" size="4">
+                        <input type="text" name="phoneMid" size="4"> -
+                        <input type="text" name="phoneLast" size="4">
                         <span style="font-size:12px; color:#777;">※ 분실된 회원정보 찾기 및 알림 등에 사용됩니다.</span>
                     </td>
                 </tr>
                 <tr>
                     <th>전화번호</th>
                     <td>
-                        <select>
+                        <select name="telArea">
                             <option>선택</option>
                             <option>02</option>
                             <option>031</option>
                         </select> -
-                        <input type="text" size="4"> -
-                        <input type="text" size="4">
+                        <input type="text" name="telMid" size="4"> -
+                        <input type="text" name="telLast" size="4">
                     </td>
                 </tr>
                 <tr>
-                    <th>이메일</th>
+                    <th>이메일<span class="redDot">*</span></th>
                     <td>
-                        <input type="text"> @
-                        <input type="text" value="naver.com">
-                        <select>
+                        <input type="text" name="emailId"> @
+                        <input type="text" name="emailDomain" value="naver.com">
+                        <select onchange="document.querySelector('[name=emailDomain]').value=this.value">
                             <option>naver.com</option>
                             <option>gmail.com</option>
                             <option>daum.net</option>
@@ -79,11 +79,12 @@
                 <tr>
                     <th>주소 <span class="redDot">*</span></th>
                     <td>
-                        <input type="text" id="postNo" placeholder="우편번호" readonly>
+                        <input type="text" id="postCode" name="postcode" placeholder="우편번호" readonly>
                         <button type="button" class="btn btn-gray btn-sm" onclick="execDaumPostcode()">우편번호
                             검색</button><br><br>
-                        <input type="text" id="address1" style="width:400px;" placeholder="기본주소" readonly><br><br>
-                        <input type="text" id="address2" style="width:400px;" placeholder="상세주소">
+                        <input type="text" id="addr1" name="addr1" style="width:400px;" placeholder="기본주소"
+                            readonly><br><br>
+                        <input type="text" id="addr2" name="addr2" style="width:400px;" placeholder="상세주소">
                     </td>
                 </tr>
             </table>
@@ -99,12 +100,62 @@
         function execDaumPostcode() {
             new daum.Postcode({
                 oncomplete: function (data) {
-                    document.getElementById("postNo").value = data.zonecode; // 우편번호
-                    document.getElementById("address1").value = data.roadAddress; // 기본주소
-                    document.getElementById("address2").value = ""; // 상세주소는 직접 입력
+                    document.getElementById("postCode").value = data.zonecode; // 우편번호
+                    document.getElementById("addr1").value = data.roadAddress; // 기본주소
+                    document.getElementById("addr2").value = ""; // 상세주소는 직접 입력
                 }
             }).open();
         }
+    </script>
+    <script>
+        async function checkDup() {
+            const loginId = document.querySelector('[name=loginId]').value;
+            if (!loginId) return alert('아이디를 입력해주세요.');
+            const res = await fetch(`/api/users/check-id?loginId=${encodeURIComponent(loginId)}`);
+            const ok = await res.json();
+            alert(ok.available ? '사용 가능한 아이디입니다.' : '이미 사용 중인 아이디입니다.');
+        }
+
+        const birthInput = document.getElementById('userBirth');
+        const birthError = document.getElementById('birthError');
+
+        // 입력할 때 자동 하이픈 & 숫자만 허용
+        birthInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/[^0-9]/g, '');
+            if (value.length > 4 && value.length <= 6) {
+                value = value.slice(0, 4) + '-' + value.slice(4);
+            } else if (value.length > 6) {
+                value = value.slice(0, 4) + '-' + value.slice(4, 6) + '-' + value.slice(6, 8);
+            }
+            e.target.value = value;
+        });
+
+        // 폼 제출 시 유효한 날짜인지 검증
+        document.querySelector('form').addEventListener('submit', function (e) {
+            const val = birthInput.value;
+
+            // 정규식 기본 체크 (YYYY-MM-DD)
+            const regex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!regex.test(val)) {
+                e.preventDefault();
+                birthError.style.display = 'inline';
+                return;
+            }
+
+            // 실제 날짜인지 체크
+            const [y, m, d] = val.split('-').map(Number);
+            const date = new Date(y, m - 1, d); // JS 월은 0~11
+            const valid = date.getFullYear() === y &&
+                date.getMonth() === (m - 1) &&
+                date.getDate() === d;
+
+            if (!valid) {
+                e.preventDefault();
+                birthError.style.display = 'inline';
+            } else {
+                birthError.style.display = 'none';
+            }
+        });
     </script>
 </body>
 
