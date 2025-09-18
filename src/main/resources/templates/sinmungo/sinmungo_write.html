@@ -24,9 +24,12 @@
         <table class="form-table">
           <tr>
             <th class="req">제목</th>
-            <td colspan="3"><input type="text" class="input" placeholder="제목을 입력하세요"></td>
+            <td colspan="3">
+              <input type="text" class="input" name="title" placeholder="제목을 입력하세요" required>
+            </td>
           </tr>
-          <tr>
+
+          <!-- <tr>
             <th class="req">공개여부</th>
             <td colspan="3">
               <div class="options">
@@ -35,46 +38,62 @@
                 <label><input type="radio" name="openYn" value="CONTENT"> 내용공개</label>
               </div>
             </td>
-          </tr>
+          </tr> -->
+
           <tr>
-            <th>휴대폰 번호</th>
+            <th class="req">휴대폰 번호</th>
             <td>
               <div class="row">
-                <div class="col"><input type="text" class="input" placeholder="'-'을 제외한 휴대전화 숫자만 입력해 주세요."></div>
+                <div class="col"><input type="text" class="input" name="telNum" placeholder="'-' 없이 숫자만" required></div>
               </div>
             </td>
             <th>전화번호</th>
             <td>
               <div class="row">
-                <div class="col"><input type="text" class="input" placeholder="'-'을 제외한 전화번호 숫자만 입력해 주세요."></div>
+                <div class="col"><input type="text" class="input" name="telNum2" placeholder="'-' 없이 숫자만"></div>
               </div>
             </td>
           </tr>
+
           <tr>
-            <th>주소</th>
+            <th class="req">주소</th>
             <td colspan="3">
               <div class="row addr-row">
-                <input type="text" class="input addr-input" placeholder="도로명 주소 또는 지번 주소">
+                <input type="text" class="input addr-input" name="postcode" placeholder="우편번호" required>
+                <input type="text" class="input addr-input" name="addr1" placeholder="도로명/지번 주소" required>
+                <input type="text" class="input addr-input" name="addr2" placeholder="상세 주소" required>
                 <button type="button" class="btn addr-btn">주소검색</button>
               </div>
             </td>
           </tr>
+
           <tr>
             <th>별도 결과통지여부</th>
             <td colspan="3">
               <div class="options">
-                <label><input type="checkbox" name="noticeBoard" checked> 게시판 답변</label>
-                <label><input type="checkbox" name="noticeEmail"> 전자우편(E-MAIL)</label>
-                <label><input type="checkbox" name="noticeSms"> 휴대전화 문자메시지(SMS)</label>
+                <label><input type="checkbox" name="noticeBoard" checked disabled> 게시판 답변</label>
+                
+                <label>
+                  <input type="hidden" name="noticeSms" value="N">
+                  <input type="checkbox" name="noticeSms" value="Y"> 휴대전화 문자메시지(SMS)
+                </label>
+
+                <label>
+                  <input type="checkbox" id="chkEmail"> 전자우편(E-MAIL)
+                  <input type="email" class="input" name="noticeEmail" placeholder="email@example.com"
+                    style="margin-left:8px;">
+                </label>
               </div>
             </td>
           </tr>
+
           <tr>
             <th class="req">내용</th>
             <td colspan="3">
-              <textarea class="textarea" placeholder="민원 내용을 상세히 입력해 주세요."></textarea>
+              <textarea class="textarea" name="content" placeholder="민원 내용을 상세히 입력해 주세요." required></textarea>
             </td>
           </tr>
+
           <tr>
             <th>첨부파일</th>
             <td colspan="3">
@@ -101,7 +120,7 @@
             <td colspan="3">
               <label class="agree">
                 <input type="checkbox" name="agree"> 개인정보 수집 및 이용*에 동의합니다.
-                <a href="#">? 개인정보 수집 및 이용안내 자세히 보기</a>
+                <a href="#"> 개인정보 수집 및 이용안내 자세히 보기</a>
               </label>
             </td>
           </tr>
@@ -110,8 +129,8 @@
 
 
       <div class="actions">
-        <button type="button" class="btn btn-cancel">취소</button>
-        <button type="button" class="btn">목록</button>
+        <button type="button" class="btn btn-cancel" onclick="history.back()">취소</button>
+        <a class="btn" th:href="@{/sinmungo/list}">목록</a>
         <button type="button" class="btn btn-warn">임시저장</button>
         <button type="submit" class="btn btn-primary">등록</button>
       </div>

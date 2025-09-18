@@ -32,6 +32,7 @@ body {
   font-weight:700; 
   border-bottom:1px solid #dcdcdc; 
   color:#2a4d00;
+  margin-top: 0;
 }
 
 .section .content {
