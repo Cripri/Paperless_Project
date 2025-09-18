@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>공지사항</title>
   <link rel="stylesheet" th:href="@{/header-footer/css/header-footer.css}">
-  <link rel="stylesheet" th:href="@{/notice/css/notice.css}">
+  <link rel="stylesheet" th:href="@{/notice/css/notice_list.css}">
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
@@ -27,7 +27,7 @@
       </ul>
     </div>
 
-    <div class="total">총 <strong>0</strong> 건</div>
+    <div class="total">총 <strong th:text="${totalCount}">0</strong> 건</div>
 
     <table class="list-table">
       <thead>
@@ -39,29 +39,43 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr th:each="it, iterStat : ${items}">
+          <td style="width:80px" th:text="${totalCount - ((currentPage - 1) * pageSize) - iterStat.index}">1</td>
+          <td>
+            <span th:if="${it.isPinned == 'Y'}" class="tag-pinned">[공지]</span>
+            <a th:href="@{|/notice/detail/${it.noticeId}|}" th:text="${it.title}">제목</a>
+          </td>
+          <td style="width:120px"
+            th:text="${it.createdAt != null ? #temporals.format(it.createdAt, 'yyyy-MM-dd') : ''}">
+            2025-09-01
+          </td>
+          <td style="width:80px" th:text="${it.viewCount}">0</td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(items)}">
           <td colspan="4" class="empty">등록된 공지사항이 없습니다.</td>
         </tr>
       </tbody>
     </table>
 
     <div class="paging" id="navigator">
-      <a href="" class="page-btn prev" title="이전 페이지">
+      <a class="page-btn prev" title="이전 페이지" th:href="@{/notice/list(
+       page=${currentPage > 1 ? currentPage - 1 : 1},
+       size=${pageSize},
+       status=${status}
+     )}">
         <span class="material-symbols-outlined">chevron_left</span>
       </a>
 
-      <a href="" class="page-btn active">1</a>
-      <!-- <a href="" class="page-btn">2</a>
-      <a href="" class="page-btn">3</a>
-      <a href="" class="page-btn">4</a>
-      <a href="" class="page-btn">5</a>
-      <a href="" class="page-btn">6</a>
-      <a href="" class="page-btn">7</a>
-      <a href="" class="page-btn">8</a>
-      <a href="" class="page-btn">9</a>
-      <a href="" class="page-btn">10</a> -->
+      <a class="page-btn" th:each="p : ${#numbers.sequence(startPage, endPage)}" th:text="${p}"
+        th:href="@{/notice/list(page=${p}, size=${pageSize}, status=${status})}"
+        th:classappend="${p == currentPage} ? ' active'">1</a>
 
-      <a href="" class="page-btn next" title="다음 페이지">
+      <a class="page-btn next" title="다음 페이지" th:href="@{/notice/list(
+       page=${currentPage < totalPages ? currentPage + 1 : totalPages},
+       size=${pageSize},
+       status=${status}
+     )}">
         <span class="material-symbols-outlined">chevron_right</span>
       </a>
     </div>
