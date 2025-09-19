@@ -38,7 +38,7 @@ public class Sinmungo {
   private String noticeEmail;
 
   @Column(name = "NOTICE_SMS", length = 1)
-  private String noticeSms;
+  private char noticeSms;
 
   @Column(name = "POSTCODE", length = 10)
   private String postcode;
