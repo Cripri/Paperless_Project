@@ -1,0 +1,298 @@
+@charset "UTF-8";
+
+/* 폰트 */
+@font-face {
+  font-family: 'Escoredream';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-4Regular.woff') format('woff');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'YeogiOttaeJalnanGothic';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_231029@1.1/JalnanGothic.woff') format('woff');
+  font-weight: 400;
+  font-display: swap;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: #5942d0; /* 기존 보라 배경 톤 유지 */
+  color: #172b4d;
+    background: #5942d0 url(/login/images/login_bg.png) no-repeat left top;
+
+  font: 16px/1.6 'Escoredream', 'Malgun Gothic', '맑은 고딕', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+/* 상단 홈 버튼 */
+.site-top { max-width: 1280px; margin: 24px auto 0; padding: 0 20px; }
+.home-btn {
+  display: inline-block;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.9);
+  background: rgba(49,108,255,.08);
+}
+
+/* 흰색 큰 카드 컨테이너 */
+.outer {
+  max-width: 1180px;
+  margin: 28px auto;
+  background: #fff;
+  border-radius: 26px;
+  border: 1px solid #e7eef8;
+  box-shadow: 0 10px 26px rgba(17,39,85,.08);
+  padding: 44px 48px 30px;
+}
+
+/* 상단 안내 */
+.page-title {
+  margin: 0 0 8px;
+  text-align: center;
+  font-family: 'YeogiOttaeJalnanGothic';
+  font-size: 28px;
+  color: #0f2a55;
+}
+.page-desc {
+  text-align: center;
+  color: #5d6c85;
+  font-size: 15px;
+  line-height: 22px;
+  margin: 0 0 24px;
+}
+.em-link { color: #1e73ff; text-decoration: underline; }
+
+/* 좌우 패널 (반응형 제거, 고정 2열) */
+.panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+}
+.panel {
+  background: #fff;
+  border: 2px solid #e2edf8; /* 연한 파란 테두리 */
+  border-radius: 24px;
+  padding: 28px 26px 24px;
+  box-shadow: 0 6px 16px rgba(90,110,150,.08);
+}
+.panel-title {
+  margin: 0 0 6px;
+  font-family: 'YeogiOttaeJalnanGothic';
+  font-size: 22px;
+  color: #0f2a55;
+}
+.panel-sub {
+  margin: 0 0 16px;
+  color: #6b7b93;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* 입력 */
+.input { position: relative; }
+.input + .input { margin-top: 10px; }
+.input input {
+  width: 100%;
+  height: 50px;
+  padding: 0 46px;
+  border: 1px solid #9fb6d6;
+  border-radius: 10px;
+  font-size: 16px;
+  color: #333;
+}
+.input input:focus {
+  outline: none;
+  border-color: #2f67ff;
+  box-shadow: 0 0 0 3px rgba(47,103,255,.18);
+}
+
+/* 스프라이트 공통 */
+.sprite {
+  background-image: url('/login/images/login_sprite.png');
+  background-repeat: no-repeat;
+}
+
+/* 왼쪽 아이콘(스프라이트 사용) */
+.with-ico::before {
+  content: "";
+  position: absolute;
+  left: 16px; top: 0; bottom: 0; margin: auto;
+  width: 20px; height: 20px;
+  opacity: .9;
+  background-image: url('/login/images/login_sprite.png');
+  background-repeat: no-repeat;
+}
+.ico-user::before   { width:14px; height:20px; background-position: left -85px; }   /* 사람 아이콘 */
+.ico-lock::before   { width:16px; height:20px; background-position: left -115px; }  /* 자물쇠 */
+
+/* 비밀번호 보기 토글(스프라이트) */
+.pw-toggle {
+  position: absolute;
+  right: 10px; top: 0; bottom: 0; margin: auto;
+  width: 34px; height: 34px;
+  border: 0; background: transparent; cursor: pointer;
+}
+.pw-toggle::before {
+  content: ""; display: block; width: 22px; height: 20px; margin: 7px auto 0;
+  background-image: url('/login/images/login_sprite.png');
+  background-repeat: no-repeat;
+  background-position: left -145px; /* 눈(닫힘) */
+}
+.pw-toggle.view::before { background-position: left -175px; } /* 눈(열림) */
+
+/* 버튼 */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 50px; padding: 0 16px;
+  border-radius: 10px; border: 1px solid transparent;
+  font-weight: 700; font-size: 16px; cursor: pointer;
+  text-decoration: none;
+}
+.btn.primary { background: #1a4fa3; color: #fff; width: 100%; }
+.btn.primary:hover { filter: brightness(0.96); }
+
+/* 회원가입 버튼(스프라이트 꺾쇠 사용) */
+.btn.join {
+  position: relative;
+  background: #1a4fa3; color: #fff; width: 100%; height: 54px; font-weight: 700;
+  padding-left: 22px; text-align: center;
+}
+.btn.join .chev {
+  position: absolute; right: 18px; top: 0; bottom: 0; margin: auto;
+  width: 7px; height: 12px;
+  background-image: url('/login/images/login_sprite.png');
+  background-repeat: no-repeat;
+  background-position: left -257px; /* > 아이콘 */
+}
+
+/* 찾기 링크 */
+.find { margin-top: 10px; }
+.find a { color: #17396a; text-decoration: underline; }
+
+/* 구분선 + 취소 버튼 */
+.divider { height: 1px; background: #eef3fb; margin: 22px 0 16px; }
+.center { text-align: center; }
+.btn.ghost {
+  background: #fff;
+  color: #17396a;
+  border-color: #c8d6ea;
+}
+
+/* 하단(푸터) */
+.site-foot {
+  text-align: center; color: #fff; font-size: 14px; line-height: 22px;
+  margin: 18px 0 24px;
+}
+.site-foot .addr { margin: 6px 0; }
+.site-foot .tel { margin: 0; }
+.site-foot .copy { margin: 6px 0 0; font-size: 12px; }
+
+body {
+  margin: 0;
+  font-family: "Noto Sans KR", sans-serif;
+  background: #4b39d0; /* 보라색 유지 */
+  color: #222;
+}
+
+.login-container {
+  max-width: 960px;
+  margin: 60px auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 40px 50px;
+  text-align: center;
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.login-desc {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 40px;
+}
+
+.login-desc a {
+  color: #0d47a1;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.login-box-wrap {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.login-box, .signup-box {
+  flex: 1;
+  background: #f9fafc;
+  border: 1px solid #e0e4ec;
+  border-radius: 12px;
+  padding: 30px;
+  text-align: left;
+}
+
+.login-box h3, .signup-box h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.login-box p, .signup-box p {
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: #555;
+}
+
+.login-box input {
+  width: 100%;
+  height: 44px;
+  margin-bottom: 12px;
+  padding: 0 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  height: 44px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.btn.primary {
+  background: #163d7a;
+  color: #fff;
+}
+
+.btn.secondary {
+  background: #163d7a;
+  color: #fff;
+}
+
+.btn.cancel {
+  width: auto;
+  padding: 0 20px;
+  background: #ccc;
+  color: #222;
+}
+
+.find-link {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #163d7a;
+}

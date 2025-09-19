@@ -20,7 +20,6 @@ public class SignupGetController {
         return "login/signup";          // templates/login/signup.html
     }
 
-    // /api/users/check-id?loginId=...
     @GetMapping("/api/users/check-id")
     @ResponseBody
     public Map<String, Object> checkId(@RequestParam String loginId) {

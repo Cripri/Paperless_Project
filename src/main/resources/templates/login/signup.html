@@ -12,7 +12,7 @@
         <h2>회원정보 입력</h2>
         <p><span class="redDot">*</span> 표시는 필수 항목입니다.</p>
 
-        <form action="/signup" method="post">
+        <form action="/signup" method="post" id="signupForm">
             <table>
                 <tr>
                     <th>이름 <span class="redDot">*</span></th>
@@ -21,6 +21,8 @@
                 <tr>
                     <th>생년월일 <span class="redDot">*</span></th>
                     <td><input type="text" name="userBirth" id="userBirth" maxlength="10" placeholder="YYYY-MM-DD"></td>
+                    <!-- 에러 메시지 영역 -->
+                    <span id="birthError" class="text-red-600" style="display:none"></span>
                 </tr>
                 <tr>
                     <th>아이디 <span class="redDot">*</span></th>
@@ -115,47 +117,77 @@
             const ok = await res.json();
             alert(ok.available ? '사용 가능한 아이디입니다.' : '이미 사용 중인 아이디입니다.');
         }
+    </script>
+    <script>
+        (function () {
+            const form = document.querySelector('#signupForm');        // ← 폼 id 지정
+            const birthInput = document.getElementById('userBirth');
+            const birthError = document.getElementById('birthError');
 
-        const birthInput = document.getElementById('userBirth');
-        const birthError = document.getElementById('birthError');
+            // 입력 중 자동 하이픈 + 숫자만 허용 + 길이 제한
+            birthInput.addEventListener('input', function (e) {
+                let v = e.target.value.replace(/[^\d]/g, '').slice(0, 8); // YYYYMMDD 최대 8자리
+                if (v.length >= 5) {
+                    v = v.slice(0, 4) + '-' + v.slice(4, 6) + (v.length > 6 ? '-' + v.slice(6, 8) : '');
+                }
+                e.target.value = v;
+            });
 
-        // 입력할 때 자동 하이픈 & 숫자만 허용
-        birthInput.addEventListener('input', function (e) {
-            let value = e.target.value.replace(/[^0-9]/g, '');
-            if (value.length > 4 && value.length <= 6) {
-                value = value.slice(0, 4) + '-' + value.slice(4);
-            } else if (value.length > 6) {
-                value = value.slice(0, 4) + '-' + value.slice(4, 6) + '-' + value.slice(6, 8);
-            }
-            e.target.value = value;
-        });
+            // 폼 제출 시 유효성 검증
+            form.addEventListener('submit', function (e) {
+                const val = birthInput.value.trim();
+                clearError();
 
-        // 폼 제출 시 유효한 날짜인지 검증
-        document.querySelector('form').addEventListener('submit', function (e) {
-            const val = birthInput.value;
+                // 선택값: 공란이면 통과
+                if (val === '') return;
 
-            // 정규식 기본 체크 (YYYY-MM-DD)
-            const regex = /^\d{4}-\d{2}-\d{2}$/;
-            if (!regex.test(val)) {
+                const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(val);
+                if (!m) return fail(e, '생년월일은 YYYY-MM-DD 형식이어야 합니다.');
+
+                const y = +m[1], mo = +m[2], d = +m[3];
+
+                // 실제 달력 날짜인지(윤년 포함)
+                const dt = new Date(y, mo - 1, d); // JS는 월 0~11
+                const isSame =
+                    dt.getFullYear() === y &&
+                    dt.getMonth() === (mo - 1) &&
+                    dt.getDate() === d;
+
+                if (!isSame) return fail(e, '유효하지 않은 날짜입니다.');
+
+                // 미래 금지, 연도 하한(필요 시 조정)
+                const today = new Date(); today.setHours(0, 0, 0, 0);
+                if (dt > today) return fail(e, '미래 날짜는 입력할 수 없습니다.');
+                if (y < 1900) return fail(e, '연도는 1900년 이후만 허용합니다.');
+
+                // 나이 제한(필요 시 사용; 주석 해제)
+                // const age = calcAge(dt, today);
+                // if (age < 14 || age > 120) return fail(e, '만 14세 이상, 120세 이하만 가입할 수 있습니다.');
+
+                // 통과 시 에러표시 숨김
+                clearError();
+            });
+
+            function fail(e, msg) {
                 e.preventDefault();
+                birthError.textContent = msg;
                 birthError.style.display = 'inline';
-                return;
+                alert(msg);
+                birthInput.focus();
             }
 
-            // 실제 날짜인지 체크
-            const [y, m, d] = val.split('-').map(Number);
-            const date = new Date(y, m - 1, d); // JS 월은 0~11
-            const valid = date.getFullYear() === y &&
-                date.getMonth() === (m - 1) &&
-                date.getDate() === d;
-
-            if (!valid) {
-                e.preventDefault();
-                birthError.style.display = 'inline';
-            } else {
+            function clearError() {
+                birthError.textContent = '';
                 birthError.style.display = 'none';
             }
-        });
+
+            function calcAge(birthDate, baseDate) {
+                let age = baseDate.getFullYear() - birthDate.getFullYear();
+                const m = baseDate.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && baseDate.getDate() < birthDate.getDate())) age--;
+                return age;
+            }
+        })();
     </script>
 </body>
 

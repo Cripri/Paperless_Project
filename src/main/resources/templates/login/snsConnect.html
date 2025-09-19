@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SNS 소셜로그인 연결하기</title>
+  <link rel="stylesheet" href="/login/css/snsConnect.css" />
+</head>
+<body>
+  <!-- 상단 홈 버튼 -->
+  <header class="site-top">
+    <a href="/" class="home-btn"><span>노원구청 바로가기</span></a>
+  </header>
+
+  <!-- 흰색 큰 컨테이너 -->
+  <div class="login-container">
+  <h2 class="login-title">SNS 소셜로그인 연결하기</h2>
+  <p class="login-desc">
+    한 번의 설정으로 향후 간편하게 소셜계정으로 로그인할 수 있습니다.<br>
+    <a href="#">네이버아이디</a>를 성북구청 SNS 소셜로그인에 등록합니다.
+  </p>
+
+  <div class="login-box-wrap">
+    <!-- 기존 회원 -->
+    <div class="login-box">
+      <h3>성북구청 회원이신가요?</h3>
+      <p>이미 성북구청 회원이시라면 연결하실 성북구청 홈페이지 아이디를 입력해 주세요.</p>
+      <input type="text" placeholder="아이디 입력">
+      <input type="password" placeholder="비밀번호 입력">
+      <button class="btn primary">연결설정</button>
+      <a href="#" class="find-link">아이디/비밀번호 찾기</a>
+    </div>
+
+    <!-- 신규 회원 -->
+    <div class="signup-box">
+      <h3>아직, 성북구청 회원이 아니신가요?</h3>
+      <p>아직 성북구청 회원이 아니시라면 회원가입을 해주세요.<br>약관동의 후 회원가입하시면 소셜계정과 연동됩니다.</p>
+      <button class="btn secondary">회원가입</button>
+    </div>
+  </div>
+
+  <div class="cancel-box">
+    <button class="btn cancel">연동 취소</button>
+  </div>
+</div>
+
+
+  <!-- 하단 정보 -->
+  <footer class="site-foot">
+    <p class="addr">[01689] 서울시 노원구 노해로 437(상계동)</p>
+    <p class="tel">TEL 02-2116-3114 (120 다산콜센터로 연결) | 02-2116-3000,3301 (야간,공휴일/당직실) | FAX 02-2116-4666</p>
+    <p class="copy">COPYRIGHT ⓒ NOWON-GU OFFICE ALL RIGHT RESERVED</p>
+  </footer>
+
+  <script>
+    // 스프라이트 아이콘 사용 비밀번호 토글 (open/close 위치 전환)
+    (function () {
+      const btn = document.querySelector('.pw-toggle');
+      if (!btn) return;
+      const input = document.getElementById('password');
+      let open = false;
+      btn.addEventListener('click', () => {
+        open = !open;
+        input.type = open ? 'text' : 'password';
+        btn.classList.toggle('view', open);
+        btn.setAttribute('aria-label', open ? '비밀번호 숨기기' : '비밀번호 보이기');
+      });
+    })();
+  </script>
+</body>
+</html>

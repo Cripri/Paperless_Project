@@ -14,4 +14,9 @@ public class LoginGetController {
     public String findAccount() {
         return "login/findAccount";
     }
+
+    @GetMapping("/snsConnect")
+    public String snsConnect() {
+        return "login/snsConnect";
+    }   
 }
