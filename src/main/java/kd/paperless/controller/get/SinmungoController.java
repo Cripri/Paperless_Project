@@ -1,17 +1,20 @@
 package kd.paperless.controller.get;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.data.domain.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import kd.paperless.dto.sinmungo.SinmungoPrevNextDto;
+import kd.paperless.dto.sinmungo.SinmungoDetailDto;
+import kd.paperless.dto.sinmungo.SinmungoListDto;
+import kd.paperless.dto.sinmungo.SinmungoWriteDto;
 import kd.paperless.entity.Sinmungo;
 import kd.paperless.repository.SinmungoRepository;
-import lombok.RequiredArgsConstructor;
+
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 
 @Controller
 @RequestMapping("/sinmungo")
@@ -29,14 +32,12 @@ public class SinmungoController {
     public String sinmungo_list(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
-
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String status,
             @RequestParam(required = false, name = "searchType") String searchType,
             Model model) {
 
         String sort = "createdAt";
-        String dir = "desc";
         Sort.Direction direction = Sort.Direction.DESC;
         Pageable pageable = PageRequest.of(Math.max(0, page - 1), size, Sort.by(direction, sort));
 
@@ -44,7 +45,8 @@ public class SinmungoController {
         String st = (status == null || status.isBlank()) ? null : status.trim();
         String ft = (searchType == null || searchType.isBlank()) ? "title" : searchType.trim();
 
-        Page<Sinmungo> pageResult = sinmungoRepository.search(kw, st, ft, pageable);
+        Page<SinmungoListDto> pageResult = sinmungoRepository.search(kw, st, ft, pageable)
+                .map(SinmungoListDto::from);
 
         long total = pageResult.getTotalElements();
         int totalPages = pageResult.getTotalPages();
@@ -62,42 +64,39 @@ public class SinmungoController {
         model.addAttribute("startPage", start);
         model.addAttribute("endPage", end);
         model.addAttribute("sort", sort);
-        model.addAttribute("dir", dir);
+        model.addAttribute("dir", "desc");
 
         model.addAttribute("keyword", kw == null ? "" : kw);
         model.addAttribute("status", st == null ? "" : st);
         model.addAttribute("searchType", ft);
+
         return "sinmungo/sinmungo_list";
     }
 
     @GetMapping("/write")
-    public String sinmnugo_submit() {
+    public String sinmungo_submit(Model model) {
         return "sinmungo/sinmungo_write";
     }
 
     @PostMapping("/write")
-    public String writeSubmit(
-            @RequestParam String title,
-            @RequestParam String content,
-            @RequestParam(required = false) Long writerId,
-            @RequestParam(required = false) String telNum,
-            @RequestParam(required = false) String noticeEmail,
-            @RequestParam(required = false, defaultValue = "N") String noticeSms,
-            @RequestParam(required = false) String postcode,
-            @RequestParam(required = false) String addr1,
-            @RequestParam(required = false) String addr2
-    // TODO: 파일!
-    ) {
+    public String writeSubmit(@Valid @ModelAttribute("dto") SinmungoWriteDto dto,
+            BindingResult bindingResult,
+            @RequestParam(required = false) Long writerId) {
+        if (bindingResult.hasErrors()) {
+            return "sinmungo/sinmungo_write";
+        }
+        dto.normalize();
+
         Sinmungo s = new Sinmungo();
-        s.setTitle(title.trim());
-        s.setContent(content);
-        s.setWriterId(writerId == null ? 0L : writerId); // TODO: 사용자!
-        s.setTelNum(telNum);
-        s.setNoticeEmail((noticeEmail == null || noticeEmail.isBlank()) ? null : noticeEmail.trim());
-        s.setNoticeSms(("Y".equalsIgnoreCase(noticeSms)) ? "Y" : "N");
-        s.setPostcode(postcode);
-        s.setAddr1(addr1);
-        s.setAddr2(addr2);
+        s.setTitle(dto.getTitle());
+        s.setContent(dto.getContent());
+        s.setWriterId(writerId == null ? 0L : writerId); // TODO 로그인 연동 시 교체
+        s.setTelNum(dto.getTelNum());
+        s.setNoticeEmail(dto.getNoticeEmail());
+        s.setNoticeSms(("Y".equalsIgnoreCase(dto.getNoticeSms())) ? 'Y' : 'N');
+        s.setPostcode(dto.getPostcode());
+        s.setAddr1(dto.getAddr1());
+        s.setAddr2(dto.getAddr2());
         s.setViewCount(0L);
         s.setStatus("접수");
 
@@ -118,29 +117,35 @@ public class SinmungoController {
         Sinmungo item = sinmungoRepository.findById(smgId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 글이 없습니다. smgId=" + smgId));
 
-        if (item.getViewCount() == null)
-            item.setViewCount(0L);
-        item.setViewCount(item.getViewCount() + 1);
+        item.setViewCount(item.getViewCount() == null ? 1L : item.getViewCount() + 1);
         sinmungoRepository.save(item);
 
-        String contentHtml = item.getContent() == null ? ""
-                : org.springframework.web.util.HtmlUtils.htmlEscape(item.getContent())
-                        .replace("\n", "<br>");
+        SinmungoDetailDto it = SinmungoDetailDto.from(item);
 
+        String contentHtml = item.getContent() == null ? ""
+                : org.springframework.web.util.HtmlUtils.htmlEscape(item.getContent()).replace("\n", "<br>");
         String adminAnswerHtml = item.getAdminAnswer() == null ? ""
-                : org.springframework.web.util.HtmlUtils.htmlEscape(item.getAdminAnswer())
-                        .replace("\n", "<br>");
+                : org.springframework.web.util.HtmlUtils.htmlEscape(item.getAdminAnswer()).replace("\n", "<br>");
 
         Long prevId = sinmungoRepository.findPrevId(smgId);
         Long nextId = sinmungoRepository.findNextId(smgId);
+        
+        SinmungoPrevNextDto prev = (prevId != null)
+                ? sinmungoRepository.findById(prevId)
+                        .map(e -> new SinmungoPrevNextDto(e.getSmgId(), e.getTitle()))
+                        .orElse(null)
+                : null;
 
-        Sinmungo prev = (prevId != null) ? sinmungoRepository.findById(prevId).orElse(null) : null;
-        Sinmungo next = (nextId != null) ? sinmungoRepository.findById(nextId).orElse(null) : null;
+        SinmungoPrevNextDto next = (nextId != null)
+                ? sinmungoRepository.findById(nextId)
+                        .map(e -> new SinmungoPrevNextDto(e.getSmgId(), e.getTitle()))
+                        .orElse(null)
+                : null;
 
         model.addAttribute("prev", prev);
         model.addAttribute("next", next);
 
-        model.addAttribute("it", item);
+        model.addAttribute("it", it);
         model.addAttribute("contentHtml", contentHtml);
         model.addAttribute("adminAnswerHtml", adminAnswerHtml);
 
@@ -150,10 +155,6 @@ public class SinmungoController {
         model.addAttribute("status", status == null ? "" : status);
         model.addAttribute("searchType", (searchType == null || searchType.isBlank()) ? "title" : searchType);
 
-        model.addAttribute("prev", prev);
-        model.addAttribute("next", next);
-
         return "sinmungo/sinmungo_detail";
     }
-
 }
