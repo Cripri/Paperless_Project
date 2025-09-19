@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>주민등록등본 신청서</title>
+  <link rel="stylesheet" th:href="@{/paperless/css/form/rr_apply.css}">
+</head>
+<body>
+<main>
+  <h2>주민등록등본 교부 신청</h2>
+
+  <!-- 폼 제거, 단순 래퍼 -->
+  <div id="rr-form">
+
+    <!-- 히든 값: 필요하면 화면 상태 유지용(서버 전송 아님) -->
+    <input type="hidden" id="docType"      name="docType"      value="resident_registration"/>
+    <input type="hidden" id="consentYn"    name="consentYn"    value="N"/>
+    <input type="hidden" id="extraJson"    name="extraJson"/>
+    <input type="hidden" id="signUrl"      th:value="@{/residentregistration/sign}">
+
+    <!-- ① 신청인 기본정보 -->
+    <section class="section">
+      <h3 class="subtle">① 신청인 기본정보</h3>
+
+      <div class="row">
+        <label for="applicantName">성명</label>
+        <div th:replace="~{paperless/writer/fragments/components :: Text('성명','applicantName', ${form.applicantName}, '홍길동')}"></div>
+      </div>
+
+      <div class="row">
+        <label>주민등록번호</label>
+        <div th:replace="~{paperless/writer/fragments/components :: Rrn('주민등록번호','rrnFront','rrnBack', ${form.rrnFront}, ${form.rrnBack})}"></div>
+      </div>
+
+      <div class="row">
+        <label for="address1">기본 주소</label>
+        <input type="text" id="address1" name="address1" th:value="${form.address1}" placeholder="기본 주소" />
+      </div>
+
+      <div class="row">
+        <label for="address2">상세 주소</label>
+        <input type="text" id="address2" name="address2" th:value="${form.address2}" placeholder="상세 주소" />
+        <div class="hint">※ 향후 도로명 주소 API 연동 예정</div>
+      </div>
+
+      <div class="row">
+        <label for="phone">연락처</label>
+        <input type="tel" id="phone" name="phone"
+               th:value="${form.phone}" placeholder="010-1234-5678"
+               pattern="^0\\d{1,2}-\\d{3,4}-\\d{4}$" />
+      </div>
+
+      <div class="row">
+        <label>수수료 면제</label>
+        <div class="inline">
+          <label>
+            <input type="radio" name="feeExempt" value="true"
+                   th:checked="${form.feeExempt} == true"> 예
+          </label>
+          <label>
+            <input type="radio" name="feeExempt" value="false"
+                   th:checked="${form.feeExempt} == false"> 아니오
+          </label>
+        </div>
+      </div>
+
+      <div class="row" th:if="${form.feeExempt} == true">
+        <label for="feeExemptReason">면제 사유</label>
+        <input type="text" id="feeExemptReason" name="feeExemptReason"
+               th:value="${form.feeExemptReason}" placeholder="면제 사유를 입력하세요" />
+      </div>
+    </section>
+
+    <!-- ② 등본 포함 범위 -->
+    <section class="section">
+      <h3 class="subtle">② 등본 포함 범위</h3>
+
+      <div class="row">
+        <label>등본사항 전부 포함</label>
+        <div class="inline">
+          <label>
+            <input type="radio" name="includeAll" value="ALL"
+                   th:checked="${form.includeAll} == 'ALL'"> 예(전부포함)
+          </label>
+          <label>
+            <input type="radio" name="includeAll" value="PART"
+                   th:checked="${form.includeAll} == 'PART'"> 아니오(부분선택)
+          </label>
+        </div>
+      </div>
+
+      <fieldset id="partialBox">
+        <div class="row">
+          <label>주소 변동사항</label>
+          <div>
+            <div class="inline">
+              <label>
+                <input type="radio" name="addressHistoryMode" value="ALL"
+                       th:checked="${form.addressHistoryMode} == 'ALL'"> 전체 포함
+              </label>
+              <label class="inline">
+                <input type="radio" name="addressHistoryMode" value="RECENT"
+                       th:checked="${form.addressHistoryMode} == 'RECENT'"> 최근
+                <input type="number" min="1" max="99" style="width:72px"
+                       id="addressHistoryYears" name="addressHistoryYears"
+                       th:value="${form.addressHistoryYears}"> 년 포함
+              </label>
+              <label class="inline">
+                <input type="radio" name="addressHistoryMode" value="CUSTOM"
+                       th:checked="${form.addressHistoryMode} == 'CUSTOM'"> 직접 입력(추후 상세 지정)
+              </label>
+            </div>
+            <div class="hint">※ ‘최근 N년’ 선택 시 N을 입력하세요.</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>세대 구성사유</label>
+          <label class="inline">
+            <input type="checkbox" name="includeHouseholdReason"
+                   th:checked="${form.includeHouseholdReason} == true"> 포함
+          </label>
+        </div>
+        <div class="row">
+          <label>세대 구성일자</label>
+          <label class="inline">
+            <input type="checkbox" name="includeHouseholdDate"
+                   th:checked="${form.includeHouseholdDate} == true"> 포함
+          </label>
+        </div>
+
+        <div class="row">
+          <label>발생일/신고일</label>
+          <label class="inline">
+            <input type="checkbox" name="includeOccurReportDates"
+                   th:checked="${form.includeOccurReportDates} == true"> 포함
+          </label>
+        </div>
+
+        <div class="row">
+          <label>변동사유</label>
+          <div class="inline" style="flex-wrap:wrap;">
+            <label><input type="radio" name="changeReasonScope" value="NONE"
+                          th:checked="${form.changeReasonScope} == 'NONE'"> 미포함</label>
+            <label><input type="radio" name="changeReasonScope" value="HOUSEHOLD"
+                          th:checked="${form.changeReasonScope} == 'HOUSEHOLD'"> 세대만</label>
+            <label><input type="radio" name="changeReasonScope" value="ALL_MEMBERS"
+                          th:checked="${form.changeReasonScope} == 'ALL_MEMBERS'"> 세대원 전부</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>교부대상자 외 이름</label>
+          <label class="inline">
+            <input type="checkbox" name="includeOtherNames"
+                   th:checked="${form.includeOtherNames} == true"> 세대주·세대원·외국인 등 이름 포함
+          </label>
+        </div>
+
+        <div class="row">
+          <label>주민등록번호 뒷자리</label>
+          <div class="inline">
+            <label><input type="radio" name="rrnBackInclusion" value="NONE"
+                          th:checked="${form.rrnBackInclusion} == 'NONE'"> 미포함</label>
+            <label><input type="radio" name="rrnBackInclusion" value="SELF"
+                          th:checked="${form.rrnBackInclusion} == 'SELF'"> 본인만</label>
+            <label><input type="radio" name="rrnBackInclusion" value="HOUSEHOLD"
+                          th:checked="${form.rrnBackInclusion} == 'HOUSEHOLD'"> 세대원도</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>세대주와의 관계</label>
+          <label class="inline">
+            <input type="checkbox" name="includeRelationshipToHead"
+                   th:checked="${form.includeRelationshipToHead} == true"> 포함
+          </label>
+        </div>
+
+        <div class="row">
+          <label>동거인</label>
+          <label class="inline">
+            <input type="checkbox" name="includeCohabitants"
+                   th:checked="${form.includeCohabitants} == true"> 포함
+          </label>
+        </div>
+      </fieldset>
+    </section>
+
+    <!-- ③ 신청인 서명 -->
+    <section class="section">
+      <h3 class="subtle">③ 신청인 서명</h3>
+
+      <div class="row">
+        <label>서명 이미지</label>
+        <div class="inline" style="align-items:flex-start; gap:16px;">
+          <img id="signPreview" alt="서명 미리보기"
+               style="width:220px; height:120px; border:1px solid #e5e7eb; background:#fff; object-fit:contain;"
+               th:src="${form.signatureBase64} == null ? null : ${form.signatureBase64}"/>
+          <div class="inline" style="flex-direction:column; align-items:flex-start; gap:8px;">
+            <button type="button" id="openSignPopup">서명하기(팝업)</button>
+            <button type="button" id="clearSignature">서명 지우기</button>
+            <div class="hint">※ 팝업에서 저장하면 이곳에 미리보기가 표시됩니다.</div>
+          </div>
+        </div>
+      </div>
+
+      <input type="hidden" id="signatureBase64" name="signatureBase64" th:value="${form.signatureBase64}" />
+    </section>
+
+    <!-- 제출/초기화 버튼을 일반 버튼으로(서버 전송 X) -->
+    <div class="inline" style="justify-content:flex-end; gap:10px;">
+      <button type="button" id="saveLocal">임시 저장(클라이언트)</button>
+      <button type="button" id="resetLocal">초기화</button>
+    </div>
+
+  </div>
+</main>
+
+<script defer th:src="@{/paperless/js/form/rr_apply.js}"></script>
+</body>
+</html>

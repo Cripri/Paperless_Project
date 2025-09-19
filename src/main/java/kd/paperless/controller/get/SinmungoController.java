@@ -94,13 +94,13 @@ public class SinmungoController {
         s.setWriterId(writerId == null ? 0L : writerId); // TODO: 사용자!
         s.setTelNum(telNum);
         s.setNoticeEmail((noticeEmail == null || noticeEmail.isBlank()) ? null : noticeEmail.trim());
-        s.setNoticeSms(("Y".equalsIgnoreCase(noticeSms)) ? "Y" : "N");
+        s.setNoticeSms(("Y".equalsIgnoreCase(noticeSms)) ? 'Y' : 'N');
         s.setPostcode(postcode);
         s.setAddr1(addr1);
         s.setAddr2(addr2);
         s.setViewCount(0L);
         s.setStatus("접수");
-
+        
         sinmungoRepository.save(s);
         return "redirect:/sinmungo/list";
     }
