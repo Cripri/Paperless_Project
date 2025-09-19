@@ -1,5 +1,8 @@
 package kd.paperless.controller.get;
 
+import kd.paperless.dto.notice.NoticeDetailDto;
+import kd.paperless.dto.notice.NoticeListDto;
+import kd.paperless.dto.notice.NoticePrevNextDto;
 import kd.paperless.entity.Notice;
 import kd.paperless.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,16 +22,23 @@ public class NoticeController {
   public String list(@RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int size,
       Model model) {
-    Pageable pageable = PageRequest.of(Math.max(0, page - 1), size);
-    Page<Notice> result = noticeRepository.list(pageable);
+
+    Pageable pageable = PageRequest.of(Math.max(0, page - 1), size, Sort.by(Sort.Direction.DESC, "noticeId"));
+    Page<NoticeListDto> result = noticeRepository.list(pageable)
+        .map(NoticeListDto::from);
 
     model.addAttribute("items", result.getContent());
     model.addAttribute("totalCount", result.getTotalElements());
     model.addAttribute("currentPage", page);
     model.addAttribute("pageSize", size);
     model.addAttribute("totalPages", result.getTotalPages());
-    model.addAttribute("startPage", ((page - 1) / 10) * 10 + 1);
-    model.addAttribute("endPage", Math.min(((page - 1) / 10) * 10 + 10, result.getTotalPages()));
+
+    int start = ((page - 1) / 10) * 10 + 1;
+    int end = Math.min(start + 9, result.getTotalPages());
+    model.addAttribute("startPage", start);
+    model.addAttribute("endPage", end);
+
+    model.addAttribute("status", "");
 
     return "notice/notice_list";
   }
@@ -39,25 +49,35 @@ public class NoticeController {
       @RequestParam(defaultValue = "10") int size,
       Model model) {
 
-    Notice notice = noticeRepository.findById(id)
+    Notice entity = noticeRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("공지 없음: " + id));
 
-    notice.setViewCount(notice.getViewCount() == null ? 1 : notice.getViewCount() + 1);
-    noticeRepository.save(notice);
+    entity.setViewCount(entity.getViewCount() == null ? 1 : entity.getViewCount() + 1);
+    noticeRepository.save(entity);
+
+    NoticeDetailDto notice = NoticeDetailDto.from(entity);
 
     Long prevId = noticeRepository.findPrevId(id);
     Long nextId = noticeRepository.findNextId(id);
 
-    Notice prev = (prevId != null) ? noticeRepository.findById(prevId).orElse(null) : null;
-    Notice next = (nextId != null) ? noticeRepository.findById(nextId).orElse(null) : null;
+    NoticePrevNextDto prev = (prevId != null)
+        ? noticeRepository.findById(prevId)
+            .map(e -> new NoticePrevNextDto(e.getNoticeId(), e.getTitle()))
+            .orElse(null)
+        : null;
 
+    NoticePrevNextDto next = (nextId != null)
+        ? noticeRepository.findById(nextId)
+            .map(e -> new NoticePrevNextDto(e.getNoticeId(), e.getTitle()))
+            .orElse(null)
+        : null;
+
+    model.addAttribute("notice", notice);
     model.addAttribute("prev", prev);
     model.addAttribute("next", next);
 
-    model.addAttribute("notice", notice);
     model.addAttribute("page", page);
     model.addAttribute("size", size);
-
     return "notice/notice_detail";
   }
 }

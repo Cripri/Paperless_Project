@@ -28,7 +28,7 @@ public class Notice {
   private String category;
 
   @Column(name = "IS_PINNED", length = 1)
-  private String isPinned;
+  private char isPinned;
 
   @Column(name = "TARGET_AUDIENCE", length = 10)
   private String targetAudience;
