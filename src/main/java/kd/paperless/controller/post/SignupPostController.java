@@ -71,6 +71,7 @@ public class SignupPostController {
                 u.setUserBirth(birth);
             } catch (DateTimeParseException e) {
                 ra.addFlashAttribute("error", "올바른 생년월일을 입력해주세요.");
+                
                 return "redirect:/signup";
             }
         }
