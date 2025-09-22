@@ -9,14 +9,13 @@
 <main>
   <h2>주민등록등본 교부 신청</h2>
 
-  <!-- 폼 제거, 단순 래퍼 -->
-  <div id="rr-form">
-
-    <!-- 히든 값: 필요하면 화면 상태 유지용(서버 전송 아님) -->
-    <input type="hidden" id="docType"      name="docType"      value="resident_registration"/>
-    <input type="hidden" id="consentYn"    name="consentYn"    value="N"/>
-    <input type="hidden" id="extraJson"    name="extraJson"/>
-    <input type="hidden" id="signUrl"      th:value="@{/residentregistration/sign}">
+  <!-- 서버 전송 -->
+  <form id="rr-form" method="post" th:action="@{/residentregistration/preview}">
+    <!-- 공용 히든 -->
+    <input type="hidden" name="docType"   value="resident_registration"/>
+    <input type="hidden" name="consentYn" th:value="${form.consentYn} ?: 'N'"/>
+    <input type="hidden" name="extraJson" id="extraJson"/>
+    <input type="hidden" id="signUrl" th:value="@{/residentregistration/sign}">
 
     <!-- ① 신청인 기본정보 -->
     <section class="section">
@@ -46,25 +45,24 @@
       <div class="row">
         <label for="phone">연락처</label>
         <input type="tel" id="phone" name="phone"
-               th:value="${form.phone}" placeholder="010-1234-5678"
-               pattern="^0\\d{1,2}-\\d{3,4}-\\d{4}$" />
+               th:value="${form.phone}" placeholder="010-1234-5678"/>
       </div>
 
       <div class="row">
         <label>수수료 면제</label>
         <div class="inline">
           <label>
-            <input type="radio" name="feeExempt" value="true"
-                   th:checked="${form.feeExempt} == true"> 예
+            <input type="radio" name="feeExempt" value="Y"
+                   th:checked="${form.feeExempt} == 'Y'"> 예
           </label>
           <label>
-            <input type="radio" name="feeExempt" value="false"
-                   th:checked="${form.feeExempt} == false"> 아니오
+            <input type="radio" name="feeExempt" value="N"
+                   th:checked="${form.feeExempt} == 'N'"> 아니오
           </label>
         </div>
       </div>
 
-      <div class="row" th:if="${form.feeExempt} == true">
+      <div class="row" th:if="${form.feeExempt} == 'Y'">
         <label for="feeExemptReason">면제 사유</label>
         <input type="text" id="feeExemptReason" name="feeExemptReason"
                th:value="${form.feeExemptReason}" placeholder="면제 사유를 입력하세요" />
@@ -103,37 +101,37 @@
                        th:checked="${form.addressHistoryMode} == 'RECENT'"> 최근
                 <input type="number" min="1" max="99" style="width:72px"
                        id="addressHistoryYears" name="addressHistoryYears"
-                       th:value="${form.addressHistoryYears}"> 년 포함
-              </label>
-              <label class="inline">
-                <input type="radio" name="addressHistoryMode" value="CUSTOM"
-                       th:checked="${form.addressHistoryMode} == 'CUSTOM'"> 직접 입력(추후 상세 지정)
+                       th:value="${form.addressHistoryYears}"
+                       th:attr="disabled=${form.addressHistoryMode} != 'RECENT' ? 'disabled' : null"> 년 포함
               </label>
             </div>
-            <div class="hint">※ ‘최근 N년’ 선택 시 N을 입력하세요.</div>
           </div>
         </div>
 
         <div class="row">
           <label>세대 구성사유</label>
           <label class="inline">
-            <input type="checkbox" name="includeHouseholdReason"
-                   th:checked="${form.includeHouseholdReason} == true"> 포함
+            <input type="hidden" name="includeHouseholdReason" value="N">
+            <input type="checkbox" name="includeHouseholdReason" value="Y"
+                   th:checked="${form.includeHouseholdReason} == 'Y'"> 포함
           </label>
         </div>
+
         <div class="row">
           <label>세대 구성일자</label>
           <label class="inline">
-            <input type="checkbox" name="includeHouseholdDate"
-                   th:checked="${form.includeHouseholdDate} == true"> 포함
+            <input type="hidden" name="includeHouseholdDate" value="N">
+            <input type="checkbox" name="includeHouseholdDate" value="Y"
+                   th:checked="${form.includeHouseholdDate} == 'Y'"> 포함
           </label>
         </div>
 
         <div class="row">
           <label>발생일/신고일</label>
           <label class="inline">
-            <input type="checkbox" name="includeOccurReportDates"
-                   th:checked="${form.includeOccurReportDates} == true"> 포함
+            <input type="hidden" name="includeOccurReportDates" value="N">
+            <input type="checkbox" name="includeOccurReportDates" value="Y"
+                   th:checked="${form.includeOccurReportDates} == 'Y'"> 포함
           </label>
         </div>
 
@@ -152,8 +150,9 @@
         <div class="row">
           <label>교부대상자 외 이름</label>
           <label class="inline">
-            <input type="checkbox" name="includeOtherNames"
-                   th:checked="${form.includeOtherNames} == true"> 세대주·세대원·외국인 등 이름 포함
+            <input type="hidden" name="includeOtherNames" value="N">
+            <input type="checkbox" name="includeOtherNames" value="Y"
+                   th:checked="${form.includeOtherNames} == 'Y'"> 세대주·세대원·외국인 등 이름 포함
           </label>
         </div>
 
@@ -172,16 +171,18 @@
         <div class="row">
           <label>세대주와의 관계</label>
           <label class="inline">
-            <input type="checkbox" name="includeRelationshipToHead"
-                   th:checked="${form.includeRelationshipToHead} == true"> 포함
+            <input type="hidden" name="includeRelationshipToHead" value="N">
+            <input type="checkbox" name="includeRelationshipToHead" value="Y"
+                   th:checked="${form.includeRelationshipToHead} == 'Y'"> 포함
           </label>
         </div>
 
         <div class="row">
           <label>동거인</label>
           <label class="inline">
-            <input type="checkbox" name="includeCohabitants"
-                   th:checked="${form.includeCohabitants} == true"> 포함
+            <input type="hidden" name="includeCohabitants" value="N">
+            <input type="checkbox" name="includeCohabitants" value="Y"
+                   th:checked="${form.includeCohabitants} == 'Y'"> 포함
           </label>
         </div>
       </fieldset>
@@ -190,7 +191,6 @@
     <!-- ③ 신청인 서명 -->
     <section class="section">
       <h3 class="subtle">③ 신청인 서명</h3>
-
       <div class="row">
         <label>서명 이미지</label>
         <div class="inline" style="align-items:flex-start; gap:16px;">
@@ -204,19 +204,18 @@
           </div>
         </div>
       </div>
-
       <input type="hidden" id="signatureBase64" name="signatureBase64" th:value="${form.signatureBase64}" />
     </section>
 
-    <!-- 제출/초기화 버튼을 일반 버튼으로(서버 전송 X) -->
+    <!-- 제출/초기화 버튼 -->
     <div class="inline" style="justify-content:flex-end; gap:10px;">
+      <button type="submit" id="submitServer">미리보기 생성</button>
       <button type="button" id="saveLocal">임시 저장(클라이언트)</button>
       <button type="button" id="resetLocal">초기화</button>
     </div>
-
-  </div>
+  </form>
 </main>
 
-<script defer th:src="@{/paperless/js/form/rr_apply.js}"></script>
+<script src="/paperless/js/form/rr_apply.js"></script>
 </body>
 </html>
