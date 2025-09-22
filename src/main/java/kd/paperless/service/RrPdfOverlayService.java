@@ -21,12 +21,11 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * PDFBox 2.0.33 버전용:
- *  - 템플릿 PDF에 좌표로 텍스트/마크/서명을 덮어쓰는 서비스
- *  - 템플릿: classpath:/pdf/rr_form_template.pdf
- *  - 한글 폰트: classpath:/fonts/NotoSansKR-Regular.ttf (권장)
- *  - 프리뷰: {tmp}/rr_preview/{id}.pdf
- *  - 최종본: {user.home}/paperless/rr_final/{id}.pdf
+ * PDFBox 2.0.33
+ * - 템플릿: classpath:/pdf/rr_form.pdf
+ * - 한글 폰트(권장): classpath:/fonts/NotoSansKR-VariableFont_wght.ttf
+ * - 프리뷰 저장: {tmp}/rr_preview/{id}.pdf
+ * - 최종본 저장: {user.home}/paperless/rr_final/{id}.pdf
  */
 @Service
 @RequiredArgsConstructor
@@ -38,114 +37,120 @@ public class RrPdfOverlayService {
     /** 미리보기 PDF 생성 후 fileId 반환 */
     public String makePreview(ResidentRegistrationForm f) throws Exception {
         Files.createDirectories(PREVIEW_DIR);
-        String id = UUID.randomUUID().toString().replace("-", "");
-        Path out = PREVIEW_DIR.resolve(id + ".pdf");
+        String id  = UUID.randomUUID().toString().replace("-", "");
+        Path   out = PREVIEW_DIR.resolve(id + ".pdf");
 
-        // 템플릿 로드 (2.x: PDDocument.load 사용)
-        try (InputStream tpl = getClass().getResourceAsStream("/pdf/rr_form_template.pdf")) {
-            if (tpl == null) {
-                throw new FileNotFoundException("템플릿 PDF 누락: classpath:/pdf/rr_form_template.pdf");
-            }
+        try (InputStream tpl = getClass().getResourceAsStream("/pdf/rr_form.pdf")) {
+            if (tpl == null) throw new FileNotFoundException("템플릿 PDF 누락: classpath:/pdf/rr_form.pdf");
+
             try (PDDocument doc = PDDocument.load(tpl)) {
-                PDPage page = doc.getPage(0);
-
-                // 폰트: 한글 우선(존재 시), 실패/누락 시 헬베티카 사용
+                // 공통 폰트
                 PDFont font = loadFontOrDefault(doc);
 
-                // 좌표 매핑(양식 맞게 조정)
-                Coords C = new Coords();
-                // 기본정보
-                C.put("applicantName",        120, 690);
-                C.put("rrnFront",             320, 690);
-                C.put("rrnBackMasked",        380, 690);
-                C.put("address1",             120, 662);
-                C.put("address2",             120, 644);
-                C.put("phone",                120, 616);
+                // ---------- 페이지1: 기본정보 ----------
+                PDPage page1 = doc.getPage(0);
 
-                // 포함 범위 (라디오/체크)
-                C.put("includeAll_ALL",       120, 580);
-                C.put("includeAll_PART",      200, 580);
+                // 페이지1 좌표
+                Coords C1 = new Coords();
+                C1.put("applicantName", 170, 670);
+                C1.put("rrnFront",      400, 670);
+                C1.put("rrnBack",       450, 670);
+                C1.put("address1",      170, 620);
+                C1.put("address2",      300, 620);
+                C1.put("phone",         400, 530);
+                C1.put("feeExempt_TRUE",          122, 563);
 
-                C.put("addrHist_ALL",         120, 552);
-                C.put("addrHist_RECENT",      200, 552);
-                C.put("addrHist_RECENT_YRS",  290, 552);
-                C.put("addrHist_CUSTOM",      360, 552);
-
-                C.put("householdReason_Y",    120, 524);
-                C.put("householdDate_Y",      200, 524);
-                C.put("occurReport_Y",        280, 524);
-
-                C.put("changeReason_NONE",        120, 496);
-                C.put("changeReason_HOUSEHOLD",   200, 496);
-                C.put("changeReason_ALL_MEMBERS", 320, 496);
-
-                C.put("otherNames_Y",             120, 468);
-
-                C.put("rrnBack_NONE",             120, 440);
-                C.put("rrnBack_SELF",             200, 440);
-                C.put("rrnBack_HOUSEHOLD",        280, 440);
-
-                C.put("relToHead_Y",              120, 412);
-                C.put("cohabitants_Y",            200, 412);
-
-                C.put("feeExempt_TRUE",           120, 384);
-                C.put("feeExempt_FALSE",          200, 384);
-                C.put("feeExemptReason",          120, 366);
-
-                C.put("signLabel",                120, 320);
-                C.put("signImage",                120, 260);
-
-                // 오버레이(2.x 시그니처)
                 try (PDPageContentStream cs =
-                         new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
+                         new PDPageContentStream(doc, page1, PDPageContentStream.AppendMode.APPEND, true, true)) {
 
-                    // 텍스트
-                    drawText(cs, font, 11, C.at("applicantName"),   nvl(f.getApplicantName()));
-                    drawText(cs, font, 11, C.at("rrnFront"),        nvl(f.getRrnFront()));
-                    drawText(cs, font, 11, C.at("rrnBackMasked"),   maskBack(f.getRrnBack()));
-                    drawText(cs, font, 11, C.at("address1"),        nvl(f.getAddress1()));
-                    drawText(cs, font, 11, C.at("address2"),        nvl(f.getAddress2()));
-                    drawText(cs, font, 11, C.at("phone"),           nvl(f.getPhone()));
+                    drawText(cs, font, 11, C1.at("applicantName"), nvl(f.getApplicantName()));
+                    drawText(cs, font, 11, C1.at("rrnFront"),      nvl(f.getRrnFront()));
+                    drawText(cs, font, 11, C1.at("rrnBack"),       nvl(f.getRrnBack())); // or maskBack(f.getRrnBack())
+                    drawText(cs, font, 11, C1.at("address1"),      nvl(f.getAddress1()));
+                    drawText(cs, font, 11, C1.at("address2"),      nvl(f.getAddress2()));
+                    drawText(cs, font, 11, C1.at("phone"),         nvl(f.getPhone()));
 
+                    markDot(cs, font, C1.at("feeExempt_TRUE"));
+                    
+                }
+
+                // ---------- 페이지2: 라디오/체크/서명 ----------
+                PDPage page2;
+                if (doc.getNumberOfPages() >= 2) {
+                    page2 = doc.getPage(1);
+                } else {
+                    page2 = new PDPage(page1.getMediaBox());
+                    doc.addPage(page2);
+                }
+
+                // 페이지2 좌표 (레이아웃 다르면 여기서 조정)
+                Coords C2 = new Coords();
+                // 포함 범위 (라디오/체크)
+                C2.put("residentregistration", 166, 750);
+                C2.put("includeAll_ALL",       172, 692);
+                C2.put("includeAll_PART",      200, 580);
+
+                C2.put("addrHist_ALL",         305, 665);
+                C2.put("addrHist_RECENT",      390, 665);
+                C2.put("addrHist_RECENT_YRS",  493, 665);
+                C2.put("addrHist_CUSTOM",      360, 552);
+
+                C2.put("householdReason_Y",    504, 644);
+                C2.put("householdDate_Y",      504, 623);
+                C2.put("occurReport_Y",        504, 601);
+
+                C2.put("changeReason_NONE",        397, 580);
+                C2.put("changeReason_HOUSEHOLD",   493, 580);
+                C2.put("changeReason_ALL_MEMBERS", 445, 580);
+
+                C2.put("otherNames_Y",             504, 557);
+
+                C2.put("rrnBack_NONE",             395, 536);
+                C2.put("rrnBack_SELF",             443, 536);
+                C2.put("rrnBack_HOUSEHOLD",        490, 536);
+
+                C2.put("relToHead_Y",              504, 514);
+                C2.put("cohabitants_Y",            504, 493);
+
+                C2.put("signImage",                500, 20);
+
+                try (PDPageContentStream cs2 =
+                         new PDPageContentStream(doc, page2, PDPageContentStream.AppendMode.APPEND, true, true)) {
+                    
+                    markDot(cs2, font, C2.at("residentregistration"));
+                    
                     // 라디오
-                    markRadio(cs, font, C, nvl(f.getIncludeAll()),
+                    markRadio(cs2, font, C2, nvl(f.getIncludeAll()),
                               mapOf("ALL","includeAll_ALL", "PART","includeAll_PART"));
 
-                    markRadio(cs, font, C, nvl(f.getAddressHistoryMode()),
+                    markRadio(cs2, font, C2, nvl(f.getAddressHistoryMode()),
                               mapOf("ALL","addrHist_ALL", "RECENT","addrHist_RECENT", "CUSTOM","addrHist_CUSTOM"));
 
                     if ("RECENT".equalsIgnoreCase(nvl(f.getAddressHistoryMode())) && f.getAddressHistoryYears()!=null) {
-                        drawText(cs, font, 11, C.at("addrHist_RECENT_YRS"), f.getAddressHistoryYears() + "년");
-                    }
+                        drawText(cs2, font, 11, C2.at("addrHist_RECENT_YRS"), f.getAddressHistoryYears() + "");
+                    }   
 
                     // 체크(Y/N 또는 true/false)
-                    markIfYes(cs, font, C, "householdReason_Y",   ynTrue(f.getIncludeHouseholdReason()));
-                    markIfYes(cs, font, C, "householdDate_Y",     ynTrue(f.getIncludeHouseholdDate()));
-                    markIfYes(cs, font, C, "occurReport_Y",       ynTrue(f.getIncludeOccurReportDates()));
-                    markIfYes(cs, font, C, "otherNames_Y",        ynTrue(f.getIncludeOtherNames()));
-                    markIfYes(cs, font, C, "relToHead_Y",         ynTrue(f.getIncludeRelationshipToHead()));
-                    markIfYes(cs, font, C, "cohabitants_Y",       ynTrue(f.getIncludeCohabitants()));
+                    markIfYes(cs2, font, C2, "householdReason_Y",   ynTrue(f.getIncludeHouseholdReason()));
+                    markIfYes(cs2, font, C2, "householdDate_Y",     ynTrue(f.getIncludeHouseholdDate()));
+                    markIfYes(cs2, font, C2, "occurReport_Y",       ynTrue(f.getIncludeOccurReportDates()));
+                    markIfYes(cs2, font, C2, "otherNames_Y",        ynTrue(f.getIncludeOtherNames()));
+                    markIfYes(cs2, font, C2, "relToHead_Y",         ynTrue(f.getIncludeRelationshipToHead()));
+                    markIfYes(cs2, font, C2, "cohabitants_Y",       ynTrue(f.getIncludeCohabitants()));
 
                     // 라디오: 주민번호 뒷자리 포함 범위
-                    markRadio(cs, font, C, nvl(f.getRrnBackInclusion()),
+                    markRadio(cs2, font, C2, nvl(f.getRrnBackInclusion()),
                               mapOf("NONE","rrnBack_NONE", "SELF","rrnBack_SELF", "HOUSEHOLD","rrnBack_HOUSEHOLD"));
 
-                    // 수수료면제
-                    if (Boolean.TRUE.equals(f.getFeeExempt())) {
-                        markDot(cs, font, C.at("feeExempt_TRUE"));
-                        drawText(cs, font, 11, C.at("feeExemptReason"), nvl(f.getFeeExemptReason()));
-                    } else if (Boolean.FALSE.equals(f.getFeeExempt())) {
-                        markDot(cs, font, C.at("feeExempt_FALSE"));
-                    }
+                    
 
-                    // 서명 이미지(data URL)
+                    // 서명 이미지
                     if (isDataUrl(f.getSignatureBase64())) {
                         byte[] png = base64Data(f.getSignatureBase64());
                         PDImageXObject img = PDImageXObject.createFromByteArray(doc, png, "sign");
-                        Pt p = C.at("signImage");
-                        float imgW = 220, imgH = 120;
-                        cs.drawImage(img, p.x, p.y, imgW, imgH);
-                        drawText(cs, font, 11, C.at("signLabel"), "신청인 서명");
+                        Pt p = C2.at("signImage");
+                        float imgW = 50, imgH = 50;
+                        cs2.drawImage(img, p.x, p.y, imgW, imgH);
                     }
                 }
 
@@ -180,15 +185,10 @@ public class RrPdfOverlayService {
     // ========= 내부 유틸 =========
 
     private PDFont loadFontOrDefault(PDDocument doc) throws IOException {
-        // 한글 폰트 우선
-        try (InputStream is = getClass().getResourceAsStream("/fonts/NotoSansKR-Regular.ttf")) {
-            if (is != null) {
-                // 2.x: PDType0Font.load(doc, stream) 시그니처 사용
-                return PDType0Font.load(doc, is);
-            }
+        try (InputStream is = getClass().getResourceAsStream("/fonts/NotoSansKR-VariableFont_wght.ttf")) {
+            if (is != null) return PDType0Font.load(doc, is); // 2.x
         } catch (IOException ignore) {}
-        // 없으면 헬베티카(영문/숫자 안전)
-        return PDType1Font.HELVETICA;
+        return PDType1Font.HELVETICA; // 영문/숫자 대체
     }
 
     private static String nvl(Object o) { return (o == null) ? "" : String.valueOf(o); }
@@ -200,8 +200,13 @@ public class RrPdfOverlayService {
 
     // Y/N, "true"/"false", Boolean 모두 지원
     private static boolean ynTrue(String v) {
-        if (v == null) return false;
-        return "Y".equalsIgnoreCase(v) || "TRUE".equalsIgnoreCase(v);
+    if (v == null) return false;
+    String s = v.trim();
+    return "Y".equalsIgnoreCase(s)
+        || "YES".equalsIgnoreCase(s)
+        || "TRUE".equalsIgnoreCase(s)
+        || "ON".equalsIgnoreCase(s)
+        || "1".equals(s);
     }
     private static boolean ynTrue(Boolean v) { return Boolean.TRUE.equals(v); }
     private static boolean ynTrue(Object v) {
