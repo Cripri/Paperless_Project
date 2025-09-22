@@ -36,7 +36,7 @@ public class PaperlessDoc {
 
     /** 'Y' / 'N' */
     @Column(name = "consent_yn", nullable = false, length = 1)
-    private String consentYn = "N";
+    private char consentYn = 'N';
 
     /** 상태값: PENDING/RECEIVED/IN_PROGRESS/APPROVED/REJECTED/CANCELED/COMPLETED */
     @Enumerated(EnumType.STRING)
@@ -81,8 +81,8 @@ public class PaperlessDoc {
     public Long getUserId() { return userId; }
     public void setUserId(Long userId) { this.userId = userId; }
 
-    public String getConsentYn() { return consentYn; }
-    public void setConsentYn(String consentYn) { this.consentYn = consentYn; }
+    public char getConsentYn() { return consentYn; }
+    public void setConsentYn(char consentYn) { this.consentYn = consentYn; }
 
     public PaperlessStatus getStatus() { return status; }
     public void setStatus(PaperlessStatus status) { this.status = status; }

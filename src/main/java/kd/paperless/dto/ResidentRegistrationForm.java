@@ -6,9 +6,9 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 /**
- * 주민등록등본 교부 신청 화면(Form) DTO
- * - GET 렌더링 시 model.addAttribute("form", new ResidentRegistrationForm()) 로 사용
- * - POST 바인딩 시에도 그대로 사용 가능
+ * [WEB FORM 전용 DTO] 주민등록등본 교부 신청 화면(Form)
+ * - DB에 직접 매핑/저장하지 않음 (Entity 아님)
+ * - Controller의 @ModelAttribute 바인딩/검증 전용
  */
 @Data
 public class ResidentRegistrationForm implements Serializable {
@@ -40,10 +40,11 @@ public class ResidentRegistrationForm implements Serializable {
              message = "연락처 형식이 올바르지 않습니다. (예: 010-1234-5678)")
     private String phone;
 
-    /** 수수료 면제 여부 (라디오) */
-    private Boolean feeExempt;
+    /** 수수료 면제 여부 (라디오) — "Y" / "N" */
+    @Pattern(regexp = "^(Y|N)?$", message = "수수료 면제 여부는 Y/N 이어야 합니다.")
+    private String feeExempt;
 
-    /** 면제 사유 (feeExempt == true 일 때만 사용) */
+    /** 면제 사유 (feeExempt == "Y" 일 때만 사용) */
     @Size(max = 200)
     private String feeExemptReason;
 
@@ -64,31 +65,37 @@ public class ResidentRegistrationForm implements Serializable {
     @Max(value = 99, message = "최근 N년은 99 이하이어야 합니다.")
     private Integer addressHistoryYears;
 
-    /** 세대 구성사유 포함 (체크) */
-    private Boolean includeHouseholdReason;
+    /** 세대 구성사유 포함 (체크) — "Y" / "N" */
+    @Pattern(regexp = "^(Y|N)?$", message = "세대 구성사유 포함은 Y/N 이어야 합니다.")
+    private String includeHouseholdReason;
 
-    /** 세대 구성일자 포함 (체크) */
-    private Boolean includeHouseholdDate;
+    /** 세대 구성일자 포함 (체크) — "Y" / "N" */
+    @Pattern(regexp = "^(Y|N)?$", message = "세대 구성일자 포함은 Y/N 이어야 합니다.")
+    private String includeHouseholdDate;
 
-    /** 발생일/신고일 포함 (체크) */
-    private Boolean includeOccurReportDates;
+    /** 발생일/신고일 포함 (체크) — "Y" / "N" */
+    @Pattern(regexp = "^(Y|N)?$", message = "발생일/신고일 포함은 Y/N 이어야 합니다.")
+    private String includeOccurReportDates;
 
     /** 변동사유 범위: "NONE" | "HOUSEHOLD" | "ALL_MEMBERS" (라디오) */
     @Pattern(regexp = "^(NONE|HOUSEHOLD|ALL_MEMBERS)?$", message = "변동사유 범위가 올바르지 않습니다.")
     private String changeReasonScope;
 
-    /** 교부대상자 외 이름 포함 (체크) */
-    private Boolean includeOtherNames;
+    /** 교부대상자 외 이름 포함 (체크) — "Y" / "N" */
+    @Pattern(regexp = "^(Y|N)?$", message = "교부대상자 외 이름 포함은 Y/N 이어야 합니다.")
+    private String includeOtherNames;
 
     /** 주민등록번호 뒷자리 포함 범위: "NONE" | "SELF" | "HOUSEHOLD" (라디오) */
     @Pattern(regexp = "^(NONE|SELF|HOUSEHOLD)?$", message = "주민등록번호 뒷자리 포함 범위가 올바르지 않습니다.")
     private String rrnBackInclusion;
 
-    /** 세대주와의 관계 포함 (체크) */
-    private Boolean includeRelationshipToHead;
+    /** 세대주와의 관계 포함 (체크) — "Y" / "N" */
+    @Pattern(regexp = "^(Y|N)?$", message = "세대주와의 관계 포함은 Y/N 이어야 합니다.")
+    private String includeRelationshipToHead;
 
-    /** 동거인 포함 (체크) */
-    private Boolean includeCohabitants;
+    /** 동거인 포함 (체크) — "Y" / "N" */
+    @Pattern(regexp = "^(Y|N)?$", message = "동거인 포함은 Y/N 이어야 합니다.")
+    private String includeCohabitants;
 
     // =========================
     // ③ 신청인 서명
@@ -122,7 +129,7 @@ public class ResidentRegistrationForm implements Serializable {
         f.setIncludeAll("ALL");     // 기본: 전부 포함
         f.setConsentYn("N");        // 기본: 미동의
         f.setDocType("resident_registration");
-        // Boolean은 null로 두면 타임리프에서 체크/표시만 담당
+        // 체크박스/라디오는 미선택(null) 또는 "N"으로 초기화 가능
         return f;
     }
 
