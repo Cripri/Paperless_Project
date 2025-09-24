@@ -5,26 +5,16 @@ import java.io.Serializable;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
-/**
- * [WEB FORM 전용 DTO] 주민등록등본 교부 신청 화면(Form)
- * - DB에 직접 매핑/저장하지 않음 (Entity 아님)
- * - Controller의 @ModelAttribute 바인딩/검증 전용
- */
 @Data
 public class ResidentRegistrationForm implements Serializable {
-
-    // =========================
     // ① 신청인 기본정보
-    // =========================
     @NotBlank(message = "성명을 입력하세요.")
     @Size(max = 100)
     private String applicantName;
 
-    /** 주민등록번호 앞 6자리 (예: 990101) */
     @Pattern(regexp = "^\\d{6}$", message = "주민등록번호 앞자리는 6자리 숫자입니다.")
     private String rrnFront;
 
-    /** 주민등록번호 뒤 7자리 (예: 1XXXXXX) — 저장 시에는 마스킹/삭제 권장 */
     @Pattern(regexp = "^\\d{7}$", message = "주민등록번호 뒷자리는 7자리 숫자입니다.")
     private String rrnBack;
 
@@ -35,23 +25,16 @@ public class ResidentRegistrationForm implements Serializable {
     @Size(max = 200)
     private String address2;
 
-    /** 예: 010-1234-5678 */
     @Pattern(regexp = "^0\\d{1,2}-\\d{3,4}-\\d{4}$",
              message = "연락처 형식이 올바르지 않습니다. (예: 010-1234-5678)")
     private String phone;
 
-    /** 수수료 면제 여부 (라디오) — "Y" / "N" */
     @Pattern(regexp = "^(Y|N)?$", message = "수수료 면제 여부는 Y/N 이어야 합니다.")
     private String feeExempt;
 
-    /** 면제 사유 (feeExempt == "Y" 일 때만 사용) */
     @Size(max = 200)
     private String feeExemptReason;
-
-    // =========================
-    // ② 등본 포함 범위
-    // =========================
-
+    
     /** 등본사항 전부 포함 여부: "ALL" 또는 "PART" (라디오) */
     @Pattern(regexp = "^(ALL|PART)$", message = "전부/부분 선택값이 올바르지 않습니다.")
     private String includeAll;

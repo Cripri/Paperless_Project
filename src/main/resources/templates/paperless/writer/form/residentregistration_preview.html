@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>미리보기</title>
+  <style>
+    .inline { display:flex; gap:12px; }
+  </style>
+</head>
+<body>
+<main>
+  <h2>미리보기</h2>
+
+  <div class="inline" style="justify-content:space-between; align-items:center;">
+    <div>
+      <div><strong>성명:</strong> <span th:text="${rrForm.applicantName}">-</span></div>
+      <div><strong>주소:</strong> <span th:text="${rrForm.address1}">-</span> <span th:text="${rrForm.address2}"></span></div>
+      <div><strong>연락처:</strong> <span th:text="${rrForm.phone}">-</span></div>
+      <div><strong>전부/부분:</strong> <span th:text="${rrForm.includeAll}">-</span></div>
+    </div>
+    <div>
+      <!-- PDF inline -->
+      <iframe th:src="@{'/residentregistration/preview/file/' + ${fileId} + '.pdf'}"
+              width="600" height="800" style="border:1px solid #ccc"></iframe>
+    </div>
+  </div>
+
+  <form method="get" th:action="@{/residentregistration/apply}">
+    <button type="submit">뒤로가기(수정)</button>
+  </form> 
+
+  <form method="post" th:action="@{/residentregistration/submit}" style="margin-top:10px;">
+    <input type="hidden" th:if="${_csrf != null}"
+           th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <button type="submit">제출</button>
+  </form>
+</main>
+</body>
+</html>
