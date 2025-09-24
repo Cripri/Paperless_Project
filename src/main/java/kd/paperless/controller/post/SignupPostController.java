@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +19,8 @@ import kd.paperless.repository.UserRepository;
 @Controller
 @RequiredArgsConstructor
 public class SignupPostController {
+
+    @Autowired PasswordEncoder encoder;
 
     private final UserRepository userRepository;
 
@@ -62,7 +67,7 @@ public class SignupPostController {
         // 4) 엔티티 매핑
         User u = new User();
         u.setLoginId(id);
-        u.setPasswordHash(pwd); // 개발용: 평문 저장
+        u.setPasswordHash(encoder.encode(pwd)); // 개발용: 평문 저장
         u.setUserName(name);
 
         if (!isBlank(userBirth)) {
