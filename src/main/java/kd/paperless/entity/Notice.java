@@ -41,4 +41,4 @@ public class Notice {
 
   @Column(name = "STATUS", length = 20, nullable = false)
   private String status; // POSTED / HIDDEN / DELETED
-}
+}       

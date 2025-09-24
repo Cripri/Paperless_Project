@@ -31,9 +31,6 @@ public class ResidentRegistrationForm implements Serializable {
 
     @Pattern(regexp = "^(Y|N)?$", message = "수수료 면제 여부는 Y/N 이어야 합니다.")
     private String feeExempt;
-
-    @Size(max = 200)
-    private String feeExemptReason;
     
     /** 등본사항 전부 포함 여부: "ALL" 또는 "PART" (라디오) */
     @Pattern(regexp = "^(ALL|PART)$", message = "전부/부분 선택값이 올바르지 않습니다.")

@@ -8,15 +8,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
-  @Bean
-  PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+<<<<<<< Updated upstream
 
   @Bean
   SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -30,18 +28,52 @@ public class SecurityConfig {
       )
 
       // 2) URL 접근 권한 (필요 경로 permitAll)
+=======
+  private final CustomUserDetailsService userDetailsService;
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
+
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration cfg) throws Exception {
+    return cfg.getAuthenticationManager();
+  }
+
+  /** 🔐 단일 SecurityFilterChain */
+
+  @Bean
+public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+
+    http
+      .headers(h -> h.frameOptions(fo -> fo.sameOrigin()))
+>>>>>>> Stashed changes
       .authorizeHttpRequests(auth -> auth
-        .requestMatchers(
-          "/", "/css/**", "/js/**", "/images/**",
-          "/residentregistration/apply",
-          "/residentregistration/preview/**",
-          "/residentregistration/pdf/**",
-          "/h2-console/**"            // 쓰는 경우만
-        ).permitAll()
-        .anyRequest().permitAll()     // 지금은 전체 공개 정책
+          .requestMatchers("/", "/error",
+              "/login/**", "/logout", "/signup/**", "/api/**",
+              "/css/**", "/js/**", "/images/**","main/js/**",
+              "/residentregistration/**",
+              "/residentregistration/preview/**",
+              "/residentregistration/pdf/**",
+              "main/**","paperless/**","paperless/js/**",
+              "sinmungo/**","sinmungo/css/**","sinmungo/js/**",
+              "portal/**","portal/css/**","portal/js/**",
+              "header-footer/**","/paperless/fragments/**,/paperless/js/form/rr_apply.js"
+          ).permitAll()
+          .anyRequest().authenticated()
       )
 
-      .csrf(csrf -> csrf.disable());
+        .formLogin(login -> login
+            .loginPage("/login")
+            .loginProcessingUrl("/login")
+            .usernameParameter("userId")
+            .passwordParameter("password")
+            .defaultSuccessUrl("/", true)
+            .failureUrl("/login?error"))
+        .logout(
+            l -> l.logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true).deleteCookies("JSESSIONID"))
+        .sessionManagement(sess -> sess.sessionFixation(fix -> fix.migrateSession()));
 
     return http.build();
   }

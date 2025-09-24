@@ -38,7 +38,6 @@ public class ResidentRegistrationMapperService {
         put(extra, "address2", f.getAddress2());
         put(extra, "phone", f.getPhone());
         put(extra, "feeExempt", f.getFeeExempt());
-        put(extra, "feeExemptReason", f.getFeeExemptReason());
         put(extra, "includeAll", f.getIncludeAll());
         put(extra, "addressHistoryMode", f.getAddressHistoryMode());
         put(extra, "addressHistoryYears", f.getAddressHistoryYears());
