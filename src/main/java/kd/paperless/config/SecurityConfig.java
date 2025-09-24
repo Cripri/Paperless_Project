@@ -19,66 +19,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-<<<<<<< HEAD
-private final CustomUserDetailsService userDetailsService;
-=======
-<<<<<<< Updated upstream
->>>>>>> cwc
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration cfg) throws Exception {
-        return cfg.getAuthenticationManager();
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login/**", "/error", "/signup/**", "/api/**",
-                                 "/images/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            .csrf(csrf -> csrf.disable())
-            .formLogin(login -> login
-                .loginPage("/login")                 // GET /login
-                .loginProcessingUrl("/login")        // POST /login
-                .usernameParameter("userId")
-                .passwordParameter("password")
-                .defaultSuccessUrl("/", true)
-                .failureUrl("/login?error")
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID")
-            )
-            .sessionManagement(sess -> sess
-                .sessionFixation(fix -> fix.migrateSession())
-            )
-            .userDetailsService(userDetailsService);
-            
-            return http.build();
-          }
-          
-    @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-      http
-      // 1) 동일 출처 iframe 허용(내장 PDF 뷰어가 iframe에서 차단되지 않게)
-      .headers(h -> h
-        .frameOptions(fo -> fo.sameOrigin())
-        .contentSecurityPolicy(csp ->
-          csp.policyDirectives("frame-ancestors 'self'")
-        )
-      )
-            
-      // 2) URL 접근 권한 (필요 경로 permitAll)
-=======
   private final CustomUserDetailsService userDetailsService;
 
   @Bean
@@ -98,18 +38,14 @@ public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospe
 
     http
       .headers(h -> h.frameOptions(fo -> fo.sameOrigin()))
->>>>>>> Stashed changes
       .authorizeHttpRequests(auth -> auth
           .requestMatchers("/", "/error",
               "/login/**", "/logout", "/signup/**", "/api/**",
-              "/css/**", "/js/**", "/images/**","main/js/**",
-              "/residentregistration/**",
+              "/css/**", "/js/**", "/images/**",
+              "/residentregistration/apply",
               "/residentregistration/preview/**",
               "/residentregistration/pdf/**",
-              "main/**","paperless/**","paperless/js/**",
-              "sinmungo/**","sinmungo/css/**","sinmungo/js/**",
-              "portal/**","portal/css/**","portal/js/**",
-              "header-footer/**","/paperless/fragments/**,/paperless/js/form/rr_apply.js"
+              "/findAccount/**", "/resetPassword/**", "/account/**"
           ).permitAll()
           .anyRequest().authenticated()
       )
