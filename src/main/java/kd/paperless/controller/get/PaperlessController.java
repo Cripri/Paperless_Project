@@ -19,16 +19,6 @@ public class PaperlessController {
         return "paperless/search";
     }
 
-    @GetMapping("/residentregistration/form")
-    public String apply(Model model) {
-         // 화면 바인딩용 빈 객체
-        ResidentRegistrationForm view = new ResidentRegistrationForm();
-        // 필요 기본값
-        view.setIncludeAll("ALL");
-        model.addAttribute("form", view); // ← 이 한 줄이 핵심
-        return "paperless/writer/form/residentregistration_form";
-    }
-
     @GetMapping("/residentregistration/sign")
     public String signPopup() {
         return "paperless/writer/fragments/sign";
