@@ -2,38 +2,155 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8"/>
-  <title>미리보기</title>
+  <title>주민등록등본 신청 – 미리보기</title>
+
+  <!-- (선택) CSRF 메타: 필요 시 JS로 폼에 주입 가능 -->
+  <meta name="_csrf_parameter" th:if="${_csrf != null}" th:content="${_csrf.parameterName}"/>
+  <meta name="_csrf"           th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+
   <style>
-    .inline { display:flex; gap:12px; }
+    :root{
+      --border:#e5e7eb; --muted:#6b7280; --fg:#111827; --danger:#b91c1c; --brand:#111827; --bg:#fff;
+      --card:#f9fafb;
+    }
+    *{box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--fg);background:#fff;margin:0}
+    main{max-width:1100px;margin:28px auto;padding:0 16px}
+    h1,h2{margin:6px 0 14px}
+    .subtle{color:var(--muted);font-weight:500}
+
+    .bar{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:12px;margin-bottom:12px
+    }
+
+    .grid{
+      display:grid;grid-template-columns: minmax(320px, 1fr) minmax(520px, 2fr);
+      gap:18px;align-items:start
+    }
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px}
+    .row{display:flex;gap:10px;margin:8px 0}
+    .row dt{min-width:120px;color:#374151}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+    .stat{display:inline-flex;gap:6px;align-items:center;padding:3px 8px;border:1px solid var(--border);border-radius:999px;background:#fff;font-size:12px}
+
+    iframe{width:100%;height:860px;border:1px solid var(--border);border-radius:10px;background:#fff}
+
+    .btns{display:flex;gap:10px}
+    .btn{
+      appearance:none;border:1px solid var(--border);background:#fff;color:var(--fg);
+      padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:600
+    }
+    .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+    .btn.ghost{background:#fff}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+
+    .alert{background:#FEF2F2;border:1px solid #FCA5A5;color:#991B1B;border-radius:10px;padding:10px 12px;margin:12px 0}
+    .muted{color:var(--muted)}
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      iframe{height:600px}
+    }
   </style>
 </head>
 <body>
 <main>
-  <h2>미리보기</h2>
 
-  <div class="inline" style="justify-content:space-between; align-items:center;">
+  <div class="bar">
     <div>
-      <div><strong>성명:</strong> <span th:text="${rrForm.applicantName}">-</span></div>
-      <div><strong>주소:</strong> <span th:text="${rrForm.address1}">-</span> <span th:text="${rrForm.address2}"></span></div>
-      <div><strong>연락처:</strong> <span th:text="${rrForm.phone}">-</span></div>
-      <div><strong>전부/부분:</strong> <span th:text="${rrForm.includeAll}">-</span></div>
+      <h2 style="margin:0">미리보기</h2>
+      <div class="subtle">제출 전에 생성된 PDF를 확인하세요.</div>
     </div>
-    <div>
-      <!-- PDF inline -->
-      <iframe th:src="@{'/residentregistration/preview/file/' + ${fileId} + '.pdf'}"
-              width="600" height="800" style="border:1px solid #ccc"></iframe>
+    <div class="btns">
+      <!-- 새 탭으로 PDF 열기 -->
+      <a class="btn ghost mono"
+         th:href="@{|/residentregistration/preview/file/${fileId}.pdf|}"
+         target="_blank" rel="noopener">PDF 새 창으로</a>
     </div>
   </div>
 
-  <form method="get" th:action="@{/residentregistration/apply}">
-    <button type="submit">뒤로가기(수정)</button>
-  </form> 
+  <!-- 서버 전송 에러가 있다면 -->
+  <div class="alert" th:if="${submitError != null}" th:text="${submitError}">제출 처리 중 오류가 발생했습니다.</div>
 
-  <form method="post" th:action="@{/residentregistration/submit}" style="margin-top:10px;">
-    <input type="hidden" th:if="${_csrf != null}"
-           th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-    <button type="submit">제출</button>
-  </form>
+  <div class="grid">
+    <!-- 좌측: 입력 요약 -->
+    <section class="card">
+      <h3 style="margin:0 0 8px">입력 정보 요약</h3>
+      <dl class="row"><dt>성명</dt><dd th:text="${rrForm.applicantName}">-</dd></dl>
+      <dl class="row">
+        <dt>주소</dt>
+        <dd>
+          <span th:text="${rrForm.address1}">-</span>
+          <span th:text="${rrForm.address2}"></span>
+        </dd>
+      </dl>
+      <dl class="row"><dt>연락처</dt><dd th:text="${rrForm.phone}">-</dd></dl>
+
+      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0"/>
+
+      <dl class="row">
+        <dt>전부/부분</dt>
+        <dd>
+          <span class="stat" th:text="${rrForm.includeAll} == 'ALL' ? '전부' : '부분'">전부</span>
+        </dd>
+      </dl>
+
+      <dl class="row">
+        <dt>수수료 면제</dt>
+        <dd><span class="stat" th:text="${rrForm.feeExempt} == 'Y' ? '면제' : '유료'">유료</span></dd>
+      </dl>
+
+      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0"/>
+
+      <div class="muted" style="font-size:12px">
+        • 내용이 다르면 아래 ‘뒤로가기(수정)’을 눌러 다시 수정하세요.
+      </div>
+    </section>
+
+    <!-- 우측: PDF 미리보기 -->
+    <section>
+      <iframe
+        th:src="@{|/residentregistration/preview/file/${fileId}.pdf|}"
+        title="미리보기 PDF" id="pdfFrame"></iframe>
+
+      <!-- 액션 버튼 -->
+      <div class="bar" style="margin-top:12px">
+        <!-- 뒤로(수정) -->
+        <form method="get" th:action="@{/residentregistration/apply}">
+          <button type="submit" class="btn">뒤로가기(수정)</button>
+        </form>
+
+        <!-- 제출 -->
+        <form method="post" th:action="@{/residentregistration/submit}" class="btns">
+          <input type="hidden" name="fileId" th:value="${fileId}"/>
+          <input type="hidden" th:if="${_csrf != null}"
+                 th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+          <button type="submit" class="btn primary">제출</button>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // 간단한 UX 보강
+    (function(){
+      const frame = document.getElementById('pdfFrame');
+      if (!frame) return;
+
+      let loaded = false;
+      frame.addEventListener('load', () => { loaded = true; });
+
+      // 3초 내 로드 실패 안내(네트워크/파일 누락 등)
+      setTimeout(() => {
+        if (!loaded) {
+          const warn = document.createElement('div');
+          warn.className = 'alert';
+          warn.textContent = 'PDF를 불러오지 못했습니다. 새로고침하거나 "PDF 새 창으로" 버튼을 이용해 확인해 주세요.';
+          frame.parentElement.insertBefore(warn, frame);
+        }
+      }, 3000);
+    })();
+  </script>
 </main>
 </body>
 </html>

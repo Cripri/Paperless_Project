@@ -1,31 +1,50 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <title>주민등록등본 신청서</title>
+  <meta name="_csrf_parameter" th:if="${_csrf != null}" th:content="${_csrf.parameterName}"/>
+  <meta name="_csrf"           th:if="${_csrf != null}" th:content="${_csrf.token}"/>
   <style>
-    .row { margin:12px 0; display:flex; gap:16px; align-items:flex-start; }
-    .row > label { width:140px; padding-top:8px; }
-    .error { color:#b91c1c; font-size:12px; margin-top:6px; }
-    .inline { display:flex; gap:12px; align-items:center; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    main { max-width: 880px; margin: 32px auto; padding: 0 16px; }
+    h2 { margin-bottom: 8px; }
+    .section { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin: 20px 0; }
+    .row { margin: 12px 0; display: flex; gap: 16px; align-items: flex-start; }
+    .row > label { width: 160px; padding-top: 8px; color: #374151; }
+    .inline { display: flex; gap: 12px; align-items: center; }
+    input[type="text"], input[type="tel"], input[type="number"] { padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; }
+    .error { color: #b91c1c; font-size: 12px; margin-top: 6px; }
+    .alert { background: #FEF2F2; color: #991B1B; border:1px solid #FCA5A5; padding: 10px 12px; border-radius: 6px; margin: 12px 0; }
+    fieldset#partialBox.disabled { opacity: .6; pointer-events: none; }
+    button { padding: 10px 16px; border-radius: 8px; border: 1px solid #d1d5db; background: #111827; color: #fff; cursor: pointer; }
+    button.secondary { background: #fff; color:#111827; }
   </style>
 </head>
 <body>
 <main>
   <h2>주민등록등본 교부 신청</h2>
 
-  <form method="post"
+  <form id="rr-form"
+        method="post"
         th:action="@{/residentregistration/preview}"
         th:object="${rrForm}">
 
-    <input type="hidden" th:if="${_csrf != null}"
-           th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <!-- 전역 에러 -->
+    <div class="alert" th:if="${#fields.hasGlobalErrors()}">
+      <ul style="margin:0; padding-left:18px;">
+        <li th:each="ge : ${#fields.globalErrors()}" th:text="${ge}"></li>
+      </ul>
+    </div>
 
-    <!-- 고정: 서버에서 엔티티에 resident_registration 세팅하지만, 폼에도 유지 -->
-    <input type="hidden" th:field="*{docType}" value="resident_registration"/>
+    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+    <!-- 메타 -->
+    <input type="hidden" th:field="*{docType}"  value="resident_registration"/>
     <input type="hidden" th:field="*{consentYn}" th:value="*{consentYn} ?: 'N'"/>
 
     <section class="section">
+      <!-- 성명 -->
       <div class="row">
         <label for="applicantName">성명</label>
         <div style="flex:1">
@@ -34,40 +53,66 @@
         </div>
       </div>
 
+      <!-- 주민등록번호 -->
       <div class="row">
         <label>주민등록번호</label>
         <div class="inline">
-          <input type="text" th:field="*{rrnFront}" maxlength="6" style="width:100px" placeholder="앞6자리">
+          <input type="text" th:field="*{rrnFront}" maxlength="6" style="width:110px" placeholder="앞 6자리"/>
           <span>-</span>
-          <input type="text" th:field="*{rrnBack}" maxlength="7" style="width:110px" placeholder="뒤7자리">
+          <input type="text" th:field="*{rrnBack}"  maxlength="7" style="width:120px" placeholder="뒤 7자리"/>
+        </div>
+      </div>
+      <div class="row">
+        <label></label>
+        <div style="flex:1">
+          <div class="error" th:if="${#fields.hasErrors('rrnFront')}" th:errors="*{rrnFront}"></div>
+          <div class="error" th:if="${#fields.hasErrors('rrnBack')}"  th:errors="*{rrnBack}"></div>
         </div>
       </div>
 
+      <!-- 주소 -->
       <div class="row">
         <label for="address1">기본 주소</label>
         <div style="flex:1">
-          <input id="address1" type="text" th:field="*{address1}" placeholder="도로명 주소">
+          <input id="address1" type="text" th:field="*{address1}" placeholder="도로명 주소"/>
           <div class="error" th:if="${#fields.hasErrors('address1')}" th:errors="*{address1}"></div>
         </div>
       </div>
-
       <div class="row">
         <label for="address2">상세 주소</label>
         <div style="flex:1">
-          <input id="address2" type="text" th:field="*{address2}" placeholder="상세 주소">
+          <input id="address2" type="text" th:field="*{address2}" placeholder="상세 주소"/>
+          <div class="error" th:if="${#fields.hasErrors('address2')}" th:errors="*{address2}"></div>
         </div>
       </div>
 
+      <!-- 연락처 -->
       <div class="row">
         <label for="phone">연락처</label>
         <div style="flex:1">
-          <input id="phone" type="tel" th:field="*{phone}" placeholder="010-1234-5678">
+          <input id="phone" type="tel" th:field="*{phone}" placeholder="010-1234-5678"/>
           <div class="error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
         </div>
       </div>
 
+      <!-- 수수료 면제 -->
       <div class="row">
-        <label>전부 포함</label>
+        <label>수수료 면제</label>
+        <div class="inline">
+          <label><input type="radio" th:field="*{feeExempt}" value="Y"> 예</label>
+          <label><input type="radio" th:field="*{feeExempt}" value="N"> 아니오</label>
+        </div>
+        <div class="error" th:if="${#fields.hasErrors('feeExempt')}" th:errors="*{feeExempt}"></div>
+      </div>
+    </section>
+
+    <!-- ② 등본 포함 범위 -->
+    <section class="section">
+      <h3>② 등본 포함 범위</h3>
+
+      <!-- 전부/부분 -->
+      <div class="row">
+        <label>등본사항 전부 포함</label>
         <div class="inline">
           <label><input type="radio" th:field="*{includeAll}" value="ALL"> 전부</label>
           <label><input type="radio" th:field="*{includeAll}" value="PART"> 부분</label>
@@ -75,13 +120,129 @@
         <div class="error" th:if="${#fields.hasErrors('includeAll')}" th:errors="*{includeAll}"></div>
       </div>
 
-      <!-- 필요한 나머지 옵션들도 th:field로 동일하게… (생략 가능) -->
+      <fieldset id="partialBox">
+        <!-- 주소 변동사항 -->
+        <div class="row">
+          <label>주소 변동사항</label>
+          <div style="flex:1">
+            <div class="inline">
+              <label><input type="radio" th:field="*{addressHistoryMode}" value="ALL"> 전체 포함</label>
+              <label class="inline">
+                <input type="radio" th:field="*{addressHistoryMode}" value="RECENT"> 최근
+                <input id="addressHistoryYears" type="number" min="1" max="99" style="width:72px" th:field="*{addressHistoryYears}"/> 년
+              </label>
+            </div>
+            <div class="error" th:if="${#fields.hasErrors('addressHistoryMode')}"  th:errors="*{addressHistoryMode}"></div>
+            <div class="error" th:if="${#fields.hasErrors('addressHistoryYears')}" th:errors="*{addressHistoryYears}"></div>
+          </div>
+        </div>
+
+        <!-- ✅ 체크박스 → 라디오로 교체: Y/N -->
+        <div class="row">
+          <label>세대 구성사유</label>
+          <div class="inline">
+            <label><input type="radio" th:field="*{includeHouseholdReason}" value="Y"> 포함</label>
+            <label><input type="radio" th:field="*{includeHouseholdReason}" value="N"> 미포함</label>
+          </div>
+          <div class="error" th:if="${#fields.hasErrors('includeHouseholdReason')}" th:errors="*{includeHouseholdReason}"></div>
+        </div>
+
+        <div class="row">
+          <label>세대 구성일자</label>
+          <div class="inline">
+            <label><input type="radio" th:field="*{includeHouseholdDate}" value="Y"> 포함</label>
+            <label><input type="radio" th:field="*{includeHouseholdDate}" value="N"> 미포함</label>
+          </div>
+          <div class="error" th:if="${#fields.hasErrors('includeHouseholdDate')}" th:errors="*{includeHouseholdDate}"></div>
+        </div>
+
+        <div class="row">
+          <label>발생일/신고일</label>
+          <div class="inline">
+            <label><input type="radio" th:field="*{includeOccurReportDates}" value="Y"> 포함</label>
+            <label><input type="radio" th:field="*{includeOccurReportDates}" value="N"> 미포함</label>
+          </div>
+          <div class="error" th:if="${#fields.hasErrors('includeOccurReportDates')}" th:errors="*{includeOccurReportDates}"></div>
+        </div>
+
+        <div class="row">
+          <label>변동사유</label>
+          <div class="inline" style="flex-wrap:wrap;">
+            <label><input type="radio" th:field="*{changeReasonScope}" value="NONE"> 미포함</label>
+            <label><input type="radio" th:field="*{changeReasonScope}" value="HOUSEHOLD"> 세대만</label>
+            <label><input type="radio" th:field="*{changeReasonScope}" value="ALL_MEMBERS"> 세대원 전부</label>
+          </div>
+          <div class="error" th:if="${#fields.hasErrors('changeReasonScope')}" th:errors="*{changeReasonScope}"></div>
+        </div>
+
+        <div class="row">
+          <label>교부대상자 외 이름</label>
+          <div class="inline">
+            <label><input type="radio" th:field="*{includeOtherNames}" value="Y"> 포함</label>
+            <label><input type="radio" th:field="*{includeOtherNames}" value="N"> 미포함</label>
+          </div>
+          <div class="error" th:if="${#fields.hasErrors('includeOtherNames')}" th:errors="*{includeOtherNames}"></div>
+        </div>
+
+        <!-- 주민번호 뒷자리 범위 -->
+        <div class="row">
+          <label>주민등록번호 뒷자리</label>
+          <div class="inline">
+            <label><input type="radio" th:field="*{rrnBackInclusion}" value="NONE"> 미포함</label>
+            <label><input type="radio" th:field="*{rrnBackInclusion}" value="SELF"> 본인만</label>
+            <label><input type="radio" th:field="*{rrnBackInclusion}" value="HOUSEHOLD"> 세대원도</label>
+          </div>
+          <div class="error" th:if="${#fields.hasErrors('rrnBackInclusion')}" th:errors="*{rrnBackInclusion}"></div>
+        </div>
+
+        <div class="row">
+          <label>세대주와의 관계</label>
+          <div class="inline">
+            <label><input type="radio" th:field="*{includeRelationshipToHead}" value="Y"> 포함</label>
+            <label><input type="radio" th:field="*{includeRelationshipToHead}" value="N"> 미포함</label>
+          </div>
+          <div class="error" th:if="${#fields.hasErrors('includeRelationshipToHead')}" th:errors="*{includeRelationshipToHead}"></div>
+        </div>
+
+        <div class="row">
+          <label>동거인</label>
+          <div class="inline">
+            <label><input type="radio" th:field="*{includeCohabitants}" value="Y"> 포함</label>
+            <label><input type="radio" th:field="*{includeCohabitants}" value="N"> 미포함</label>
+          </div>
+          <div class="error" th:if="${#fields.hasErrors('includeCohabitants')}" th:errors="*{includeCohabitants}"></div>
+        </div>
+      </fieldset>
+    </section>
+
+    <!-- ③ 신청인 서명 -->
+    <section class="section">
+      <h3>③ 신청인 서명</h3>
+      <div class="row">
+        <label>서명 이미지</label>
+        <div class="inline" style="align-items:flex-start; gap:16px;">
+          <img id="signPreview" alt="서명 미리보기"
+               style="width:220px; height:120px; border:1px solid #e5e7eb; background:#fff; object-fit:contain;"
+               th:if="*{signatureBase64} != null"
+               th:src="*{signatureBase64}"/>
+          <div class="inline" style="flex-direction:column; align-items:flex-start; gap:8px;">
+            <button type="button" id="openSignPopup">서명하기(팝업)</button>
+            <button type="button" id="clearSignature" class="secondary">서명 지우기</button>
+            <div class="hint" style="color:#6b7280; font-size:12px;">※ 팝업에서 저장하면 미리보기가 표시됩니다.</div>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" id="signatureBase64" th:field="*{signatureBase64}"/>
+      <input type="hidden" id="signUrl" value="/residentregistration/sign"/>
     </section>
 
     <div class="inline" style="justify-content:flex-end; gap:10px;">
+      <a href="/" class="secondary" style="text-decoration:none; padding:10px 16px; border:1px solid #d1d5db; border-radius:8px; background:#fff; color:#111827;">뒤로</a>
       <button type="submit">미리보기</button>
     </div>
   </form>
 </main>
+
+<script src="/paperless/js/form/rr_apply.js"></script>
 </body>
 </html>
