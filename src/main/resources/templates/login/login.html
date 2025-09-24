@@ -33,6 +33,7 @@
                             <li class="form-item n01">
                                 <span class="form-title">회원 로그인</span>
                                 <form action="/login" id="loginForm" method="post">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                     <div class="login-inp-box">
                                         <div class="login-inp id">
                                             <label for="userId"></label>

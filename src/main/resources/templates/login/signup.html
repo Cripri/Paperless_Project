@@ -13,6 +13,7 @@
         <p><span class="redDot">*</span> 표시는 필수 항목입니다.</p>
 
         <form action="/signup" method="post" id="signupForm">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <table>
                 <tr>
                     <th>이름 <span class="redDot">*</span></th>
