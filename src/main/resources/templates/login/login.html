@@ -108,20 +108,29 @@
             window.open('/findAccount', 'findPopup', 'width=600,height=700,scrollbars=yes,resizable=no');
         }
 
-        function onNaverLogin() {
-            const clientId = 'PEnFelOXlfDdetDwx5mv'; // 네이버에서 발급받은 Client ID
-            const redirectUri = 'http://localhost:9050/oauth/naver/callback';
-            const state = Math.random().toString(36).substring(2, 15); // CSRF 방지용
+        // function onNaverLogin() {
+        //     const clientId = 'PEnFelOXlfDdetDwx5mv'; // 네이버에서 발급받은 Client ID
+        //     const redirectUri = 'http://localhost:9020/oauth/naver/callback';
+        //     const state = Math.random().toString(36).substring(2, 15); // CSRF 방지용
 
-            const naverAuthUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
+        //     const naverAuthUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
 
-            window.location.href = naverAuthUrl;
+        //     window.location.href = naverAuthUrl;
+        // }
+
+        // function onKakaoLogin() {
+        //     // 서버에서 로그인 리다이렉션을 처리
+        //     window.location.href = '/oauth/kakao/login';
+        // }
+
+        function onNaverLogin() { 
+            location.href = '/oauth/naver/login'; 
         }
 
-        function onKakaoLogin() {
-            // 서버에서 로그인 리다이렉션을 처리
-            window.location.href = '/oauth/kakao/login';
+        function onKakaoLogin() { 
+            location.href = '/oauth/kakao/login'; 
         }
+
 
         (function () {
             const btn = document.getElementById('pw-hide');
