@@ -1,18 +1,38 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <title>민원 작성</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/paperless/css/search.css">
+
+  <!-- 공통 헤더/푸터 테마 -->
+  <link rel="stylesheet" href="/header-footer/css/header-footer.css"
+        th:href="@{/header-footer/css/header-footer.css}">
+
+  <!-- 이 페이지 전용 스타일 -->
+  <link rel="stylesheet" href="/paperless/css/search.css"
+        th:href="@{/paperless/css/search.css}">
+
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="/header-footer/js/header-footer.js"
+          th:src="@{/header-footer/js/header-footer.js}" defer></script>
+
+  <!-- 이 페이지 전용 스크립트 -->
+  <script src="/paperless/js/search.js" defer></script>
 </head>
 <body>
-  <div class="wrap">
+  <!-- 헤더 -->
+  <div th:replace="~{fragments/header :: header}"></div>
+
+  <!-- 본문 -->
+  <main class="wrap">
     <h1>민원 작성</h1>
 
     <!-- 검색 -->
     <form class="search-bar" id="search-form" role="search" aria-label="민원 검색">
-      <input id="search-input" type="search" placeholder="원하는 민원명을 입력하세요 (예: 전입신고, 등본, 여권 재발급)" autocomplete="off" />
+      <input id="search-input" type="search"
+             placeholder="원하는 민원명을 입력하세요 (예: 전입신고, 등본, 여권 재발급)"
+             autocomplete="off" aria-label="민원 검색어 입력" />
       <button type="submit" class="btn primary">검색</button>
     </form>
 
@@ -20,47 +40,48 @@
     <section class="section">
       <h2>자주찾는 민원</h2>
       <div class="quick-grid">
-        <a class="quick-btn"      href="/residentregistration/form">주민등록등본</a>
-        <a class="quick-btn--alt quick-btn" href="/minwon/residentregistration">주민등록초본</a>
-        <a class="quick-btn"      href="/minwon/move/transfer">전입신고</a>
-        <a class="quick-btn--alt quick-btn" href="/minwon/certificates/family">가족관계증명서</a>
-        <a class="quick-btn"      href="/minwon/passport/reissue">여권 재발급</a>
-        <a class="quick-btn--alt quick-btn" href="/minwon/id/reissue">주민등록증 재발급</a>
+        <a class="quick-btn"                 href="/residentregistration/form"             th:href="@{/residentregistration/form}">주민등록등본</a>
+        <a class="quick-btn quick-btn--alt"  href="/minwon/residentregistration"          th:href="@{/minwon/residentregistration}">주민등록초본</a>
+        <a class="quick-btn"                 href="/minwon/move/transfer"                 th:href="@{/minwon/move/transfer}">전입신고</a>
+        <a class="quick-btn quick-btn--alt"  href="/minwon/certificates/family"           th:href="@{/minwon/certificates/family}">가족관계증명서</a>
+        <a class="quick-btn"                 href="/minwon/passport/reissue"              th:href="@{/minwon/passport/reissue}">여권 재발급</a>
+        <a class="quick-btn quick-btn--alt"  href="/minwon/id/reissue"                    th:href="@{/minwon/id/reissue}">주민등록증 재발급</a>
       </div>
     </section>
 
     <!-- 툴바 (표시개수/정렬) -->
-    <div class="toolbar">
+    <div class="toolbar" aria-label="목록 설정">
       <div class="tool-left">
         <label for="page-size" class="sr-only">표시 개수</label>
-        <select id="page-size" class="select">
+        <select id="page-size" class="select" aria-label="표시 개수 선택">
           <option value="10">10개씩 보기</option>
           <option value="20">20개씩 보기</option>
           <option value="50">50개씩 보기</option>
         </select>
 
         <label for="sort-by" class="sr-only">정렬</label>
-        <select id="sort-by" class="select">
+        <select id="sort-by" class="select" aria-label="정렬 기준 선택">
           <option value="latest">최신순</option>
           <option value="name">이름순</option>
         </select>
       </div>
       <div class="tool-right">
-        <span id="result-count" class="count">총 0건</span>
+        <span id="result-count" class="count" aria-live="polite">총 0건</span>
       </div>
     </div>
 
     <!-- 목록 -->
-    <div id="list" class="list" role="list"></div>
+    <section id="list" class="list" role="list" aria-label="민원 목록"></section>
 
     <!-- 페이지네이션 -->
-    <div class="pager">
-      <button id="prev" class="btn" type="button">이전</button>
-      <span id="page-info" class="page-info">1 / 1</span>
-      <button id="next" class="btn" type="button">다음</button>
-    </div>
-  </div>
+    <nav class="pager" aria-label="페이지 이동">
+      <button id="prev" class="btn" type="button" aria-label="이전 페이지">이전</button>
+      <span id="page-info" class="page-info" aria-live="polite">1 / 1</span>
+      <button id="next" class="btn" type="button" aria-label="다음 페이지">다음</button>
+    </nav>
+  </main>
 
-  <script src="/paperless/js/search.js"></script>
+  <!-- 푸터 -->
+  <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

@@ -184,3 +184,18 @@
   }
   .etcmenu ul{ justify-content: center; }
 }
+
+/* body {
+  position: relative;
+  margin: 0;
+  background-color: #f9f4ef;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0; /* top:0; right:0; bottom:0; left:0; 
+  background: url("/main/images/Penguhandsup.png") left/cover no-repeat;
+  opacity: 0.15;       /* 투명도 
+  z-index: -1;          컨텐츠 뒤로 
+} */
