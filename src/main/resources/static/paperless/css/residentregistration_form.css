@@ -1,0 +1,112 @@
+root{
+      --bg: #f9f4ef;       /* 전체 배경 */
+      --ink: #0f172a;      /* 본문 텍스트 */
+      --muted:#6b7280;     /* 보조 텍스트 */
+      --line:#e6dccf;      /* 베이지 라인 */
+      --card:#ffffff;      /* 카드 배경 */
+
+      --navy:#5b6b82;      /* 버튼/타이틀 네이비 */
+      --navy-d:#4d5c70;
+
+      --orange:#e09a58;    /* 보조 주황 */
+      --orange-d:#c97f4e;
+
+      --shadow: 0 8px 20px rgba(15,23,42,.06);
+      --radius: 10px;
+    }
+
+    /* ========= Base ========= */
+    html, body { margin:0; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    /* 헤더/푸터는 전폭으로, 본문은 제한폭 */
+    main {
+      max-width: 880px;
+      margin: 32px auto 80px;
+      padding: 0 16px;
+    }
+
+    /* 제목 */
+    h2 {
+      margin: 0 0 12px;
+      font-weight: 800;
+      color: #0c1324;
+      border-left: 6px solid var(--orange);
+      padding-left: 10px;
+      letter-spacing: -.01em;
+    }
+    h3 {
+      margin: 0 0 10px;
+      font-weight: 800;
+      color: #0c1324;
+    }
+
+    /* 카드 섹션 */
+    .section {
+      background: var(--card);
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin: 20px 0;
+      box-shadow: var(--shadow);
+    }
+
+    /* 라인/필드 */
+    .row { margin: 12px 0; display: flex; gap: 16px; align-items: flex-start; }
+    .row > label { width: 160px; padding-top: 8px; color: #374151; font-weight: 700; }
+    .inline { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="email"],
+    textarea {
+      padding: 10px 12px;
+      border: 1px solid #cfd6dc;
+      border-radius: 8px;
+      background: #fff;
+      font: inherit;
+    }
+    textarea { min-height: 160px; resize: vertical; }
+
+    /* 에러/알림 */
+    .error { color: #b91c1c; font-size: 12px; margin-top: 6px; }
+    .alert {
+      background: #FEF2F2; color: #991B1B; border:1px solid #FCA5A5;
+      padding: 10px 12px; border-radius: 8px; margin: 12px 0;
+    }
+
+    /* 부분선택 비활성 */
+    fieldset#partialBox.disabled { opacity: .55; pointer-events: none; }
+
+    /* 버튼 */
+    .btn { padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 800; }
+    .btn-primary {
+      border: 1px solid var(--navy); background: var(--navy); color: #fff;
+    }
+    .btn-primary:hover { background: var(--navy-d); border-color: var(--navy-d); }
+    .btn-secondary {
+      border: 1px solid #cfd6dc; background: #fff; color: #111827;
+    }
+    .btn-secondary:hover { background: #f5f6f7; }
+    .btn-warn {
+      border: 1px solid var(--orange); background: var(--orange); color:#fff;
+    }
+    .btn-warn:hover { background: var(--orange-d); border-color: var(--orange-d); }
+
+    /* 하단 버튼영역 */
+    .actions {
+      display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;
+    }
+
+    /* 서명 프리뷰 */
+    #signPreview {
+      width:220px; height:120px;
+      border:1px solid var(--line); background:#fff; object-fit:contain;
+      border-radius: 6px;
+    }
+    .hint { color: var(--muted); font-size: 12px; }

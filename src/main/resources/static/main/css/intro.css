@@ -132,6 +132,7 @@ html, body {
 /* ===== Bottom 3-column (category | chatbot | banner) ===== */
 .intro-extra {
   display:flex; gap:16px; margin-top:20px; align-items:stretch;
+  height: 250px;
 }
 
 /* Category */
@@ -150,7 +151,7 @@ html, body {
   grid-template-columns: repeat(3, 1fr); /* 3열 */
   grid-template-rows: repeat(2, 1fr);    /* 2행 */
   gap:12px;
-  height: 220px; /* 전체 높이 고정 → 6칸이 정확히 나눠짐 (필요시 200~260px 사이로 조정) */
+  height: 180px; /* 전체 높이 고정 → 6칸이 정확히 나눠짐 (필요시 200~260px 사이로 조정) */
 }
 .service-card{
   display:flex; align-items:center; justify-content:center;
@@ -170,7 +171,7 @@ html, body {
 }
 .chatbot-box h3{ font-size:18px; font-weight:700; margin:0 0 10px; color:var(--text); }
 #winging-chatbot-button{ border:none; outline:none; background:none; padding:0; cursor:pointer; }
-#winging-chatbot-icon{ display:block; width:180px; height:auto; border:none; }
+#winging-chatbot-icon{ display:block; width:130px; height:auto; border:none; }
 
 /* Banner */
 .benner {
@@ -179,7 +180,7 @@ html, body {
   border-radius:10px; padding:15px; box-sizing:border-box; text-align:center;
 }
 .benner .slider {
-  position:relative; width:100%; aspect-ratio:4/3;
+  position:relative; width:100%; aspect-ratio:16/9;
   border-radius:10px; overflow:hidden; background:#eee;
 }
 .benner .slides { display:flex; width:100%; height:100%; transition:transform .5s ease; }
@@ -206,4 +207,30 @@ html, body {
 address {
   margin-top: 35px; text-align:center; font-size:16px;
   font-weight:500; line-height:1.5; color:var(--text);
+}
+
+.notice-box ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.notice-box ul li {
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+}
+.notice-box ul li a {
+  text-decoration: none;
+  color: #333;
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+}
+.notice-box ul li a:hover { color: var(--accent); }
+.notice-box .date {
+  color: #888;
+  font-size: 13px;
+  margin-left: 12px;
+  white-space: nowrap;
 }
