@@ -108,21 +108,6 @@
             window.open('/findAccount', 'findPopup', 'width=600,height=700,scrollbars=yes,resizable=no');
         }
 
-        // function onNaverLogin() {
-        //     const clientId = 'PEnFelOXlfDdetDwx5mv'; // 네이버에서 발급받은 Client ID
-        //     const redirectUri = 'http://localhost:9020/oauth/naver/callback';
-        //     const state = Math.random().toString(36).substring(2, 15); // CSRF 방지용
-
-        //     const naverAuthUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
-
-        //     window.location.href = naverAuthUrl;
-        // }
-
-        // function onKakaoLogin() {
-        //     // 서버에서 로그인 리다이렉션을 처리
-        //     window.location.href = '/oauth/kakao/login';
-        // }
-
         function onNaverLogin() { 
             location.href = '/oauth/naver/login'; 
         }
@@ -130,7 +115,6 @@
         function onKakaoLogin() { 
             location.href = '/oauth/kakao/login'; 
         }
-
 
         (function () {
             const btn = document.getElementById('pw-hide');
@@ -158,6 +142,16 @@
                     togglePw();
                 }
             });
+        })();
+
+        // ✅ 회원가입 / SNS 연동 완료 안내
+        (function () {
+            const p = new URLSearchParams(location.search);
+            if (p.get('linkedSns') === '1') {
+                alert('회원가입과 SNS 연동이 완료되었습니다. 이제 소셜 로그인 버튼으로 바로 로그인할 수 있습니다.');
+            } else if (p.get('joined') === '1') {
+                alert('회원가입이 완료되었습니다. 로그인해 주세요.');
+            }
         })();
     </script>
 </body>

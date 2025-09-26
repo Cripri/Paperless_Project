@@ -91,8 +91,13 @@
                     </td>
                 </tr>
             </table>
-
+            
             <div class="btn-set">
+                <!-- 가입 완료 후(서버에서 newUserId 세팅했을 때) -->
+                <form method="post" action="/sns/connect/signup-complete" id="snsLinkCompleteForm">
+                    <input type="hidden" name="newUserId" th:value="${newUserId}">
+                    <button type="submit" class="btn btn-blue">SNS 연동 마치기</button>
+                </form>
                 <button type="submit" class="btn btn-blue">회원가입</button>
                 <button type="reset" class="btn btn-gray">가입취소</button>
             </div>
@@ -187,6 +192,15 @@
                 const m = baseDate.getMonth() - birthDate.getMonth();
                 if (m < 0 || (m === 0 && baseDate.getDate() < birthDate.getDate())) age--;
                 return age;
+            }
+        })();
+
+        (function () {
+            const p = new URLSearchParams(location.search);
+            if (p.get('linkedSns') === '1') {
+                alert('회원가입과 SNS 연동이 완료되었습니다. 이제 소셜 로그인 버튼으로 바로 로그인할 수 있습니다.');
+            } else if (p.get('joined') === '1') {
+                alert('회원가입이 완료되었습니다. 로그인해 주세요.');
             }
         })();
     </script>

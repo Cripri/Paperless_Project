@@ -3,6 +3,7 @@ package kd.paperless.service;
 import kd.paperless.entity.User;
 import kd.paperless.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -10,16 +11,12 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-    /** 평문 로그인: DB password_hash 컬럼에 평문이 들어 있다고 가정 */
-    public Optional<User> authenticatePlain(String loginId, String rawPassword) {
-        return userRepository.findByLoginIdAndPasswordHash(loginId, rawPassword);
+    public Optional<User> authenticateHash(String loginId, String rawPassword) {
+        return userRepository.findByLoginId(loginId)
+                .filter(u -> passwordEncoder.matches(rawPassword, u.getPasswordHash()));
     }
-
-    // 변경 (BCrypt):
-    // public Optional<User> suthenticateHash(String loginId, String hashPassword) {
-    //     return userRepository.findByLoginId(loginId)
-    //         .filter(u -> passwordEncoder.matches(hashPassword, u.getPasswordHash()));
-    // }
 }
