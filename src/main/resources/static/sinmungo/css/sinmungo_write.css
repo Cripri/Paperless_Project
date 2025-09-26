@@ -74,7 +74,7 @@ body {
   box-sizing: border-box;
   border: 1px solid #cfd6dc;
   background: #fff;
-  border-radius: 3px;
+  border-radius: 6px;
   padding: 8px 10px;
   font: inherit;
 }
@@ -117,7 +117,6 @@ body {
   white-space: nowrap;
 }
 
-
 .btn {
   display: inline-block;
   height: 36px;
@@ -157,7 +156,6 @@ body {
   border-color: #ddd;
   background: #fafafa;
 }
-
 
 .hint {
   font-size: 12px;
@@ -211,4 +209,107 @@ body {
 .btn-cancel {
   background: #eee;
   border-color: #ddd;
+}
+
+.uploader {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+  margin-top: 8px;
+}
+
+.uploader-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dropzone {
+  flex: 1;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #64748b;
+  background: #f8fafc;
+  transition: all .15s ease;
+}
+
+.dropzone.hover {
+  background: #eef2ff;
+  border-color: #94a3b8;
+  color: #475569;
+}
+
+.uploader-meta {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #64748b;
+  display: flex;
+  gap: 8px;
+}
+
+.file-items {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+.file-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.file-name .badge {
+  font-size: 11px;
+  background: #e2e8f0;
+  color: #334155;
+  padding: 2px 6px;
+  border-radius: 999px;
+}
+
+.file-title {
+  font-size: 14px;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 520px;
+}
+
+.file-size {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.file-remove {
+  border: none;
+  background: #fff;
+  color: #ef4444;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.file-remove:hover {
+  background: #fee2e2;
 }
