@@ -14,7 +14,6 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-<<<<<<< Updated upstream
 
   @Bean
   SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -28,27 +27,6 @@ public class SecurityConfig {
       )
 
       // 2) URL 접근 권한 (필요 경로 permitAll)
-=======
-  private final CustomUserDetailsService userDetailsService;
-
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
-
-  @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration cfg) throws Exception {
-    return cfg.getAuthenticationManager();
-  }
-
-  /** 🔐 단일 SecurityFilterChain */
-
-  @Bean
-public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
-
-    http
-      .headers(h -> h.frameOptions(fo -> fo.sameOrigin()))
->>>>>>> Stashed changes
       .authorizeHttpRequests(auth -> auth
           .requestMatchers("/", "/error",
               "/login/**", "/logout", "/signup/**", "/api/**",
