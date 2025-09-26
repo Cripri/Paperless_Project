@@ -1,24 +1,31 @@
 <div th:fragment="footer">
-  <div id="footer">
+  <footer id="footer" class="pg-footer">
     <div class="footer-container">
 
+      <!-- 좌측 로고 -->
       <div class="logo-area-left">
-        <img src="/images/log_foot.png" width="190" height="60" alt="새올전자민원창구">
+        <img src="/main/images/PenguLogoLongempty.png" alt="팽구 민원 포털 로고">
       </div>
 
+      <!-- 우측 링크 -->
       <div class="logo-area-right">
-        <div class="etcmenu">
+        <nav class="etcmenu" aria-label="푸터 메뉴">
           <ul>
-            <li><a href=""><span style="color: #096fba; font-weight: bold;">개인정보처리방침</span></a></li>
-            <li class="linl15"><a href="">협업창구</a></li>
+            <li>
+              <a href="">
+                <span class="policy">개인정보처리방침</span>
+              </a>
+            </li>
+            <li><a href="">협업창구</a></li>
           </ul>
-        </div>
-      </div>
-
-      <div class="copy_u">
-        (우) 01689 서울특별시 노원구 노해로 437(상계동) <br>
-        대표전화: 02-2116-3114 / FAX: 02-2116-4666
+        </nav>
       </div>
     </div>
-  </div>
+
+    <!-- 카피라이트/주소 -->
+    <div class="copy_u">
+      (우) 01689 서울특별시 노원구 노해로 437(상계동)<br>
+      대표전화: 02-2116-3114 / FAX: 02-2116-4666
+    </div>
+  </footer>
 </div>

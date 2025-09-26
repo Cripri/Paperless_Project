@@ -1,151 +1,97 @@
 <div th:fragment="header">
-  <div id="header">
-    <div id="h-top">
-      <ul>
-        <li><a href="">나의민원조회</a></li>
-        <li><a href="">로그인</a></li>
+  <div id="header" class="pg-header">
+    <!-- Top bar -->
+    <div id="h-top" class="topbar">
+      <ul class="top-links">
+        <li><a th:href="@{/minwon/my}">나의 민원 조회</a></li>
+        <li><a th:href="@{/auth/login}">로그인</a></li>
       </ul>
     </div>
-    <div id="h-middle">
+
+    <!-- Middle: logo + gnb -->
+    <div id="h-middle" class="middle">
       <div class="title">
-        <a th:href="@{/portal}">노원구</a>
-        |
-        <a th:href="@{/portal}">
-          <img src="/images/log_head.png" width="173" height="53" alt="새올전자민원창구">
+        <a th:href="@{/portal}" class="brand-img">
+          <img src="/main/images/PenguLogoLongempty.png" width="173" height="53" alt="민원 포털">
         </a>
       </div>
-      <div class="menu">
+
+      <nav class="menu" aria-label="주요 메뉴">
         <ul class="menu-list">
-          <li><a href="javascript:void(0)">고객센터</a></li>
-          <li><a href="javascript:void(0)">내 민원</a></li>
-          <li><a href="javascript:void(0)">노원신문고</a></li>
-          <li><a href="javascript:void(0)">쉬운 민원</a></li>
+          <li data-group="paperless">
+            <a href="javascript:void(0)">종이 없는 행정</a>
+            <span class="bar" aria-hidden="true"></span>
+          </li>
+          <li data-group="sinmungo">
+            <a th:href="@{/sinmungo/list}">노원신문고</a>
+            <span class="bar" aria-hidden="true"></span>
+          </li>
+          <li data-group="my">
+            <a href="javascript:void(0)">내 민원</a>
+            <span class="bar" aria-hidden="true"></span>
+          </li>
+          <li data-group="cs">
+            <a href="javascript:void(0)">고객센터</a>
+            <span class="bar" aria-hidden="true"></span>
+          </li>
+          
         </ul>
-      </div>
+      </nav>
     </div>
-    <div id="allmenu" class="menu-container" style="display: none;">
+
+    <!-- Mega menu -->
+    <div id="allmenu" class="menu-container" style="display:none;">
       <div class="all-menu">
-        <div class="menu-back">
+        <!-- 배경(높이에 영향 X) -->
+        <div class="menu-back" aria-hidden="true">
           <img src="/images/bg_img2.png" alt="">
         </div>
+
         <div class="sub-menu">
-
-          <span class="dot-line"></span>
-
-          <div class="menu">
-            <ul class="all-menu-list">
-              <li>
-                <a href="">민원마법사 안내</a>
-              </li>
-              <li>
-                <a href="">민원마법사 신청</a>
-              </li>
-            </ul>
+          <!-- 고객센터 -->
+          <div class="menu-group" data-group="cs">
+            <div class="group-body">
+              <ul class="all-menu-list">
+                <li><a href="">민원마법사 안내</a></li>
+                <li><a href="">민원마법사 신청</a></li>
+                <li><a th:href="@{/notice/list}">공지사항</a></li>
+              </ul>
+            </div>
           </div>
 
-          <span class="dot-line"></span>
-
-          <div class="menu">
-            <ul class="all-menu-list">
-              <li>
-                <a th:href="@{/sinmungo/guide}">신문고 안내</a>
-              </li>
-              <li>
-                <a th:href="@{/sinmungo/list}">신문고 게시판</a>
-              </li>
-              <li>
-                <a th:href="@{/sinmungo/write}">신문고 작성</a>
-              </li>
-            </ul>
+          <!-- 내 민원 -->
+          <div class="menu-group" data-group="my">
+            <div class="group-body">
+              <ul class="all-menu-list">
+                <li><a href="">내 민원</a></li>
+                <li><a href="">처리현황</a></li>
+              </ul>
+            </div>
           </div>
 
-          <span class="dot-line"></span>
-
-          <div class="menu">
-            <ul class="all-menu-list">
-              <li>
-                <a href="">내 민원</a>
-              </li>
-              <li>
-                <a href="">처리현황</a>
-              </li>
-            </ul>
+          <!-- 노원신문고 -->
+          <div class="menu-group" data-group="sinmungo">
+            <div class="group-body">
+              <ul class="all-menu-list">
+                <li><a th:href="@{/sinmungo/guide}">신문고 안내</a></li>
+                <li><a th:href="@{/sinmungo/list}">신문고 게시판</a></li>
+                <li><a th:href="@{/sinmungo/write}">신문고 작성</a></li>
+              </ul>
+            </div>
           </div>
 
-          <span class="dot-line"></span>
-
-          <div class="menu">
-            <ul class="all-menu-list">
-              <li>
-                <a th:href="@{/notice/list}">공지사항</a>
-              </li>
-              <!-- <li>
-                <a href="">조직도</a>
-              </li> -->
-            </ul>
+          <!-- 종이 없는 민원 -->
+          <div class="menu-group" data-group="paperless">
+            <div class="group-body">
+              <ul class="all-menu-list">
+                <li><a href="">종이없는 행정 안내</a></li>
+                <li><a href="">종이없는 행정 작성</a></li>
+              </ul>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script>
-    $(document).ready(function () {
-      $(".menu-list > li").on({
-        mouseenter: function () {
-          $(".menu-list > li").find("span").removeClass("selected");
-          $(".menu-list > li").removeClass("selected");
-          $(this).find("span").addClass("selected");
-          $(this).addClass("selected");
-          if (!$("#allmenu").is(':animated')) {
-            $("#allmenu").slideDown();
-          }
-        },
-        mouseout: function () {
-          $("#allmenu").on('mouseleave', function () {
-            $(".menu-list > li").find("span").removeClass("selected");
-            $(".menu-list > li").removeClass("selected");
-            $("#allmenu").hide();
-          });
-        }, focusin: function () {
-          $(".menu-list > li").find("span").removeClass("selected");
-          $(".menu-list > li").removeClass("selected");
-          $(this).find("span").addClass("selected");
-          $(this).addClass("selected");
-          if (!$("#allmenu").is(':animated')) {
-            $("#allmenu").slideDown();
-          }
-        },
-        click: function () {
-          var hrefurl = $(this).find("a").attr("href");
-          location.href = hrefurl;
-        }
-      });
-
-      $(".all-menu-list > li ").on({
-        click: function () {
-          var hrefurl = $(this).find("a").attr("href");
-          location.href = hrefurl;
-        },
-        focusin: function () {
-          $(".menu-list > li").find("span").removeClass("selected");
-          $(".menu-list > li").removeClass("selected");
-          $(this).find("span").addClass("selected");
-          $(this).addClass("selected");
-          if (!$("#allmenu").is(':animated')) {
-            $("#allmenu").slideDown();
-          }
-        }
-      });
-
-      $(".all-menu > div > div.menu:last-child > ul > li:last-child").on({
-        focusout: function () {
-          $(".menu-list > li").find("span").removeClass("selected");
-          $(".menu-list > li").removeClass("selected");
-          $("#allmenu").hide();
-        }
-      });
-
-
-    });
-  </script>
+        </div> <!-- /sub-menu -->
+      </div> <!-- /all-menu -->
+    </div> <!-- /menu-container -->
+  </div> <!-- /pg-header -->
+  <script th:src="@{/portal/js/header.js}"></script>
 </div>

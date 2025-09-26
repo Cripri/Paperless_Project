@@ -1,105 +1,138 @@
-html,
-body {
+@charset "UTF-8";
+
+/* ========= Theme ========= */
+:root{
+  --bg:#f9f4ef;        /* 연한 베이지 (페이지 배경) */
+  --text:#2d3642;      /* 네이비 (기본 텍스트) */
+  --muted:#6b7280;     /* 보조 텍스트 */
+  --accent:#e98b2a;    /* 주황 (포인트) */
+  --accent-d:#cc7422;  /* 포인트 hover */
+  --card:#ffffff;      /* 카드/버튼 배경 */
+  --border:#d9c7b3;    /* 연베이지 보더 */
+}
+
+/* ========= Reset / Base ========= */
+*{ margin:0; padding:0; box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+}
+a{ color:inherit; text-decoration:none; }
+
+/* ========= Layout ========= */
+#body, #container{
   width: 100%;
-  height: 100%;
-}
-
-div {
-  display: block;
-  unicode-bidi: isolate;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-}
-
-#body {
-  width: 1170px;
-  margin: 0 auto;
-}
-
-#container {
-  width: 1170px;
+  max-width: 1170px;
   margin: 0 auto;
   position: relative;
+  padding: 0 16px;
 }
 
-#content {
-  display: block;
-  margin-top: 50px;
-  height: 600px;
-  background: url(/images/img_main01.png) no-repeat;
-  background-position: 0px 0px;
-}
-
-.main_txt1 {
-  display: block;
-  float: right;
-  width: 400px;
-  height: 145px;
-  margin-top: 45px;
-  line-height: 48px;
-}
-
-.fc_b1 {
-  color: #2b4c7f;
-}
-
-.b {
-  font-weight: bold;
-}
-
-.f36 {
-  font-size: 36px;
-  letter-spacing: -5px;
-  line-height: 1px;
-}
-
-.fc_b {
-  color: #666;
-}
-
-.f24 {
-  font-size: 24px;
-  letter-spacing: -2px;
-}
-
-.main_btn1 {
-  display: block;
-  float: left;
-  margin-left: 430px;
-  margin-top: -15px;
-}
-
-.main_btn1 > a {
-  color: #666;
-  text-decoration: none;
-}
-
-.main_btn1 > a > img {
-  vertical-align: top;
-}
-
-.blind {
-  position: absolute;
+/* ========= Hero ========= */
+.hero{
+  position: relative;
   overflow: hidden;
-  width: 1px;
-  height: 1px;
+  border-radius: 24px;
+  margin-top: 32px;
+  padding: 48px 40px;
+  min-height: 420px;
+
+  /* 배경 이미지 유지하고 톤 맞추는 블렌드 */
+  background:
+    linear-gradient(0deg, rgba(249,244,239,.94), rgba(249,244,239,.94)),
+    url("/main/images/Penguhandsup.png") no-repeat;
+  border: 2px solid var(--border);
+  box-shadow: 0 6px 16px rgba(0,0,0,.06);
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 24px;
+  align-items: center;
 }
 
-.main_btn2 {
-  display: block;
-  float: left;
-  margin-left: 700px;
-  margin-top: -60px;
+/* 텍스트 영역 */
+.hero-text .eyebrow{
+  display:inline-block;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: .08em;
+  color: var(--accent);
+  background: rgba(233,139,42,.12);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+.hero-text h1{
+  font-size: 40px;
+  line-height: 1.25;
+  letter-spacing: -.02em;
+  font-weight: 800;
+  color: var(--text);
+}
+.hero-text p{
+  margin-top: 10px;
+  color: var(--muted);
 }
 
-.main_btn2 > a {
-  color: #666;
-  text-decoration: none;
+/* 액션 버튼 영역 */
+.hero-actions{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  justify-self: end;
 }
 
-.main_btn2 > a > img {
-  vertical-align: top;
+/* 기본 pill 버튼 */
+.pill{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 18px;
+  transition: .18s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,.04);
+}
+.pill i{ font-size: 20px; }
+
+/* 강조형(좌측 버튼) */
+.pill.primary{
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.pill:hover{
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.pill.primary:hover{
+  background: var(--accent-d);
+  border-color: var(--accent-d);
+}
+
+/* ========= Responsive ========= */
+@media (max-width: 1024px){
+  .hero{
+    grid-template-columns: 1fr;
+    padding: 36px 24px;
+    min-height: auto;
+  }
+  .hero-actions{
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+}
+@media (max-width: 640px){
+  .hero-text h1{ font-size: 30px; }
+  .pill{ font-size: 16px; padding: 12px 16px; }
+  .pill i{ font-size: 18px; }
 }
