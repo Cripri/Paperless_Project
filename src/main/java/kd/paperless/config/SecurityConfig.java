@@ -44,9 +44,10 @@ public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospe
               "/css/**", "/js/**", "/images/**",
               "/residentregistration/apply",
               "/residentregistration/preview/**",
-              "/residentregistration/pdf/**",
-              "/findAccount/**", "/resetPassword/**", "/account/**",
-              "paperless/**","main/**","/residentregistration/**","paperless/fragments/**"
+              "/residentregistration/pdf/**", "sinmungo/**",
+              "/findAccount/**", "/resetPassword/**", "/account/**","header-footer/**",
+              "paperless/**","main/**","/residentregistration/**","paperless/fragments/**",
+              "/oauth/**", "/sns/**","/portal","/header-footer","/main/**","portal/**"
           ).permitAll()
           .anyRequest().authenticated()
       )

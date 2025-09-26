@@ -9,6 +9,7 @@
   <link rel="stylesheet" th:href="@{/header-footer/css/header-footer.css}">
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script th:src="@{/portal/js/header.js}"></script>
+  <script th:src="@{/header-footer/js/header-footer.js}"></script>
 </head>
 
 <body>
@@ -20,35 +21,29 @@
 
     <!-- content -->
     <div id="body">
-      <div id="container">
-        <div id="content">
+  <div id="container">
+    <div id="content" class="hero">
 
-          <div class="main_txt1 fc_b1">
-            <span class="f36 b">
-              편리한 대민행정 서비스 창구
-            </span>
-            <br>
-            <span class="f24 fc_b">
-              언제나 열려있는 민원 행정 서비스
-            </span>
-          </div>
-
-          <div class="main_btn1">
-            <a href="">
-              <img src="/images/btn_main_myminwon.png" width="250" height="250" alt="나의민원조회하기">
-              <span class="blind">나의민원조회하기</span>
-            </a>
-          </div>
-
-          <div class="main_btn2">
-            <a href="">
-              <img src="/images/btn_main_online.png" width="209" height="209" alt="민원신청하기">
-              <span class="blind">민원신청하기</span>
-            </a>
-          </div>
-        </div>
+      <div class="hero-text">
+        <p class="eyebrow">편리한 대민행정 서비스 창구</p>
+        <h1>언제나 열려있는<br>민원 행정 서비스</h1>
       </div>
+
+      <div class="hero-actions">
+        <a class="pill primary" href="/minwon/my">
+          <i class="fa-solid fa-folder-open"></i>
+          <span>나의 민원 조회</span>
+        </a>
+        <a class="pill" href="/minwon/apply">
+          <i class="fa-solid fa-pen-to-square"></i>
+          <span>민원 신청하기</span>
+        </a>
+      </div>
+
     </div>
+  </div>
+</div>
+
     <!-- content -->
 
     <!-- footer -->
