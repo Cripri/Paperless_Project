@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <meta charset="utf-8" />
@@ -16,10 +16,6 @@
   <!-- header -->
 
   <div class="container">
-    <!-- <div class="page-actions">
-      <a href="javascript:window.print()" class="btn btn-ghost">🖨 인쇄</a>
-    </div> -->
-
     <h1 class="page-title">공개 상담민원</h1>
 
     <section class="section">
@@ -41,7 +37,7 @@
         </tr>
         <tr>
           <th class="label">작성자</th>
-          <td class="value" th:text="${it.writerId}">김○○</td>
+          <td class="value" th:text="${writerNameMasked != null ? writerNameMasked : '-'}">김○○</td>
 
           <th class="label">작성일</th>
           <td class="value"
@@ -60,15 +56,28 @@
           <td class="value" colspan="3">
             <span th:text="${#strings.equalsIgnoreCase(it.noticeSms, 'Y') 
                 ? '게시판답변, 휴대전화 문자메시지(SMS)' 
-                : '게시판답변'}">
-              게시판답변
-            </span>
+                : '게시판답변'}">게시판답변</span>
           </td>
         </tr>
       </table>
 
-      <div class="content-box" th:utext="${contentHtml}">
-        본문
+      <div class="content-box" th:utext="${contentHtml}">본문</div>
+    </section>
+
+    <section class="section" th:if="${files != null and !#lists.isEmpty(files)}">
+      <div class="attach-card">
+        <h2 class="attach-title">첨부파일</h2>
+        <ul class="attach-list">
+          <li class="attach-item" th:each="f : ${files}">
+            <div class="attach-left">
+              <span class="attach-badge">FILE</span>
+              <a class="attach-name" th:href="${f.url}" th:text="${f.filename}" target="_blank" rel="noopener">
+                첨부파일명
+              </a>
+            </div>
+            <div class="attach-size" th:text="${#numbers.formatInteger(f.size, 0) + ' B'}">0 B</div>
+          </li>
+        </ul>
       </div>
     </section>
 
@@ -83,9 +92,7 @@
         </colgroup>
         <tr>
           <th>담당부서</th>
-          <td>
-            <span th:text="${it.adminId != null ? '관리자ID: ' + it.adminId : '-'}">미지정</span>
-          </td>
+          <td><span th:text="${it.adminId != null ? '관리자ID: ' + it.adminId : '-'}">미지정</span></td>
 
           <th>답변일자</th>
           <td th:text="${it.answerDate != null ? #temporals.format(it.answerDate, 'yyyy-MM-dd HH:mm:ss') : '-'}">&nbsp;
@@ -94,9 +101,7 @@
 
         <tr>
           <th>작성자</th>
-          <td>
-            <span th:text="${it.adminId != null ? '관리자이름' : '-'}">-</span>
-          </td>
+          <td><span th:text="${it.adminId != null ? '관리자이름' : '-'}">-</span></td>
 
           <th>접수번호</th>
           <td th:text="${it.smgId}">-</td>
@@ -136,10 +141,10 @@
       </table>
 
       <div class="action-bar">
-        <a class="btn btn-primary" th:href="@{/sinmungo/list(
-         page=${page}, size=${size},
-         keyword=${keyword}, status=${status}, searchType=${searchType}
-       )}">목록</a>
+        <a class="btn btn-primary"
+          th:href="@{/sinmungo/list(page=${page}, size=${size}, keyword=${keyword}, status=${status}, searchType=${searchType})}">
+          목록
+        </a>
       </div>
     </section>
   </div>

@@ -10,7 +10,7 @@
   <link rel="stylesheet" th:href="@{/sinmungo/css/sinmungo_list.css}">
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 </head>
-  
+
 <body>
 
   <!-- header -->
@@ -36,16 +36,6 @@
           <label class="accessibility-hidden" for="srhKeyword">검색어입력</label>
           <input type="text" name="keyword" id="srhKeyword" class="input-keyword" style="width:200px;" title="검색어"
             th:value="${keyword}">
-
-          <!-- <label class="accessibility-hidden" for="pt_dept">부서종류</label>
-          <select id="pt_dept" name="pt_dept" style="width:150px;" title="부서종류">
-            <option value="" selected>전체</option>
-            <option value="">공릉1동</option>
-            <option value="">상계10동</option>
-            <option value="">상계9동</option>
-            <option value="">상계8동</option>
-            <option value="">상계3.4동</option>
-          </select> -->
 
           <label class="accessibility-hidden" for="pt_deal_state">처리상태</label>
           <select id="pt_deal_state" name="status" style="width:120px;" title="처리상태">
@@ -73,7 +63,6 @@
         <div class="tablecnt-area">
           <div class="title">신문고 게시판 <span style="font-size:13px; font-weight:400; color:#000;"
               th:text="'(총 ' + ${totalCount} + '건)'">(총0건)</span></div>
-          <!-- <a class="btn_info" href="#">민원상담 안내보기</a> -->
         </div>
       </div>
 
@@ -98,7 +87,10 @@
               <a th:href="@{|/sinmungo/detail/${it.smgId}|}" th:text="${it.title}">제목</a>
             </td>
 
-            <td class="td-name" th:text="${it.writerId}">-</td>
+            <td class="td-name"
+              th:text="${writerNames != null && it.writerId != null && writerNames[it.writerId] != null ? writerNames[it.writerId] : '-'}">
+              -
+            </td>
 
             <td class="td-date" th:text="${it.createdAt != null ? #temporals.format(it.createdAt, 'yyyy-MM-dd') : ''}">
               2025-09-09
