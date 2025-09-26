@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <meta charset="utf-8" />
@@ -11,10 +11,10 @@
 </head>
 
 <body class="site">
-
   <!-- header -->
   <div th:replace="fragments/header :: header"></div>
-  <!-- header -->
+  <!-- /header -->
+
   <div class="container">
     <div class="help-top"><a href="#">상담민원 작성안내</a></div>
     <h1 class="page-title">상담민원 신청</h1>
@@ -28,17 +28,6 @@
               <input type="text" class="input" name="title" placeholder="제목을 입력하세요" required>
             </td>
           </tr>
-
-          <!-- <tr>
-            <th class="req">공개여부</th>
-            <td colspan="3">
-              <div class="options">
-                <label><input type="radio" name="openYn" value="OPEN" checked> 공개</label>
-                <label><input type="radio" name="openYn" value="PRIVATE"> 비공개</label>
-                <label><input type="radio" name="openYn" value="CONTENT"> 내용공개</label>
-              </div>
-            </td>
-          </tr> -->
 
           <tr>
             <th class="req">휴대폰 번호</th>
@@ -62,7 +51,7 @@
                 <input type="text" class="input addr-input" name="postcode" placeholder="우편번호" required>
                 <input type="text" class="input addr-input" name="addr1" placeholder="도로명/지번 주소" required>
                 <input type="text" class="input addr-input" name="addr2" placeholder="상세 주소" required>
-                <button type="button" class="btn addr-btn">주소검색</button>
+                <button type="button" class="btn addr-btn" disabled>주소검색</button>
               </div>
             </td>
           </tr>
@@ -72,7 +61,7 @@
             <td colspan="3">
               <div class="options">
                 <label><input type="checkbox" name="noticeBoard" checked disabled> 게시판 답변</label>
-                
+
                 <label>
                   <input type="hidden" name="noticeSms" value="N">
                   <input type="checkbox" name="noticeSms" value="Y"> 휴대전화 문자메시지(SMS)
@@ -97,24 +86,28 @@
           <tr>
             <th>첨부파일</th>
             <td colspan="3">
-              <div class="hint">첨부파일 총 용량은 최대 6MByte이며, 시스템 상태에 따라 6Mbyte 이하로 등록될 수 있습니다.</div>
-              <div class="file-line">
-                <label class="btn btn-link">파일 선택<input type="file" hidden></label>
-                <div class="file-name">선택된 파일 없음</div>
-                <button type="button" class="btn">X 취소</button>
-              </div>
-              <div class="file-line">
-                <label class="btn btn-link">파일 선택<input type="file" hidden></label>
-                <div class="file-name">선택된 파일 없음</div>
-                <button type="button" class="btn">X 취소</button>
-              </div>
-              <div class="file-line">
-                <label class="btn btn-link">파일 선택<input type="file" hidden></label>
-                <div class="file-name">선택된 파일 없음</div>
-                <button type="button" class="btn">X 취소</button>
+              <div class="hint">첨부파일 총 용량은 최대 6MByte입니다.</div>
+
+              <div class="uploader" id="uploader">
+                <div class="uploader-top">
+                  <div class="dropzone" id="dropzone">
+                    여기에 파일을 드래그하거나, <b>파일 추가</b> 버튼을 클릭하세요.
+                  </div>
+                  <button type="button" class="btn" id="btnAddFile">파일 추가</button>
+                </div>
+
+                <div class="uploader-meta">
+                  <span>총 제한: <b>6 MB</b></span>
+                  <span>현재 선택 용량: <b id="totalSize">0 MB</b></span>
+                </div>
+
+                <div class="file-items" id="fileItems"></div>
+
+                <div id="hiddenInputs" style="display:none;"></div>
               </div>
             </td>
           </tr>
+
           <tr>
             <th>개인정보 동의</th>
             <td colspan="3">
@@ -127,11 +120,10 @@
         </table>
       </div>
 
-
       <div class="actions">
         <button type="button" class="btn btn-cancel" onclick="history.back()">취소</button>
         <a class="btn" th:href="@{/sinmungo/list}">목록</a>
-        <button type="button" class="btn btn-warn">임시저장</button>
+        <button type="button" class="btn btn-warn" disabled>임시저장</button>
         <button type="submit" class="btn btn-primary">등록</button>
       </div>
     </form>
@@ -139,61 +131,117 @@
 
   <!-- footer -->
   <div th:replace="fragments/footer :: footer"></div>
-  <!-- footer -->
+  <!-- /footer -->
 
   <script>
-    document.querySelectorAll('.file-line input[type=file]').forEach(function (inp) {
-      inp.addEventListener('change', function () {
-        var name = this.files && this.files.length ? this.files[0].name : '선택된 파일 없음';
-        this.closest('.file-line').querySelector('.file-name').textContent = name;
+    (function () {
+      const MAX_TOTAL = 6 * 1024 * 1024;
+      const fileItems = document.getElementById('fileItems');
+      const dropzone = document.getElementById('dropzone');
+      const btnAdd = document.getElementById('btnAddFile');
+      const totalSizeEl = document.getElementById('totalSize');
+      const hiddenBox = document.getElementById('hiddenInputs');
+
+      function fmt(bytes) {
+        if (bytes >= 1024 * 1024) return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+        if (bytes >= 1024) return (bytes / 1024).toFixed(0) + ' KB';
+        return bytes + ' B';
+      }
+
+      function calcTotal() {
+        let sum = 0;
+        fileItems.querySelectorAll('input[type=file][name="files"]').forEach(inp => {
+          if (inp.files && inp.files[0]) sum += inp.files[0].size || 0;
+        });
+        totalSizeEl.textContent = fmt(sum);
+        return sum;
+      }
+
+      function appendLineWithInput(inp) {
+        const f = inp.files && inp.files[0];
+        if (!f) return;
+
+        if (calcTotal() + (f.size || 0) > MAX_TOTAL) {
+          alert('첨부파일 총 용량이 6MB를 초과합니다.');
+          inp.remove();
+          return;
+        }
+
+        const line = document.createElement('div');
+        line.className = 'file-item';
+        line.innerHTML = `
+        <div class="file-name">
+          <span class="badge">FILE</span>
+          <span class="file-title" title="${f.name}">${f.name}</span>
+          <span class="file-size">(${fmt(f.size || 0)})</span>
+        </div>
+        <button type="button" class="file-remove" title="삭제">삭제</button>
+      `;
+
+        inp.name = 'files';
+        inp.hidden = true;
+        line.appendChild(inp);
+
+        line.querySelector('.file-remove').addEventListener('click', () => {
+          line.remove();
+          calcTotal();
+        });
+
+        fileItems.appendChild(line);
+        calcTotal();
+      }
+
+      function createOneInputAndPick() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        hiddenBox.appendChild(input);
+
+        input.addEventListener('change', function () {
+          if (!this.files || !this.files[0]) {
+            this.remove();
+            return;
+          }
+          appendLineWithInput(this);
+        }, { once: true });
+
+        input.click();
+      }
+
+      // 버튼으로 추가
+      btnAdd.addEventListener('click', () => {
+        createOneInputAndPick();
       });
-    });
-    document.querySelectorAll('.file-line .btn:not(.btn-link)').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var line = this.closest('.file-line');
-        var file = line.querySelector('input[type=file]');
-        file.value = '';
-        line.querySelector('.file-name').textContent = '선택된 파일 없음';
+
+      // 드래그&드랍
+      ['dragenter', 'dragover'].forEach(evt => {
+        dropzone.addEventListener(evt, e => {
+          e.preventDefault(); e.stopPropagation();
+          dropzone.classList.add('hover');
+        });
       });
-    });
+      ['dragleave', 'drop'].forEach(evt => {
+        dropzone.addEventListener(evt, e => {
+          e.preventDefault(); e.stopPropagation();
+          dropzone.classList.remove('hover');
+        });
+      });
+      dropzone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (!files || files.length === 0) return;
+
+        Array.from(files).forEach(file => {
+          const input = document.createElement('input');
+          input.type = 'file';
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          input.files = dt.files;
+          hiddenBox.appendChild(input);
+          appendLineWithInput(input);
+        });
+      });
+    })();
   </script>
+
 </body>
-
-<!-- <body class="site">
-
-  <main id="content" class="container">
-    <h1 class="page-title">신문고 등록</h1>
-
-    <form class="form">
-      <div class="row">
-        <label for="title">제목</label>
-        <input id="title" name="title" placeholder="신문고 제목을 입력하세요" required />
-      </div>
-      <div class="row">
-        <label for="category">분류</label>
-        <select id="category" name="category">
-          <option>도로/교통</option>
-          <option>환경/청소</option>
-          <option>복지/보건</option>
-          <option>기타</option>
-        </select>
-      </div>
-      <div class="row">
-        <label for="content">내용</label>
-        <textarea id="content" name="content" rows="8" placeholder="내용을 입력하세요" required></textarea>
-      </div>
-      <div class="row">
-        <label for="file">첨부</label>
-        <input id="file" type="file" />
-      </div>
-      <div class="controls">
-        <button class="btn primary" type="submit">제출</button>
-        <a href="javascript:history.back()" class="btn">취소</a>
-      </div>
-    </form>
-
-  </main>
-
-</body> -->
 
 </html>

@@ -14,6 +14,7 @@ public class SinmungoListDto {
   private Long smgId;
   private String title;
   private Long writerId;
+  private String writerNameMasked;
   private LocalDateTime createdAt;
   private String status;
   private Long viewCount;
