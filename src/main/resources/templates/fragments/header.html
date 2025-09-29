@@ -1,10 +1,23 @@
-<div th:fragment="header">
+<div th:fragment="header" xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
   <div id="header" class="pg-header">
     <!-- Top bar -->
     <div id="h-top" class="topbar">
       <ul class="top-links">
+        <li sec:authorize="isAuthenticated()">
+          <span class="welcome-text">환영합니다&nbsp;<span th:text="${loginName}"></span>님</span>
+        </li>
+
         <li><a th:href="@{/minwon/my}">나의 민원 조회</a></li>
-        <li><a th:href="@{/auth/login}">로그인</a></li>
+
+        <li sec:authorize="!isAuthenticated()">
+          <a th:href="@{/login}">로그인</a>
+        </li>
+
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+          <button type="submit" class="logout-link">로그아웃</button>
+        </form>
       </ul>
     </div>
 
@@ -34,7 +47,7 @@
             <a href="javascript:void(0)">고객센터</a>
             <span class="bar" aria-hidden="true"></span>
           </li>
-          
+
         </ul>
       </nav>
     </div>
