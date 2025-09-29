@@ -1,23 +1,27 @@
-body {
-  background: #fff;
-  color: #333;
-  font-family: "맑은 고딕", "Malgun Gothic", sans-serif;
-}
+@charset "UTF-8";
 
-.site {
+/* ===== 전역 ===== */
+body {
+  background: #f9f4ef; /* 통일된 배경 */
+  color: #0f172a;
+  font-family: "맑은 고딕","Malgun Gothic",sans-serif;
   margin: 0;
 }
 
 .container {
   width: 1180px;
   max-width: 96%;
-  margin: 28px auto 80px;
+  margin: 32px auto 80px;
 }
 
+/* ===== 페이지 타이틀/상단 안내 ===== */
 .page-title {
   font-size: 26px;
-  font-weight: 700;
-  margin: 6px 0 18px;
+  font-weight: 800;
+  margin: 10px 0 24px;
+  color: #0c1324;
+  border-left: 6px solid #e09a58; /* 주황 포인트 */
+  padding-left: 10px;
 }
 
 .help-top {
@@ -25,98 +29,83 @@ body {
   margin-top: -8px;
   font-size: 14px;
 }
-
 .help-top a {
-  color: #333;
+  color: #5b6b82;
   text-decoration: none;
-  border: 1px solid #ddd;
+  border: 1px solid #e6dccf;
   border-radius: 16px;
   padding: 6px 10px;
-  background: #fafafa;
+  background: #fff;
+  transition: .2s;
 }
+.help-top a:hover { background: #faf7f2; }
 
+/* ===== 폼 카드 ===== */
 .form-card {
-  border: 1px solid #dfe2e6;
-  border-top: 2px solid #9dc14f;
-  border-radius: 6px;
+  border: 1.5px solid #e6dccf;
+  border-radius: 10px;
   overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,.05);
 }
 
 .form-table {
   width: 100%;
   border-collapse: collapse;
 }
-
 .form-table th,
 .form-table td {
   border-bottom: 1px solid #e6e9ed;
-  padding: 10px 12px;
+  padding: 12px 14px;
   vertical-align: middle;
+  font-size: 14px;
 }
-
 .form-table th {
   width: 160px;
-  background: #f7f7f7;
-  text-align: left;
+  background: #faf7f2;
   font-weight: 700;
+  color: #374151;
+  text-align: left;
 }
-
 .req::before {
   content: "· ";
-  color: #c62828;
-  font-weight: 700;
+  color: #e53935; /* 강조 빨강 */
+  font-weight: 800;
 }
 
+/* ===== 입력 요소 ===== */
 .input,
 .select,
 .textarea {
   width: 100%;
-  box-sizing: border-box;
   border: 1px solid #cfd6dc;
   background: #fff;
   border-radius: 6px;
   padding: 8px 10px;
   font: inherit;
 }
-
 .textarea {
   min-height: 220px;
   resize: vertical;
 }
+.input::placeholder { color: #999; }
 
-.input::placeholder {
-  color: #999;
-}
+.row { display: flex; gap: 10px; }
+.row .col { flex: 1; }
 
+.addr-row .addr-input { flex: 1; }
+.addr-row .addr-btn { white-space: nowrap; }
+
+/* ===== 옵션 ===== */
 .options {
   display: flex;
   gap: 18px;
   align-items: center;
+  flex-wrap: wrap;
 }
+.options label { display: inline-flex; gap: 6px; align-items: center; }
 
-.options label {
-  display: inline-flex;
-  gap: 6px;
-  align-items: center;
-}
-
-.row {
-  display: flex;
-  gap: 10px;
-}
-
-.row .col {
-  flex: 1;
-}
-
-.addr-row .addr-input {
-  flex: 1;
-}
-
-.addr-row .addr-btn {
-  white-space: nowrap;
-}
-
+/* ===== 버튼 ===== */
 .btn {
   display: inline-block;
   height: 36px;
@@ -126,89 +115,44 @@ body {
   border-radius: 6px;
   background: #fff;
   color: #333;
-  text-decoration: none;
   font-weight: 700;
   cursor: pointer;
   transition: .2s;
 }
-
-.btn:hover {
-  background: #f2f2f2;
-}
+.btn:hover { background: #f2f2f2; }
 
 .btn-primary {
-  background: #9dc14f;
-  border-color: #9dc14f;
+  background: #5b6b82;   /* 네이비 */
+  border-color: #5b6b82;
   color: #fff;
 }
-
-.btn-primary:hover {
-  filter: brightness(.95);
-}
+.btn-primary:hover { filter: brightness(1.1); }
 
 .btn-warn {
-  background: #f7a600;
-  border-color: #f7a600;
+  background: #e09a58;   /* 주황 */
+  border-color: #e09a58;
   color: #fff;
 }
+.btn-warn:hover { filter: brightness(1.05); }
 
-.btn-link {
+.btn-cancel {
+  background: #eee;
   border-color: #ddd;
-  background: #fafafa;
 }
-
-.hint {
-  font-size: 12px;
-  color: #666;
-  margin-top: 6px;
-  line-height: 1.6;
-}
-
-.file-line {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin-top: 6px;
-}
-
-.file-name {
-  flex: 1;
-  min-height: 36px;
-  line-height: 34px;
-  padding: 0 10px;
-  border: 1px solid #cfd6dc;
-  border-radius: 6px;
-  background: #fff;
-  color: #666;
-}
-
-.agree {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-}
-
-.agree a {
-  color: #2a69ac;
-  text-decoration: underline;
-}
+.btn-cancel:hover { background: #e2e2e2; }
 
 .actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 16px;
+  margin-top: 20px;
 }
 
-.btn-ghost {
-  background: #fff;
-  border-color: #cfd6dc;
-}
-
-.btn-cancel {
-  background: #eee;
-  border-color: #ddd;
+/* ===== 첨부파일 업로더 ===== */
+.hint {
+  font-size: 12px;
+  color: #666;
+  margin-top: 6px;
 }
 
 .uploader {
@@ -218,13 +162,11 @@ body {
   background: #fff;
   margin-top: 8px;
 }
-
 .uploader-top {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-
 .dropzone {
   flex: 1;
   border: 1px dashed #cbd5e1;
@@ -236,14 +178,13 @@ body {
   padding: 10px 12px;
   font-size: 14px;
   color: #64748b;
-  background: #f8fafc;
+  background: #fafafa;
   transition: all .15s ease;
 }
-
 .dropzone.hover {
-  background: #eef2ff;
-  border-color: #94a3b8;
-  color: #475569;
+  background: #fff7f2;
+  border-color: #e09a58;
+  color: #7a4c25;
 }
 
 .uploader-meta {
@@ -251,7 +192,7 @@ body {
   font-size: 12px;
   color: #64748b;
   display: flex;
-  gap: 8px;
+  gap: 12px;
 }
 
 .file-items {
@@ -260,7 +201,6 @@ body {
   flex-direction: column;
   gap: 8px;
 }
-
 .file-item {
   display: flex;
   align-items: center;
@@ -271,14 +211,7 @@ body {
   border-radius: 10px;
   background: #fafafa;
 }
-
-.file-name {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
+.file-name { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .file-name .badge {
   font-size: 11px;
   background: #e2e8f0;
@@ -286,7 +219,6 @@ body {
   padding: 2px 6px;
   border-radius: 999px;
 }
-
 .file-title {
   font-size: 14px;
   color: #0f172a;
@@ -295,11 +227,7 @@ body {
   text-overflow: ellipsis;
   max-width: 520px;
 }
-
-.file-size {
-  font-size: 12px;
-  color: #64748b;
-}
+.file-size { font-size: 12px; color: #64748b; }
 
 .file-remove {
   border: none;
@@ -309,7 +237,19 @@ body {
   border-radius: 8px;
   cursor: pointer;
 }
-
 .file-remove:hover {
   background: #fee2e2;
 }
+
+/* ===== 개인정보 동의 ===== */
+.agree {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+.agree a {
+  color: #5b6b82;
+  text-decoration: underline;
+}
+.agree a:hover { color: #e09a58; }

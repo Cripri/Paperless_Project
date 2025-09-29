@@ -1,138 +1,182 @@
-body {
-  background: #fff;
-  color: #333;
-  font-family: "맑은 고딕", "Malgun Gothic", sans-serif;
-  margin: 0;
+@charset "UTF-8";
+
+/* ===== Theme ===== */
+:root{
+  --bg:#f9f4ef;       /* 전체 배경 */
+  --ink:#0f172a;      /* 본문 텍스트 */
+  --muted:#6b7280;    /* 보조 텍스트 */
+  --line:#e6dccf;     /* 베이지 라인 */
+  --card:#ffffff;     /* 카드 배경 */
+  --navy:#5b6b82;     /* 네이비 포인트 */
+  --navy-d:#4d5c70;
+  --orange:#e09a58;   /* 주황 포인트 */
+  --shadow:0 6px 16px rgba(15,23,42,.06);
+  --radius:10px;
 }
 
-.container {
-  width: 1170px;
-  max-width: 96%;
-  margin: 28px auto 80px;
+/* ===== 전역 ===== */
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"맑은 고딕","Malgun Gothic",sans-serif;
+  margin:0;
 }
 
-
-.page-actions {
-  text-align: right;
-  margin-bottom: 12px;
+.container{
+  width:1170px;
+  max-width:96%;
+  margin:32px auto 80px;
 }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 88px;
-  height: 36px;
-  line-height: 1;
-  padding: 0 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
-  color: #333;
-  text-decoration: none;
-  font-weight: 700;
-  transition: .2s;
+/* 페이지 상단 액션 */
+.page-actions{
+  text-align:right;
+  margin-bottom:12px;
 }
 
-.btn:hover {
-  background: #f2f2f2;
+/* 버튼 */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:96px;
+  height:36px;
+  padding:0 14px;
+  border:1px solid var(--navy);
+  border-radius:8px;
+  background:var(--navy);
+  color:#fff;
+  text-decoration:none;
+  font-weight:800;
+  line-height:1;
+  transition:.2s;
+  box-shadow:var(--shadow);
+}
+.btn:hover{ background:var(--navy-d); border-color:var(--navy-d); }
+.btn-primary{ background:var(--orange); border-color:var(--orange); }
+.btn-primary:hover{ background:#cf874b; border-color:#cf874b; }
+
+/* 타이틀 */
+.page-title{
+  font-size:26px;
+  font-weight:800;
+  margin:6px 0 18px;
+  color:#0c1324;
+  border-left:6px solid var(--orange);
+  padding-left:10px;
+  letter-spacing:-.01em;
 }
 
-.btn-primary {
-  background: #9dc14f;
-  border-color: #9dc14f;
-  color: #fff;
-}
-
-.page-title {
-  font-size: 26px;
-  font-weight: 700;
-  margin: 6px 0 18px;
-}
-
-.head-table {
-  width: 100%;
-  border-collapse: collapse;
-  border-top: 2px solid #9dc14f;
+/* ===== 상단 메타 테이블 ===== */
+.head-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  background:var(--card);
+  border:1.5px solid var(--line);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow);
 }
 
 .head-table th,
-.head-table td {
-  padding: 12px 14px;
-  border: 1px solid #e1e1e1;
-  font-size: 14px;
+.head-table td{
+  padding:12px 14px;
+  font-size:14px;
+  border-top:1px solid #eee;
+  border-left:1px solid #eee;
+}
+.head-table tr:first-child th,
+.head-table tr:first-child td{ border-top:none; }
+.head-table th:first-child,
+.head-table td:first-child{ border-left:none; }
+
+.head-table th{
+  width:140px;
+  background:#faf7f2;
+  text-align:left;
+  font-weight:800;
+  color:#374151;
 }
 
-.head-table th {
-  width: 120px;
-  background: #f7f7f7;
-  text-align: left;
-  font-weight: 700;
+.head-table .title{
+  font-size:18px;
+  font-weight:800;
+  background:#fff;
+  color:#0f172a;
 }
 
-.head-table .title {
-  font-size: 18px;
-  font-weight: 700;
-  background: #fff;
+/* ===== 본문 내용 ===== */
+.content-box{
+  background:var(--card);
+  border:1.5px solid var(--line);
+  border-top:none;
+  border-radius:0 0 var(--radius) var(--radius);
+  padding:22px 18px;
+  line-height:1.8;
+  box-shadow:var(--shadow);
 }
 
-.content-box {
-  border: 1px solid #e1e1e1;
-  border-top: 0;
-  padding: 22px 18px;
-  line-height: 1.8;
+/* ===== 첨부 ===== */
+.attach{
+  margin-top:12px;
+  background:#fff;
+  border:1.5px solid var(--line);
+  border-radius:var(--radius);
+  padding:14px 18px;
+  box-shadow:var(--shadow);
 }
-
-.attach {
-  border: 1px solid #e1e1e1;
-  border-top: 0;
-  padding: 14px 18px;
-  background: #fafafa;
+.attach ul{
+  margin:0;
+  padding-left:18px;
+  line-height:1.8;
 }
-
-.attach ul {
-  margin: 0;
-  padding-left: 18px;
+.attach a{
+  color:var(--navy);
+  text-decoration:underline;
 }
+.attach a:hover{ color:var(--orange); }
 
-.attach a {
-  color: #2a69ac;
-  text-decoration: underline;
-}
-
-.nav-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 18px;
-  border-bottom: 1px solid #e1e1e1;
+/* ===== 이전/다음 네비 테이블 ===== */
+.nav-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  margin-top:18px;
+  background:var(--card);
+  border:1.5px solid var(--line);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow);
 }
 
 .nav-table th,
-.nav-table td {
-  padding: 10px 12px;
-  border-top: 1px solid #e1e1e1;
-  border-bottom: 1px solid #e1e1e1;
-  font-size: 14px;
+.nav-table td{
+  padding:12px 14px;
+  font-size:14px;
+  border-top:1px solid #eee;
+}
+.nav-table tr:first-child th,
+.nav-table tr:first-child td{ border-top:none; }
+
+.nav-table th{
+  width:140px;
+  background:#faf7f2;
+  text-align:left;
+  font-weight:800;
+  color:#374151;
 }
 
-.nav-table th {
-  width: 120px;
-  background: #f7f7f7;
-  text-align: left;
+.nav-table td a{
+  color:var(--ink);
+  text-decoration:none;
 }
+.nav-table td a:hover{ text-decoration:underline; }
 
-.nav-table td a {
-  color: #333;
-  text-decoration: none;
-}
-
-.nav-table td a:hover {
-  text-decoration: underline;
-}
-
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 16px;
+/* ===== 하단 액션 ===== */
+.actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:16px;
 }

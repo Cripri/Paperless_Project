@@ -1,92 +1,100 @@
+@charset "UTF-8";
+
+/* ===== 전역 ===== */
 body {
-  background: #fff;
-  color: #333;
-  font-family: "맑은 고딕", "Malgun Gothic", sans-serif;
+  background: #f9f4ef; /* 고정 배경 */
+  color: #0f172a;
+  font-family: "맑은 고딕","Malgun Gothic",sans-serif;
   margin: 0;
 }
 
 .container {
   width: 1170px;
   max-width: 96%;
-  margin: 28px auto 80px;
+  margin: 32px auto 80px;
 }
 
+/* ===== 페이지 타이틀 ===== */
 .page-title {
-  font-size: 26px;
-  font-weight: 700;
-  margin: 6px 0 24px;
+  font-size: 28px;
+  font-weight: 800;
+  margin: 8px 0 28px;
   text-align: center;
+  color: #0c1324;
+  border-bottom: 3px solid #e09a58; /* 주황 포인트 */
+  padding-bottom: 10px;
 }
 
+/* ===== 섹션 박스 ===== */
 .section { 
-  border:1px solid #dcdcdc; 
-  border-top:2px solid #9dc14f;
-  border-radius:4px; 
-  margin-bottom:28px; 
-  overflow:hidden; 
-}
-.section h2 { 
-  background:#f9faf7;
-  padding:12px 16px; 
-  font-size:18px; 
-  font-weight:700; 
-  border-bottom:1px solid #dcdcdc; 
-  color:#2a4d00;
-  margin-top: 0;
+  border: 1.5px solid #e6dccf;
+  border-radius: 10px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.04);
+  overflow: hidden;
+  background: #fff;
 }
 
+.section h2 { 
+  background: #faf7f2;
+  padding: 14px 18px;
+  font-size: 19px;
+  font-weight: 800;
+  border-bottom: 1.5px solid #e6dccf;
+  color: #5b6b82; /* 저채도 네이비 */
+  margin: 0;
+}
+
+/* ===== 본문 콘텐츠 ===== */
 .section .content {
-  padding: 18px 20px;
+  padding: 20px 22px;
   line-height: 1.8;
   font-size: 15px;
 }
 
-.content strong {
-  font-weight: 700;
-}
+.content strong { font-weight: 700; }
 
-.content ul {
+.content ul,
+.content ol {
   margin: 0;
-  padding-left: 20px;
+  padding-left: 22px;
   line-height: 1.8;
 }
+.content li { margin-bottom: 8px; }
 
-.content li {
-  margin-bottom: 6px;
-}
+.content p { margin: 0 0 14px; }
 
-.content p {
-  margin: 0 0 12px;
-}
-
+/* ===== 소제목 ===== */
 .sub-title { 
-  font-weight:700; 
-  color:#2a4d00;
-  margin:18px 0 8px; 
+  font-weight: 800;
+  color: #e09a58;  /* 주황 포인트 */
+  margin: 20px 0 10px;
+  font-size: 15px;
 }
 
+/* ===== 예시 박스 ===== */
 .example {
-  margin: 12px 0;
+  margin: 14px 0;
+  background: #fafafa;
+  border: 1px dashed #e6dccf;
+  border-radius: 8px;
+  padding: 14px 16px;
 }
+.example ol { margin: 0; padding-left: 22px; }
+.example ol li { margin-bottom: 14px; }
 
-.example ol {
-  margin: 0;
-  padding-left: 20px;
-}
-
-.example ol li {
-  margin-bottom: 12px;
-}
-
+/* ===== 안내 박스 ===== */
 .info-box {
-  border: 1px solid #dcdcdc;
-  background: #f7f9fc;
-  padding: 12px 16px;
+  border: 1.5px solid #e6dccf;
+  background: #fff8ef;
+  padding: 14px 18px;
   margin-top: 20px;
   font-size: 14px;
+  border-radius: 8px;
+  color: #7a4c25;
 }
-
 .info-box a {
-  color: #2a69ac;
+  color: #5b6b82;
   text-decoration: underline;
 }
+.info-box a:hover { color: #e09a58; }
