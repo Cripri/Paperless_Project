@@ -1,20 +1,16 @@
-root{
-      --bg: #f9f4ef;       /* 전체 배경 */
-      --ink: #0f172a;      /* 본문 텍스트 */
-      --muted:#6b7280;     /* 보조 텍스트 */
-      --line:#e6dccf;      /* 베이지 라인 */
-      --card:#ffffff;      /* 카드 배경 */
-
-      --navy:#5b6b82;      /* 버튼/타이틀 네이비 */
-      --navy-d:#4d5c70;
-
-      --orange:#e09a58;    /* 보조 주황 */
-      --orange-d:#c97f4e;
-
-      --shadow: 0 8px 20px rgba(15,23,42,.06);
-      --radius: 10px;
-    }
-
+:root{
+  --bg: #f9f4ef;
+  --ink: #0f172a;
+  --muted:#6b7280;
+  --line:#e6dccf;
+  --card:#ffffff;
+  --navy:#5b6b82;
+  --navy-d:#4d5c70;
+  --orange:#e09a58;
+  --orange-d:#c97f4e;
+  --shadow: 0 8px 20px rgba(15,23,42,.06);
+  --radius: 10px;
+}
     /* ========= Base ========= */
     html, body { margin:0; }
     body {
@@ -59,7 +55,7 @@ root{
     .row { margin: 12px 0; display: flex; gap: 16px; align-items: flex-start; }
     .row > label { width: 160px; padding-top: 8px; color: #374151; font-weight: 700; }
     .inline { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-    
+
     input[type="text"],
     input[type="tel"],
     input[type="number"],
