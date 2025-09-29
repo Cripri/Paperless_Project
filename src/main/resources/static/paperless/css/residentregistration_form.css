@@ -59,7 +59,7 @@ root{
     .row { margin: 12px 0; display: flex; gap: 16px; align-items: flex-start; }
     .row > label { width: 160px; padding-top: 8px; color: #374151; font-weight: 700; }
     .inline { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-
+    
     input[type="text"],
     input[type="tel"],
     input[type="number"],
