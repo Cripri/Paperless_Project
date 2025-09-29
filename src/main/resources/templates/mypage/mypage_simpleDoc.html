@@ -6,9 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지</title>
     <link rel="stylesheet" href="/mypage/css/mypage_simpleDoc.css">
-    <link rel="stylesheet" th:href="@{/header-footer/css/header-footer.css}">
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script th:src="@{/portal/js/header.js}"></script>
+    <!-- 공통 헤더/푸터 -->
+  <link rel="stylesheet" href="/header-footer/css/header-footer.css"
+        th:href="@{/header-footer/css/header-footer.css}">
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="/header-footer/js/header-footer.js"
+          th:src="@{/header-footer/js/header-footer.js}" defer></script>
 </head>
 
 <body>
@@ -83,7 +86,11 @@
                         </tr>
                     </tbody>
                 </table>
-                <!-- 페이징은 원창님한테 받아서 돌려쓰기로 함 -->
+                <nav class="pager" aria-label="페이지 이동">
+                    <button id="prev" class="btn" type="button" aria-label="이전 페이지">이전</button>
+                    <span id="page-info" class="page-info" aria-live="polite">1 / 1</span>
+                    <button id="next" class="btn" type="button" aria-label="다음 페이지">다음</button>
+                </nav>
             </div>
     </div>
     <div class="content-footer"></div>
