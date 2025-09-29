@@ -40,6 +40,7 @@ public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospe
       .headers(h -> h.frameOptions(fo -> fo.sameOrigin()))
       .authorizeHttpRequests(auth -> auth
           .requestMatchers("/", "/error",
+              "/favicon.ico",
               "/login/**", "/logout", "/signup/**", "/api/**",
               "/css/**", "/js/**", "/images/**",
               "/residentregistration/apply",
