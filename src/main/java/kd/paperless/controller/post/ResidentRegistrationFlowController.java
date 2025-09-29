@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.support.SessionStatus;
 
 @Controller
 @RequestMapping("/residentregistration")
+@PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
 @SessionAttributes("rrForm") // ✅ DTO를 프리뷰/제출까지 세션에 유지
 public class ResidentRegistrationFlowController {

@@ -40,19 +40,13 @@
     const signUrl         = $('#signUrl')?.value || '/residentregistration/sign';
     const signatureBase64 = $('#signatureBase64');
 
-    // ▼ 서명 미리보기 보장: 없으면 즉석 생성 + 위치 삽입
+    // ▼ 서명 미리보기 보장: 없으면 즉석 생성 + 위치 삽입 (요청하신 기존 방식)
     function ensurePreview() {
       let preview = $('#signPreview');
       if (preview) return preview;
 
-      // 프리뷰를 넣을 자리를 찾는다 (버튼 블록 바로 앞)
       const btnBlock = $('#openSignPopup')?.closest('.inline');
-      // 버튼 블록 상위 .inline(두 줄짜리 컨테이너) 내 맨 앞에 이미지가 오도록
-      const container = btnBlock?.parentElement; // label과 나란히 있는 inline 컨테이너
-      // 기존 마크업: <div class="inline" style="align-items:flex-start; gap:16px;">
-      //   <img id="signPreview" ...>
-      //   <div class="inline" ...>버튼들...</div>
-      // </div>
+      const container = btnBlock?.parentElement;
 
       preview = document.createElement('img');
       preview.id = 'signPreview';
@@ -69,7 +63,6 @@
       } else if (btnBlock) {
         btnBlock.prepend(preview);
       } else {
-        // 최후 수단: 폼 맨 앞에 붙임
         form.prepend(preview);
       }
       return preview;
@@ -80,8 +73,6 @@
       if (signatureBase64) signatureBase64.value = dataUrl;
       const preview = ensurePreview();
       preview.src = dataUrl;
-
-      // 접근성: 새 이미지가 로드되면 포커스 힌트
       preview.onload = () => {
         preview.setAttribute('tabindex', '-1');
         preview.focus?.();
@@ -99,16 +90,17 @@
       if (!signPopup) alert('팝업이 차단되었습니다. 팝업 허용 후 다시 시도하세요.');
     });
 
-    // postMessage 수신 (권장 방식)
+    // postMessage 수신 (type: SIGN_DONE | SIGN_SAVED 지원)
     window.addEventListener('message', (e) => {
-      const msg = e.data;
-      if (!msg || msg.type !== 'SIGN_DONE' || !msg.dataUrl) return;
-      setSignature(msg.dataUrl);
+      const msg = e?.data;
+      if (!msg || (msg.type !== 'SIGN_DONE' && msg.type !== 'SIGN_SAVED')) return;
+      const dataUrl = msg.dataUrl || msg.base64 || msg.signature || msg.data;
+      if (!dataUrl) return;
+      setSignature(String(dataUrl));
       try { signPopup?.close(); } catch(_) {}
     });
 
-    // (대안) 팝업이 window.opener.setSignature() 직접 호출하는 경우도 지원
-    // 전역에 노출
+    // (대안) 팝업에서 opener.setSignature() 직접 호출 지원
     window.setSignature = setSignature;
 
     // 지우기
@@ -154,4 +146,60 @@
       }
     });
   });
+})();
+
+(function(){
+  // 다음 우편번호 스크립트 로더 (중복 로드 방지)
+  function loadDaumPostcodeScript(cb){
+    if (window.daum && window.daum.Postcode) { cb(); return; }
+    const cur = document.getElementById('daum-postcode-sdk');
+    if (cur) { cur.addEventListener('load', cb); return; }
+    var s = document.createElement('script');
+    s.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+    s.id  = "daum-postcode-sdk";
+    s.onload = cb;
+    document.head.appendChild(s);
+  }
+
+  // 주소 컴포넌트 바인딩 (시/도 → address1, 시/군/구 → address2)
+  function wirePicker(root){
+    if (!root) return;
+    var btn   = root.querySelector('[data-role="search"]');
+    var addr1 = root.querySelector('[data-role="addr1"]'); // th:field="*{address1}"
+    var addr2 = root.querySelector('[data-role="addr2"]'); // th:field="*{address2}"
+    if (!btn || !addr1 || !addr2) return;
+
+    btn.addEventListener('click', function(){
+      loadDaumPostcodeScript(function(){
+        new daum.Postcode({
+          oncomplete: function(data){
+            // 카카오 API: data.sido (시/도), data.sigungu (시/군/구)
+            var sido   = data.sido    || '';   // 예: 서울특별시 / 경기도
+            var sigg   = data.sigungu || '';   // 예: 강남구 / 수원시 영통구
+
+            addr1.value = sido;
+            addr2.value = sigg;
+
+            // 바인딩 이벤트 발행
+            ['change','input'].forEach(type => {
+              addr1.dispatchEvent(new Event(type, { bubbles:true }));
+              addr2.dispatchEvent(new Event(type, { bubbles:true }));
+            });
+          }
+        }).open();
+      });
+    });
+  }
+
+  // 모든 주소 컴포넌트 초기화
+  function initAll(){
+    document.querySelectorAll('.addr-picker').forEach(wirePicker);
+  }
+  window.initAddressPickers = initAll;
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
+  }
 })();

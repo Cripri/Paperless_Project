@@ -4,137 +4,145 @@
   <meta charset="UTF-8"/>
   <title>주민등록등본 신청 – 미리보기</title>
 
-  <!-- (선택) CSRF 메타: 필요 시 JS로 폼에 주입 가능 -->
+  <!-- CSRF -->
   <meta name="_csrf_parameter" th:if="${_csrf != null}" th:content="${_csrf.parameterName}"/>
   <meta name="_csrf"           th:if="${_csrf != null}" th:content="${_csrf.token}"/>
 
+  <!-- 공통 헤더/푸터 테마 -->
+  <link rel="stylesheet" href="/header-footer/css/header-footer.css"
+        th:href="@{/header-footer/css/header-footer.css}">
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="/header-footer/js/header-footer.js"
+          th:src="@{/header-footer/js/header-footer.js}" defer></script>
+
   <style>
     :root{
-      --border:#e5e7eb; --muted:#6b7280; --fg:#111827; --danger:#b91c1c; --brand:#111827; --bg:#fff;
-      --card:#f9fafb;
+      --bg:#f9f4ef; --ink:#0f172a; --muted:#6b7280;
+      --line:#e6dccf; --card:#ffffff;
+      --navy:#5b6b82; --navy-d:#4d5c70;
+      --orange:#e09a58;
+      --shadow:0 6px 16px rgba(15,23,42,.06);
+      --radius:10px;
     }
     *{box-sizing:border-box}
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--fg);background:#fff;margin:0}
-    main{max-width:1100px;margin:28px auto;padding:0 16px}
-    h1,h2{margin:6px 0 14px}
-    .subtle{color:var(--muted);font-weight:500}
-
-    .bar{
-      display:flex;align-items:center;justify-content:space-between;
-      gap:12px;margin-bottom:12px
+    body{
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg); color:var(--ink); margin:0;
     }
+    main{max-width:1100px; margin:32px auto 80px; padding:0 16px;}
 
-    .grid{
-      display:grid;grid-template-columns: minmax(320px, 1fr) minmax(520px, 2fr);
-      gap:18px;align-items:start
+    h2{margin:0 0 12px; font-weight:800; color:#0c1324;
+       border-left:6px solid var(--orange); padding-left:10px;}
+
+    .subtle{color:var(--muted); font-weight:500;}
+
+    .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+    .grid{display:grid;grid-template-columns: minmax(320px,1fr) minmax(520px,2fr);
+          gap:20px;align-items:start}
+    .card{
+      background:var(--card); border:1.5px solid var(--line);
+      border-radius:var(--radius); padding:16px;
+      box-shadow:var(--shadow);
     }
-    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px}
     .row{display:flex;gap:10px;margin:8px 0}
-    .row dt{min-width:120px;color:#374151}
-    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-    .stat{display:inline-flex;gap:6px;align-items:center;padding:3px 8px;border:1px solid var(--border);border-radius:999px;background:#fff;font-size:12px}
+    .row dt{min-width:120px;color:#374151;font-weight:600}
+    .stat{display:inline-flex;gap:6px;align-items:center;
+          padding:3px 8px;border:1px solid var(--line);
+          border-radius:999px;background:#fff;font-size:12px}
 
-    iframe{width:100%;height:860px;border:1px solid var(--border);border-radius:10px;background:#fff}
+    iframe{width:100%;height:860px;border:1.5px solid var(--line);
+           border-radius:var(--radius);background:#fff;
+           box-shadow:var(--shadow)}
 
     .btns{display:flex;gap:10px}
     .btn{
-      appearance:none;border:1px solid var(--border);background:#fff;color:var(--fg);
-      padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:600
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:10px 16px;border-radius:8px;cursor:pointer;
+      font-weight:700;text-decoration:none;transition:.2s;
+      border:1px solid var(--line); background:#fff; color:var(--ink);
     }
-    .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
-    .btn.ghost{background:#fff}
+    .btn.primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+    .btn.primary:hover{background:var(--navy-d);border-color:var(--navy-d);}
+    .btn:hover{background:#f6f7f8}
     .btn:disabled{opacity:.55;cursor:not-allowed}
 
-    .alert{background:#FEF2F2;border:1px solid #FCA5A5;color:#991B1B;border-radius:10px;padding:10px 12px;margin:12px 0}
-    .muted{color:var(--muted)}
-    @media (max-width: 980px){
+    .alert{background:#FEF2F2;border:1px solid #FCA5A5;color:#991B1B;
+           border-radius:var(--radius);padding:10px 12px;margin:12px 0}
+
+    .muted{color:var(--muted);font-size:13px}
+
+    @media (max-width:980px){
       .grid{grid-template-columns:1fr}
       iframe{height:600px}
     }
   </style>
 </head>
 <body>
-<main>
+  <!-- ✅ 헤더: main 바깥 -->
+  <div th:replace="fragments/header :: header"></div>
 
-  <div class="bar">
-    <div>
-      <h2 style="margin:0">미리보기</h2>
-      <div class="subtle">제출 전에 생성된 PDF를 확인하세요.</div>
+  <main>
+    <div class="bar">
+      <div>
+        <h2>미리보기</h2>
+        <div class="subtle">제출 전에 생성된 PDF를 확인하세요.</div>
+      </div>
     </div>
-  </div>
 
-  <!-- 서버 전송 에러가 있다면 -->
-  <div class="alert" th:if="${submitError != null}" th:text="${submitError}">제출 처리 중 오류가 발생했습니다.</div>
+    <!-- 서버 전송 에러 -->
+    <div class="alert" th:if="${submitError != null}" th:text="${submitError}">
+      제출 처리 중 오류가 발생했습니다.
+    </div>
 
-  <div class="grid">
-    <!-- 좌측: 입력 요약 -->
-    <section class="card">
-      <h3 style="margin:0 0 8px">입력 정보 요약</h3>
-      <dl class="row"><dt>성명</dt><dd th:text="${rrForm.applicantName}">-</dd></dl>
-      <dl class="row">
-        <dt>주소</dt>
-        <dd>
-          <span th:text="${rrForm.address1}">-</span>
-          <span th:text="${rrForm.address2}"></span>
-        </dd>
-      </dl>
-      <dl class="row"><dt>연락처</dt><dd th:text="${rrForm.phone}">-</dd></dl>
+    <div class="grid">
+      <!-- 좌측: 입력 요약 -->
+      <section class="card">
+        <h3 style="margin:0 0 8px">입력 정보 요약</h3>
+        <dl class="row"><dt>성명</dt><dd th:text="${rrForm.applicantName}">-</dd></dl>
+        <dl class="row"><dt>주소</dt>
+          <dd><span th:text="${rrForm.address1}">-</span> <span th:text="${rrForm.address2}"></span></dd>
+        </dl>
+        <dl class="row"><dt>연락처</dt><dd th:text="${rrForm.phone}">-</dd></dl>
+        <hr style="border:none;border-top:1px solid var(--line);margin:12px 0"/>
+        <dl class="row"><dt>전부/부분</dt>
+          <dd><span class="stat" th:text="${rrForm.includeAll} == 'ALL' ? '전부' : '부분'">전부</span></dd>
+        </dl>
+        <dl class="row"><dt>수수료 면제</dt>
+          <dd><span class="stat" th:text="${rrForm.feeExempt} == 'Y' ? '면제' : '유료'">유료</span></dd>
+        </dl>
+        <hr style="border:none;border-top:1px solid var(--line);margin:12px 0"/>
+        <div class="muted">• 내용이 다르면 아래 ‘뒤로가기(수정)’을 눌러 다시 수정하세요.</div>
+      </section>
 
-      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0"/>
+      <!-- 우측: PDF 미리보기 -->
+      <section>
+        <iframe th:src="@{|/residentregistration/preview/file/${fileId}.pdf|}" title="미리보기 PDF" id="pdfFrame"></iframe>
+        <div class="bar" style="margin-top:12px">
+          <!-- 뒤로(수정) -->
+          <form method="get" th:action="@{/residentregistration/apply}">
+            <button type="submit" class="btn">뒤로가기(수정)</button>
+          </form>
+          <!-- 제출 -->
+          <form method="post" th:action="@{/residentregistration/submit}" class="btns">
+            <input type="hidden" name="fileId" th:value="${fileId}"/>
+            <input type="hidden" th:if="${_csrf != null}"
+                   th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn primary">제출</button>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
 
-      <dl class="row">
-        <dt>전부/부분</dt>
-        <dd>
-          <span class="stat" th:text="${rrForm.includeAll} == 'ALL' ? '전부' : '부분'">전부</span>
-        </dd>
-      </dl>
-
-      <dl class="row">
-        <dt>수수료 면제</dt>
-        <dd><span class="stat" th:text="${rrForm.feeExempt} == 'Y' ? '면제' : '유료'">유료</span></dd>
-      </dl>
-
-      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0"/>
-
-      <div class="muted" style="font-size:12px">
-        • 내용이 다르면 아래 ‘뒤로가기(수정)’을 눌러 다시 수정하세요.
-      </div>
-    </section>
-
-    <!-- 우측: PDF 미리보기 -->
-    <section>
-      <iframe
-        th:src="@{|/residentregistration/preview/file/${fileId}.pdf|}"
-        title="미리보기 PDF" id="pdfFrame"></iframe>
-
-      <!-- 액션 버튼 -->
-      <div class="bar" style="margin-top:12px">
-        <!-- 뒤로(수정) -->
-        <form method="get" th:action="@{/residentregistration/apply}">
-          <button type="submit" class="btn">뒤로가기(수정)</button>
-        </form>
-
-        <!-- 제출 -->
-        <form method="post" th:action="@{/residentregistration/submit}" class="btns">
-          <input type="hidden" name="fileId" th:value="${fileId}"/>
-          <input type="hidden" th:if="${_csrf != null}"
-                 th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-          <button type="submit" class="btn primary">제출</button>
-        </form>
-      </div>
-    </section>
-  </div>
+  <!-- ✅ 푸터: main 바깥 -->
+  <div th:replace="fragments/footer :: footer"></div>
 
   <script>
-    // 간단한 UX 보강
     (function(){
       const frame = document.getElementById('pdfFrame');
       if (!frame) return;
-
       let loaded = false;
       frame.addEventListener('load', () => { loaded = true; });
-
-      // 3초 내 로드 실패 안내(네트워크/파일 누락 등)
       setTimeout(() => {
         if (!loaded) {
           const warn = document.createElement('div');
@@ -145,6 +153,5 @@
       }, 3000);
     })();
   </script>
-</main>
 </body>
 </html>

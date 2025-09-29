@@ -1,9 +1,11 @@
 package kd.paperless.controller.get;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
+@PreAuthorize("isAuthenticated()")
 public class MypageController {
 
     @GetMapping("/mypage_sinmungo")

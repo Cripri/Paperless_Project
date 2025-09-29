@@ -58,7 +58,7 @@ public class RrPdfOverlayService {
                 C1.put("address1",      170, 620);
                 C1.put("address2",      300, 620);
                 C1.put("phone",         400, 530);
-                C1.put("feeExempt_TRUE",          122, 563);
+                C1.put("feeExempt_Y",          113, 493);
 
                 try (PDPageContentStream cs =
                          new PDPageContentStream(doc, page1, PDPageContentStream.AppendMode.APPEND, true, true)) {
@@ -70,7 +70,7 @@ public class RrPdfOverlayService {
                     drawText(cs, font, 11, C1.at("address2"),      nvl(f.getAddress2()));
                     drawText(cs, font, 11, C1.at("phone"),         nvl(f.getPhone()));
 
-                    markDot(cs, font, C1.at("feeExempt_TRUE"));
+                    markIfYes(cs, font, C1, "feeExempt_Y", ynTrue(f.getFeeExempt()));
                     
                 }
 

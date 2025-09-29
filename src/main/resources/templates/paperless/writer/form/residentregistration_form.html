@@ -4,23 +4,30 @@
   <meta charset="UTF-8"/>
   <title>주민등록등본 신청서</title>
 
-  <!-- CSRF -->
+  <!-- CSRF (선택) -->
   <meta name="_csrf_parameter" th:if="${_csrf != null}" th:content="${_csrf.parameterName}"/>
   <meta name="_csrf"           th:if="${_csrf != null}" th:content="${_csrf.token}"/>
 
   <!-- 페이지 전용 스타일 -->
-  <link rel="stylesheet" th:href="@{/paperless/css/residentregistration_form.css}">
-  <!-- 페이지 스크립트 -->
-  <script src="/paperless/js/form/rr_apply.js"></script>
+  <link rel="stylesheet" href="/paperless/css/residentregistration_form.css"
+        th:href="@{/paperless/css/residentregistration_form.css}">
 
   <!-- 공통 헤더/푸터 -->
   <link rel="stylesheet" href="/header-footer/css/header-footer.css"
         th:href="@{/header-footer/css/header-footer.css}">
+
+  <!-- jQuery (필요 시) -->
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+  <!-- 다음 우편번호 (주소 검색용) -->
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+  <!-- 공통 헤더/푸터 스크립트 -->
   <script src="/header-footer/js/header-footer.js"
           th:src="@{/header-footer/js/header-footer.js}" defer></script>
 
-  
+  <!-- 페이지 스크립트 -->
+  <script src="/paperless/js/form/rr_apply.js" defer></script>
 </head>
 
 <body>
@@ -37,7 +44,7 @@
 
       <!-- 전역 에러 -->
       <div class="alert" th:if="${#fields.hasGlobalErrors()}">
-        <ul style="margin:0; padding-left:18px;">
+        <ul class="ul-reset">
           <li th:each="ge : ${#fields.globalErrors()}" th:text="${ge}"></li>
         </ul>
       </div>
@@ -53,8 +60,8 @@
       <section class="section">
         <div class="row">
           <label for="applicantName">성명</label>
-          <div style="flex:1">
-            <input id="applicantName" type="text" th:field="*{applicantName}" placeholder="홍길동"/>
+          <div class="flex-1">
+            <input id="applicantName" type="text" th:field="*{applicantName}" placeholder="홍길동" autocomplete="name"/>
             <div class="error" th:if="${#fields.hasErrors('applicantName')}" th:errors="*{applicantName}"></div>
           </div>
         </div>
@@ -62,42 +69,62 @@
         <div class="row">
           <label>주민등록번호</label>
           <div class="inline">
-            <input type="text" th:field="*{rrnFront}" maxlength="6" style="width:110px" placeholder="앞 6자리"/>
+            <input type="text" th:field="*{rrnFront}" maxlength="6" class="num-only" style="width:110px" placeholder="앞 6자리" inputmode="numeric" autocomplete="off"/>
             <span>-</span>
-            <input type="text" th:field="*{rrnBack}"  maxlength="7" style="width:120px" placeholder="뒤 7자리"/>
+            <input type="text" th:field="*{rrnBack}"  maxlength="7" class="num-only" style="width:120px" placeholder="뒤 7자리" inputmode="numeric" autocomplete="off"/>
           </div>
         </div>
         <div class="row">
           <label></label>
-          <div style="flex:1">
+          <div class="flex-1">
             <div class="error" th:if="${#fields.hasErrors('rrnFront')}" th:errors="*{rrnFront}"></div>
             <div class="error" th:if="${#fields.hasErrors('rrnBack')}"  th:errors="*{rrnBack}"></div>
           </div>
         </div>
 
-        <div class="row">
-          <label for="address1">기본 주소</label>
-          <div style="flex:1">
-            <input id="address1" type="text" th:field="*{address1}" placeholder="도로명 주소"/>
-            <div class="error" th:if="${#fields.hasErrors('address1')}" th:errors="*{address1}"></div>
-          </div>
-        </div>
+        <!-- 주소 입력 -->
+          <div class="row">
+            <label>주소</label>
+            <div class="flex-1">
+              <div class="addr-picker" data-autofocus-detail="false">
+                <div class="addr-header">
+                  <strong>주소</strong>
+                  <span class="addr-hint">버튼으로 검색하면 시/도, 시/군/구가 자동 입력됩니다</span>
+                </div>
 
-        <div class="row">
-          <label for="address2">상세 주소</label>
-          <div style="flex:1">
-            <input id="address2" type="text" th:field="*{address2}" placeholder="상세 주소"/>
-            <div class="error" th:if="${#fields.hasErrors('address2')}" th:errors="*{address2}"></div>
-          </div>
-        </div>
+                <div class="addr-row">
+                  <button type="button" class="btn addr-btn" data-role="search" id="addrSearchBtn">
+                    주소 찾기
+                  </button>
+                </div>
 
-        <div class="row">
-          <label for="phone">연락처</label>
-          <div style="flex:1">
-            <input id="phone" type="tel" th:field="*{phone}" placeholder="010-1234-5678"/>
-            <div class="error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                <!-- 시/도 = address1 -->
+                <div class="addr-row">
+                  <input type="text"
+                        class="input"
+                        data-role="addr1"
+                        th:field="*{address1}"
+                        placeholder="시/도 (예: 서울특별시 / 경기도)"
+                        readonly>
+                </div>
+
+                <!-- 시/군/구 = address2 -->
+                <div class="addr-row">
+                  <input type="text"
+                        class="input"
+                        data-role="addr2"
+                        th:field="*{address2}"
+                        placeholder="시/군/구 (예: 강남구 / 수원시 영통구)"
+                        readonly>
+                </div>
+              </div>
+
+              <!-- 검증 메시지 -->
+              <div class="error" th:if="${#fields.hasErrors('address1')}" th:errors="*{address1}"></div>
+              <div class="error" th:if="${#fields.hasErrors('address2')}" th:errors="*{address2}"></div>
+            </div>
           </div>
-        </div>
+
 
         <div class="row">
           <label>수수료 면제</label>
@@ -125,7 +152,7 @@
         <fieldset id="partialBox">
           <div class="row">
             <label>주소 변동사항</label>
-            <div style="flex:1">
+            <div class="flex-1">
               <div class="inline">
                 <label><input type="radio" th:field="*{addressHistoryMode}" value="ALL"> 전체 포함</label>
                 <label class="inline">
@@ -167,7 +194,7 @@
 
           <div class="row">
             <label>변동사유</label>
-            <div class="inline" style="flex-wrap:wrap;">
+            <div class="inline wrap">
               <label><input type="radio" th:field="*{changeReasonScope}" value="NONE"> 미포함</label>
               <label><input type="radio" th:field="*{changeReasonScope}" value="HOUSEHOLD"> 세대만</label>
               <label><input type="radio" th:field="*{changeReasonScope}" value="ALL_MEMBERS"> 세대원 전부</label>
@@ -219,11 +246,11 @@
         <h3>③ 신청인 서명</h3>
         <div class="row">
           <label>서명 이미지</label>
-          <div class="inline" style="align-items:flex-start; gap:16px;">
+          <div class="inline align-start gap-16">
             <img id="signPreview" alt="서명 미리보기"
                  th:if="*{signatureBase64} != null"
                  th:src="*{signatureBase64}"/>
-            <div class="inline" style="flex-direction:column; align-items:flex-start; gap:8px;">
+            <div class="inline column align-start gap-8">
               <button type="button" id="openSignPopup" class="btn btn-primary">서명하기(팝업)</button>
               <button type="button" id="clearSignature" class="btn btn-secondary">서명 지우기</button>
               <div class="hint">※ 팝업에서 저장하면 미리보기가 표시됩니다.</div>
@@ -231,11 +258,11 @@
           </div>
         </div>
         <input type="hidden" id="signatureBase64" th:field="*{signatureBase64}"/>
-        <input type="hidden" id="signUrl" value="/residentregistration/sign"/>
+        <input type="hidden" id="signUrl" value="/residentregistration/sign" th:value="@{/residentregistration/sign}"/>
       </section>
 
       <div class="actions">
-        <a href="/" class="btn btn-secondary" style="text-decoration:none;">뒤로</a>
+        <a href="/" class="btn btn-secondary linklike" th:href="@{/}">뒤로</a>
         <button type="submit" class="btn btn-primary">미리보기</button>
       </div>
     </form>
