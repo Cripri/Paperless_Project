@@ -42,7 +42,7 @@ a{ color:inherit; text-decoration:none; }
   /* 배경 이미지 유지하고 톤 맞추는 블렌드 */
   background:
     linear-gradient(0deg, rgba(249,244,239,.94), rgba(249,244,239,.94)),
-    url("/main/images/Penguhandsup.png") no-repeat;
+    url("/main/images/Pengu.png") no-repeat;
   border: 2px solid var(--border);
   box-shadow: 0 6px 16px rgba(0,0,0,.06);
   display: grid;
