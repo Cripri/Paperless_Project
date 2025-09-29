@@ -18,7 +18,6 @@
       $$('#partialBox input, #partialBox select, #partialBox textarea, #partialBox button')
         .forEach(el => disable ? el.setAttribute('disabled','disabled')
                                : el.removeAttribute('disabled'));
-      // disabled여도 서버로 값 보내려면 제출 직전 잠깐 풀어줌(아래 submit 훅에서 처리)
     }
     includeAllRadios.forEach(r => r.addEventListener('change', refreshPartial));
 
@@ -34,47 +33,99 @@
     refreshPartial();
     toggleYears();
 
-    // 서명 팝업
-    const signPreview     = $('#signPreview');
-    const signatureBase64 = $('#signatureBase64');
+    // === 서명 팝업 ===
+    let signPopup;
     const openBtn         = $('#openSignPopup');
     const clearBtn        = $('#clearSignature');
     const signUrl         = $('#signUrl')?.value || '/residentregistration/sign';
-    let signPopup;
+    const signatureBase64 = $('#signatureBase64');
 
+    // ▼ 서명 미리보기 보장: 없으면 즉석 생성 + 위치 삽입
+    function ensurePreview() {
+      let preview = $('#signPreview');
+      if (preview) return preview;
+
+      // 프리뷰를 넣을 자리를 찾는다 (버튼 블록 바로 앞)
+      const btnBlock = $('#openSignPopup')?.closest('.inline');
+      // 버튼 블록 상위 .inline(두 줄짜리 컨테이너) 내 맨 앞에 이미지가 오도록
+      const container = btnBlock?.parentElement; // label과 나란히 있는 inline 컨테이너
+      // 기존 마크업: <div class="inline" style="align-items:flex-start; gap:16px;">
+      //   <img id="signPreview" ...>
+      //   <div class="inline" ...>버튼들...</div>
+      // </div>
+
+      preview = document.createElement('img');
+      preview.id = 'signPreview';
+      preview.alt = '서명 미리보기';
+      preview.style.width = '220px';
+      preview.style.height = '120px';
+      preview.style.border = '1px solid #e5e7eb';
+      preview.style.background = '#fff';
+      preview.style.objectFit = 'contain';
+      preview.style.borderRadius = '6px';
+
+      if (container) {
+        container.insertBefore(preview, container.firstChild);
+      } else if (btnBlock) {
+        btnBlock.prepend(preview);
+      } else {
+        // 최후 수단: 폼 맨 앞에 붙임
+        form.prepend(preview);
+      }
+      return preview;
+    }
+
+    // ▼ 서명 수신 → hidden 저장 + 프리뷰 즉시 갱신
+    function setSignature(dataUrl) {
+      if (signatureBase64) signatureBase64.value = dataUrl;
+      const preview = ensurePreview();
+      preview.src = dataUrl;
+
+      // 접근성: 새 이미지가 로드되면 포커스 힌트
+      preview.onload = () => {
+        preview.setAttribute('tabindex', '-1');
+        preview.focus?.();
+      };
+    }
+
+    // 팝업 열기
     openBtn?.addEventListener('click', () => {
       const w=480, h=360, left=Math.round((screen.width-w)/2), top=Math.round((screen.height-h)/2);
-      signPopup = window.open(signUrl, 'signPopup',
-        `width=${w},height=${h},left=${left},top=${top},resizable=no,scrollbars=no`);
+      signPopup = window.open(
+        signUrl,
+        'signPopup',
+        `width=${w},height=${h},left=${left},top=${top},resizable=no,scrollbars=no`
+      );
       if (!signPopup) alert('팝업이 차단되었습니다. 팝업 허용 후 다시 시도하세요.');
     });
 
+    // postMessage 수신 (권장 방식)
     window.addEventListener('message', (e) => {
       const msg = e.data;
       if (!msg || msg.type !== 'SIGN_DONE' || !msg.dataUrl) return;
-      if (signPreview) signPreview.src = msg.dataUrl;
-      if (signatureBase64) signatureBase64.value = msg.dataUrl;
+      setSignature(msg.dataUrl);
       try { signPopup?.close(); } catch(_) {}
     });
 
+    // (대안) 팝업이 window.opener.setSignature() 직접 호출하는 경우도 지원
+    // 전역에 노출
+    window.setSignature = setSignature;
+
+    // 지우기
     clearBtn?.addEventListener('click', () => {
-      signPreview?.removeAttribute('src');
+      const preview = $('#signPreview');
+      if (preview) preview.removeAttribute('src');
       if (signatureBase64) signatureBase64.value = '';
     });
 
-    // 제출 직전 정리:
-    //  - 체크박스: 미체크는 N, 체크는 Y만 남기기
-    //  - disabled 일시 해제하여 값 누락 방지
-    //  - CSRF 메타 → hidden 보강(템플릿에 이미 있더라도 중복 방지)
+    // 제출 직전 정리
     form.addEventListener('submit', () => {
-      // 1) 체크박스 Y/N 일관화
+      // 체크박스 Y/N 일관화
       const checkboxNames = new Set($$('input[type="checkbox"][name]').map(cb => cb.name));
-      // 이미 템플릿의 hidden(N) 이 들어있을 수 있으므로, 중복 hidden 정리
       $$('input[type="hidden"]').forEach(h => {
         const keep = new Set(['docType','consentYn','extraJson','signUrl','signatureBase64']);
         if (!keep.has(h.name) && checkboxNames.has(h.name) && h.disabled) h.remove();
       });
-      // 미체크 → N hidden 추가
       checkboxNames.forEach(name => {
         const cb = $(`input[type="checkbox"][name="${name}"]`);
         if (!cb) return;
@@ -83,19 +134,18 @@
           h.type='hidden'; h.name=name; h.value='N';
           form.appendChild(h);
         } else {
-          // 체크되면 값은 Y로 보장
           cb.value = 'Y';
         }
       });
 
-      // 2) disabled 일시 해제(ALL일 때 partialBox 내부가 disabled인 경우 포함)
+      // disabled 일시 해제
       const disabled = $$('[disabled]', form);
       disabled.forEach(el => { el.dataset.wasDisabled='1'; el.removeAttribute('disabled'); });
       setTimeout(() => disabled.forEach(el => {
         if (el.dataset.wasDisabled) { el.setAttribute('disabled','disabled'); el.removeAttribute('data-was-disabled'); }
       }), 0);
 
-      // 3) CSRF 보강
+      // CSRF 보강
       const csrfParam = document.querySelector('meta[name="_csrf_parameter"]')?.content;
       const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
       if (csrfParam && csrfToken && !$(`input[name="${csrfParam}"]`)) {

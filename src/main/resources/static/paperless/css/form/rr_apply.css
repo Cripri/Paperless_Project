@@ -1,7 +1,0 @@
-.section {border:1px solid #e5e7eb; padding:16px; border-radius:10px; margin:16px 0;}
-.row {display:grid; grid-template-columns: 160px 1fr; gap:12px; align-items:center; margin:10px 0;}
-.hint {color:#6b7280; font-size:12px;}
-.inline {display:flex; gap:8px; align-items:center;}
-.subtle {color:#374151; font-weight:600; margin:8px 0}
-fieldset {border:0; padding:0; margin:0}
-.disabled {opacity: .6; pointer-events: none;}

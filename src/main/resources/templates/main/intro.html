@@ -31,33 +31,37 @@
             <span>종이없는 행정<br>민원 작성 도우미</span>
             <div class="button">바로가기</div>
           </div>
-          <div class="gnare"><img src="/main/images/Penguhandsup.png" alt="" width="200px"></div>
+          <div class="gnare"><img src="/main/images/Pengu.png" alt="" width="200px"></div>
         </a>
       </div>
 
       <!-- 오른쪽 링크 + 공지 -->
       <div class="intro-info-right">
         <div class="intro-right-links">
-          <a href="">
+          <a href="/portal">
             <div class="ico depart">
-              <img src="/main/images/depart_ico.png" alt="부서안내 아이콘">
+              <img src="/main/images/service_ico.png" alt="메인 홈페이지">
             </div>
-            <span>부서안내</span>
+            <span>메인 홈페이지</span>
           </a>
           <a href="" target="_blank" title="새창 열림">
             <div class="ico kakao">
               <img src="/main/images/kakao_ico.png" alt="카카오 아이콘">
             </div>
-            <span>노원민원톡톡</span>
+            <span>민원 톡톡</span>
           </a>
         </div>
 
         <div class="notice-box">
           <h3>공지사항</h3>
           <ul>
-            <li><a href="#">[공지] 1번</a></li>
-            <li><a href="#">[안내] 2번</a></li>
-            <li><a href="#">[알림] 3번</a></li>
+            <li th:each="it : ${items}">
+              <a th:href="@{|/notice/detail/${it.noticeId}|}">
+                <span class="title" th:text="${it.title}">제목</span>
+                <span class="date" th:text="${#temporals.format(it.createdAt,'yyyy-MM-dd')}">2025-09-26</span>
+              </a>
+            </li>
+            <li th:if="${#lists.isEmpty(items)}">공지사항이 없습니다.</li>
           </ul>
         </div>
       </div>
@@ -93,9 +97,9 @@
         <div class="benner">
           <div class="slider" id="banner-slider">
             <div class="slides">
-              <div class="slide"><img src="/main/images/banner_1.png" alt="배너1"></div>
-              <div class="slide"><img src="/main/images/banner_1.png" alt="배너2"></div>
-              <div class="slide"><img src="/main/images/banner_1.png" alt="배너3"></div>
+              <div class="slide"><img src="/main/images/goodsshops.png" alt="배너1"></div>
+              <div class="slide"><img src="/main/images/goodsshops.png" alt="배너2"></div>
+              <div class="slide"><img src="/main/images/goodsshops.png" alt="배너3"></div>
             </div>
             <button class="nav prev" aria-label="이전">
               <i class="fa-solid fa-chevron-left"></i>

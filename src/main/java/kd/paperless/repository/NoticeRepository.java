@@ -1,5 +1,7 @@
 package kd.paperless.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,4 +26,13 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
 
   @Query(value = "select min(n.notice_id) from notice n where n.status='POSTED' and n.notice_id > :id", nativeQuery = true)
   Long findNextId(@Param("id") Long id);
+
+   @Query("""
+    SELECT n
+    FROM Notice n
+    WHERE n.status = 'POSTED'
+    ORDER BY CASE WHEN n.isPinned = 'Y' THEN 0 ELSE 1 END,
+             n.createdAt DESC, n.noticeId DESC
+  """)
+  List<Notice> findPostedTop(Pageable pageable); // Page 말고 List로
 }
