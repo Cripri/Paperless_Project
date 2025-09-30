@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>여권 (재)발급 신청</title>
+
+  <!-- CSRF (선택) -->
+  <meta name="_csrf_parameter" th:if="${_csrf != null}" th:content="${_csrf.parameterName}"/>
+  <meta name="_csrf"           th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+
+  <!-- 공통 헤더/푸터 -->
+  <link rel="stylesheet" href="/header-footer/css/header-footer.css"
+        th:href="@{/header-footer/css/header-footer.css}">
+
+  <!-- 페이지 전용 스타일 -->
+  <link rel="stylesheet" href="/paperless/css/passport_form.css"
+        th:href="@{/paperless/css/passport_form.css}">
+
+  <!-- jQuery (필요 시) -->
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+  <!-- 다음 우편번호 (주소 검색용) -->
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" async defer></script>
+
+  <!-- 공통 헤더/푸터 스크립트 -->
+  <script src="/header-footer/js/header-footer.js"
+          th:src="@{/header-footer/js/header-footer.js}" defer></script>
+
+  <!-- 페이지 스크립트 -->
+  <script src="/paperless/js/form/passport_apply.js" defer></script>
+</head>
+
+<body>
+  <!-- ✅ 헤더는 main 밖(전폭) -->
+  <div th:replace="~{fragments/header :: header}"></div>
+
+  <main>
+    <h2>여권 (재)발급 신청</h2>
+
+    <form id="passport-form"
+          method="post"
+          enctype="multipart/form-data"
+          th:action="@{/passport/preview}"
+          th:object="${passportForm}">
+
+      <!-- 전역 에러 -->
+      <div class="alert" th:if="${#fields.hasGlobalErrors()}">
+        <ul class="ul-reset">
+          <li th:each="ge : ${#fields.globalErrors()}" th:text="${ge}"></li>
+        </ul>
+      </div>
+
+      <!-- CSRF -->
+      <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+      <!-- 메타 -->
+      <input type="hidden" name="docType" value="passport_reissue"/>
+
+      <!-- ① 기본 선택 -->
+      <section class="section">
+        <h3>① 기본 선택</h3>
+
+        <div class="row">
+          <label>여권 종류</label>
+          <div class="inline wrap">
+            <label><input type="radio" th:field="*{passportType}" value="NORMAL"    checked> 일반</label>
+            <label><input type="radio" th:field="*{passportType}" value="OFFICIAL"> 관용</label>
+            <label><input type="radio" th:field="*{passportType}" value="DIPLOMAT"> 외교관</label>
+            <label><input type="radio" th:field="*{passportType}" value="EMERGENCY"> 긴급</label>
+            <label class="inline">
+              <input type="radio" th:field="*{passportType}" value="TRAVEL_CERT"> 여행증명서
+              <span class="hint">선택 시 왕복/편도 선택</span>
+            </label>
+          </div>
+          <div class="error" th:if="${#fields.hasErrors('passportType')}" th:errors="*{passportType}"></div>
+        </div>
+
+        <!-- 여행증명서일 때만 노출 -->
+        <div class="row travel-mode" id="travelModeRow">
+          <label>여행증명서 구분</label>
+          <div class="inline">
+            <label><input type="radio" th:field="*{travelMode}" value="ROUND"> 왕복</label>
+            <label><input type="radio" th:field="*{travelMode}" value="ONEWAY"> 편도</label>
+          </div>
+          <div class="error" th:if="${#fields.hasErrors('travelMode')}" th:errors="*{travelMode}"></div>
+        </div>
+
+        <div class="row">
+          <label>면수</label>
+          <div class="inline">
+            <label><input type="radio" th:field="*{pageCount}" value="26" checked> 26면</label>
+            <label><input type="radio" th:field="*{pageCount}" value="58"> 58면</label>
+          </div>
+          <div class="error" th:if="${#fields.hasErrors('pageCount')}" th:errors="*{pageCount}"></div>
+        </div>
+
+        <div class="row">
+          <label>기간</label>
+          <div class="inline wrap">
+            <label><input type="radio" th:field="*{validity}" value="10Y" checked> 10년</label>
+            <label><input type="radio" th:field="*{validity}" value="1Y_SINGLE"> 단수 1년</label>
+            <label><input type="radio" th:field="*{validity}" value="REMAINING"> 잔여기간</label>
+          </div>
+          <div class="error" th:if="${#fields.hasErrors('validity')}" th:errors="*{validity}"></div>
+        </div>
+
+        <div class="row">
+          <label>사진 (첨부)</label>
+          <div class="inline column align-start gap-8">
+            <input id="photoFile" name="photoFile" type="file" accept="image/*">
+            <div class="hint">기준: 최근 6개월, 3.5×4.5cm, 배경 흰색 권장</div>
+            <img id="photoPreview" alt="사진 미리보기" style="display:none;" />
+            <div class="error" th:if="${#fields.hasErrors('photoFile')}" th:errors="*{photoFile}"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ② 인적 사항 -->
+      <section class="section">
+        <h3>② 인적 사항</h3>
+
+        <div class="row">
+          <label for="koreanName">한글 성명</label>
+          <div class="flex-1">
+            <input id="koreanName" type="text" th:field="*{koreanName}" placeholder="홍길동" autocomplete="name">
+            <div class="error" th:if="${#fields.hasErrors('koreanName')}" th:errors="*{koreanName}"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>주민등록번호</label>
+          <div class="inline">
+            <input type="text" th:field="*{rrnFront}" maxlength="6" class="num-only" style="width:110px" placeholder="앞 6자리" inputmode="numeric" autocomplete="off">
+            <span>-</span>
+            <input type="text" th:field="*{rrnBack}" maxlength="7" class="num-only" style="width:120px" placeholder="뒤 7자리" inputmode="numeric" autocomplete="off">
+          </div>
+        </div>
+        <div class="row">
+          <label></label>
+          <div class="flex-1">
+            <div class="error" th:if="${#fields.hasErrors('rrnFront')}" th:errors="*{rrnFront}"></div>
+            <div class="error" th:if="${#fields.hasErrors('rrnBack')}" th:errors="*{rrnBack}"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="phone">본인 연락처</label>
+          <div class="flex-1">
+            <input id="phone" type="tel" th:field="*{phone}" placeholder="010-1234-5678" inputmode="tel">
+            <div class="error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>긴급 연락처</label>
+          <div class="grid-3">
+            <input type="text" th:field="*{emergencyName}" placeholder="성명">
+            <input type="text" th:field="*{emergencyRelation}" placeholder="관계 (예: 배우자/부모/자녀)">
+            <input type="tel"  th:field="*{emergencyPhone}" placeholder="전화번호">
+          </div>
+          <div class="flex-1">
+            <div class="error" th:if="${#fields.hasErrors('emergencyName')}" th:errors="*{emergencyName}"></div>
+            <div class="error" th:if="${#fields.hasErrors('emergencyRelation')}" th:errors="*{emergencyRelation}"></div>
+            <div class="error" th:if="${#fields.hasErrors('emergencyPhone')}" th:errors="*{emergencyPhone}"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>영문 성명</label>
+          <div class="grid-2">
+            <input type="text" th:field="*{engLastName}"  placeholder="성 (LAST NAME) — 대문자">
+            <input type="text" th:field="*{engFirstName}" placeholder="이름 (FIRST NAME) — 대문자">
+          </div>
+          <div class="flex-1">
+            <div class="error" th:if="${#fields.hasErrors('engLastName')}" th:errors="*{engLastName}"></div>
+            <div class="error" th:if="${#fields.hasErrors('engFirstName')}" th:errors="*{engFirstName}"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="spouseEngLastName">배우자의 영문 성</label>
+          <div class="flex-1">
+            <input id="spouseEngLastName" type="text" th:field="*{spouseEngLastName}" placeholder="선택 입력">
+            <div class="hint">혼인으로 성 변경 등을 증빙 시 참고</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>점자여권</label>
+          <div class="inline">
+            <label><input type="radio" th:field="*{braillePassport}" value="Y"> 희망</label>
+            <label><input type="radio" th:field="*{braillePassport}" value="N" checked> 희망 안 함</label>
+          </div>
+          <div class="error" th:if="${#fields.hasErrors('braillePassport')}" th:errors="*{braillePassport}"></div>
+        </div>
+      </section>
+
+      <!-- ③ 우편 배송 서비스 -->
+      <section class="section">
+        <h3>③ 우편 배송 서비스</h3>
+
+        <div class="row">
+          <label>우편배송 희망</label>
+          <div class="inline">
+            <label><input type="radio" th:field="*{deliveryWanted}" value="Y"> 희망</label>
+            <label><input type="radio" th:field="*{deliveryWanted}" value="N" checked> 희망 안 함</label>
+          </div>
+          <div class="error" th:if="${#fields.hasErrors('deliveryWanted')}" th:errors="*{deliveryWanted}"></div>
+        </div>
+
+        <fieldset id="deliveryBox" class="delivery-box">
+          <div class="row">
+            <label>수령 주소</label>
+            <div class="flex-1">
+              <div class="addr-picker">
+                <div class="addr-row">
+                  <input type="text" class="input addr-post" th:field="*{deliveryPostcode}" placeholder="우편번호" readonly>
+                  <button type="button" class="btn addr-btn" data-role="search">주소 찾기</button>
+                </div>
+
+                <div class="addr-row">
+                  <input type="text" class="input" th:field="*{deliveryAddress1}" placeholder="기본주소" readonly>
+                </div>
+
+                <div class="addr-row">
+                  <input type="text" class="input" th:field="*{deliveryAddress2}" placeholder="상세주소">
+                </div>
+              </div>
+
+              <div class="error" th:if="${#fields.hasErrors('deliveryPostcode')}" th:errors="*{deliveryPostcode}"></div>
+              <div class="error" th:if="${#fields.hasErrors('deliveryAddress1')}" th:errors="*{deliveryAddress1}"></div>
+              <div class="error" th:if="${#fields.hasErrors('deliveryAddress2')}" th:errors="*{deliveryAddress2}"></div>
+            </div>
+          </div>
+        </fieldset>
+      </section>
+
+      <div class="actions">
+        <a href="/" class="btn btn-secondary linklike" th:href="@{/}">뒤로</a>
+        <button type="submit" class="btn btn-primary">미리보기</button>
+      </div>
+    </form>
+  </main>
+
+  <!-- ✅ 푸터도 main 밖(전폭) -->
+  <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
