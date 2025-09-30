@@ -9,6 +9,8 @@
     <link rel="stylesheet" th:href="@{/header-footer/css/header-footer.css}">
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script th:src="@{/portal/js/header.js}"></script>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 
 <body>
@@ -36,7 +38,7 @@
                                 <tbody>
                                     <tr>
                                         <th>아이디</th>
-                                        <td>(유저ID)</td>
+                                        <td th:text="${userId}">(유저ID)</td>
                                     </tr>
                                     <tr>
                                         <th><label for="pw">비밀번호</label></th>
@@ -48,7 +50,7 @@
                         </div>
                     </div>
                     <div class="gray_bg_box">
-                        <p class="normal_txt align-c">외부로부터 [ <strong class="text-red02">(유저ID)</strong> ]님의 정보를 안전하게
+                        <p class="normal_txt align-c">외부로부터 [ <strong class="text-red02" th:text="${userId}">(유저ID)</strong> ]님의 정보를 안전하게
                             보호하기 위해 비밀번호를 다시 한 번 확인 합니다.</p>
                         <p class="normal_txt align-c">항상 비밀번호는 타인에게 노출되지 않도록 주의해 주세요.</p>
 
@@ -91,7 +93,7 @@
                         <tbody>
                             <tr>
                                 <th>아이디</th>
-                                <td>(유저ID)</td>
+                                <td th:text="${userId}">(유저ID)</td>
                             </tr>
                         </tbody>
                     </table>
@@ -201,8 +203,7 @@
                     </table>
                 </div>
             </div>
-            <!-- 중랑구 알림서비스 -->
-            <h2 class="bu_t1 top20">중랑구 알림서비스</h2>
+            <h2 class="bu_t1 top20">팽구 알림서비스</h2>
             <div class="table_wrap">
                 <div class="table_type03">
                     <table class="none_head write_table">
@@ -216,7 +217,7 @@
                                 <th><label for="newsReceive1"><span class="redDot">*</span> 이메일 수신여부</label></th>
                                 <td>
                                     <p>
-                                        중랑구청에서 발간하는 각종 소식을 받아보시겠습니까?<br />
+                                        팽구청에서 발간하는 각종 소식을 받아보시겠습니까?<br />
                                     </p>
                                 </td>
                                 <td>
@@ -235,7 +236,7 @@
                                 <th><label for="smsReceive1"><span class="redDot">*</span> 문자 수신여부</label></th>
                                 <td>
                                     <p>
-                                        중랑구청 SMS서비스를 신청하시겠습니까?<br />
+                                        팽구청 SMS서비스를 신청하시겠습니까?<br />
                                         * SMS는 개인정보 연락처란에 휴대폰 번호의 등록이 필요하며, 해당 휴대폰 번호로 서비스 됩니다
                                     </p>
                                 </td>
@@ -342,45 +343,48 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
-<!-- 일단 아직 db 없어서 나중에 db연결하고 써먹겠슨 -->
-<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(function () {
-    // 처음에는 txt_box 숨기기
-    $(".txt_box").hide();
+  // 처음에는 txt_box 숨기기
+  $(".txt_box").hide();
 
-    // 비밀번호 확인 폼 submit 이벤트
-    $("#container form").on("submit", function (e) {
-        e.preventDefault(); // 기본 제출 막기
+  // CSRF 준비
+  const token  = document.querySelector('meta[name="_csrf"]')?.content;
+  const header = document.querySelector('meta[name="_csrf_header"]')?.content;
 
-        var pw = $("#pw").val();
+  $("#container form").on("submit", function (e) {
+    e.preventDefault();
 
-        if (!pw) {
-            alert("비밀번호를 입력해주세요.");
-            return false;
+    var pw = $("#pw").val();
+    if (!pw) {
+      alert("비밀번호를 입력해주세요.");
+      return false;
+    }
+
+    $.ajax({
+      url: "/portal/member/checkPw.do",
+      type: "POST",
+      data: { password: pw },
+      beforeSend: function(xhr) {
+        if (token && header) xhr.setRequestHeader(header, token);
+      },
+      success: function (res) {
+        if (res === "OK" || res.success) {
+          $("#container").hide();
+          $(".txt_box").fadeIn();
+        } else {
+          alert(res.message || "비밀번호가 올바르지 않습니다.");
         }
-
-        $.ajax({
-            url: "/portal/member/checkPw.do", // ★ 서버의 비밀번호 확인 API 주소
-            type: "POST",
-            data: { password: pw, userId: "ruby3163" },
-            success: function (res) {
-                // 서버 응답이 true/false라고 가정
-                if (res === "OK" || res.success) {
-                    // 비밀번호 맞음 → .txt_box 보여주기
-                    $("#container").hide();
-                    $(".txt_box").fadeIn();
-                } else {
-                    alert("비밀번호가 올바르지 않습니다.");
-                }
-            },
-            error: function () {
-                alert("서버와 통신 중 오류가 발생했습니다.");
-            }
-        });
+      },
+      error: function () {
+        alert("서버와 통신 중 오류가 발생했습니다.");
+      }
     });
+  });
 });
-</script> -->
+</script>
 </body>
 
 </html>
