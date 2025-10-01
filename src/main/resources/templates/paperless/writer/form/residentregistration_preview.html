@@ -79,7 +79,7 @@
 </head>
 <body>
   <!-- ✅ 헤더: main 바깥 -->
-  <div th:replace="fragments/header :: header"></div>
+  <div th:replace="~{fragments/header :: header}"></div>
 
   <main>
     <div class="bar">
@@ -135,7 +135,7 @@
   </main>
 
   <!-- ✅ 푸터: main 바깥 -->
-  <div th:replace="fragments/footer :: footer"></div>
+  <div th:replace="~{fragments/footer :: footer}"></div>
 
   <script>
     (function(){
