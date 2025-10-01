@@ -2,9 +2,10 @@
 
 /* ===== 전역 ===== */
 body {
-  background: #f9f4ef; /* 통일된 배경 */
+  background: #f9f4ef;
+  /* 통일된 배경 */
   color: #0f172a;
-  font-family: "맑은 고딕","Malgun Gothic",sans-serif;
+  font-family: "맑은 고딕", "Malgun Gothic", sans-serif;
   margin: 0;
 }
 
@@ -20,7 +21,8 @@ body {
   font-weight: 800;
   margin: 10px 0 24px;
   color: #0c1324;
-  border-left: 6px solid #e09a58; /* 주황 포인트 */
+  border-left: 6px solid #e09a58;
+  /* 주황 포인트 */
   padding-left: 10px;
 }
 
@@ -29,6 +31,7 @@ body {
   margin-top: -8px;
   font-size: 14px;
 }
+
 .help-top a {
   color: #5b6b82;
   text-decoration: none;
@@ -38,7 +41,10 @@ body {
   background: #fff;
   transition: .2s;
 }
-.help-top a:hover { background: #faf7f2; }
+
+.help-top a:hover {
+  background: #faf7f2;
+}
 
 /* ===== 폼 카드 ===== */
 .form-card {
@@ -46,13 +52,14 @@ body {
   border-radius: 10px;
   overflow: hidden;
   background: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .05);
 }
 
 .form-table {
   width: 100%;
   border-collapse: collapse;
 }
+
 .form-table th,
 .form-table td {
   border-bottom: 1px solid #e6e9ed;
@@ -60,6 +67,7 @@ body {
   vertical-align: middle;
   font-size: 14px;
 }
+
 .form-table th {
   width: 160px;
   background: #faf7f2;
@@ -67,9 +75,11 @@ body {
   color: #374151;
   text-align: left;
 }
+
 .req::before {
   content: "· ";
-  color: #e53935; /* 강조 빨강 */
+  color: #e53935;
+  /* 강조 빨강 */
   font-weight: 800;
 }
 
@@ -84,17 +94,32 @@ body {
   padding: 8px 10px;
   font: inherit;
 }
+
 .textarea {
   min-height: 220px;
   resize: vertical;
 }
-.input::placeholder { color: #999; }
 
-.row { display: flex; gap: 10px; }
-.row .col { flex: 1; }
+.input::placeholder {
+  color: #999;
+}
 
-.addr-row .addr-input { flex: 1; }
-.addr-row .addr-btn { white-space: nowrap; }
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.row .col {
+  flex: 1;
+}
+
+.addr-row .addr-input {
+  flex: 1;
+}
+
+.addr-row .addr-btn {
+  white-space: nowrap;
+}
 
 /* ===== 옵션 ===== */
 .options {
@@ -103,7 +128,12 @@ body {
   align-items: center;
   flex-wrap: wrap;
 }
-.options label { display: inline-flex; gap: 6px; align-items: center; }
+
+.options label {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
 
 /* ===== 버튼 ===== */
 .btn {
@@ -119,27 +149,41 @@ body {
   cursor: pointer;
   transition: .2s;
 }
-.btn:hover { background: #f2f2f2; }
+
+.btn:hover {
+  background: #f2f2f2;
+}
 
 .btn-primary {
-  background: #5b6b82;   /* 네이비 */
+  background: #5b6b82;
+  /* 네이비 */
   border-color: #5b6b82;
   color: #fff;
 }
-.btn-primary:hover { filter: brightness(1.1); }
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+}
 
 .btn-warn {
-  background: #e09a58;   /* 주황 */
+  background: #e09a58;
+  /* 주황 */
   border-color: #e09a58;
   color: #fff;
 }
-.btn-warn:hover { filter: brightness(1.05); }
+
+.btn-warn:hover {
+  filter: brightness(1.05);
+}
 
 .btn-cancel {
   background: #eee;
   border-color: #ddd;
 }
-.btn-cancel:hover { background: #e2e2e2; }
+
+.btn-cancel:hover {
+  background: #e2e2e2;
+}
 
 .actions {
   display: flex;
@@ -162,11 +206,13 @@ body {
   background: #fff;
   margin-top: 8px;
 }
+
 .uploader-top {
   display: flex;
   align-items: center;
   gap: 12px;
 }
+
 .dropzone {
   flex: 1;
   border: 1px dashed #cbd5e1;
@@ -181,6 +227,7 @@ body {
   background: #fafafa;
   transition: all .15s ease;
 }
+
 .dropzone.hover {
   background: #fff7f2;
   border-color: #e09a58;
@@ -201,6 +248,7 @@ body {
   flex-direction: column;
   gap: 8px;
 }
+
 .file-item {
   display: flex;
   align-items: center;
@@ -211,7 +259,14 @@ body {
   border-radius: 10px;
   background: #fafafa;
 }
-.file-name { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
+.file-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
 .file-name .badge {
   font-size: 11px;
   background: #e2e8f0;
@@ -219,6 +274,7 @@ body {
   padding: 2px 6px;
   border-radius: 999px;
 }
+
 .file-title {
   font-size: 14px;
   color: #0f172a;
@@ -227,7 +283,11 @@ body {
   text-overflow: ellipsis;
   max-width: 520px;
 }
-.file-size { font-size: 12px; color: #64748b; }
+
+.file-size {
+  font-size: 12px;
+  color: #64748b;
+}
 
 .file-remove {
   border: none;
@@ -237,6 +297,7 @@ body {
   border-radius: 8px;
   cursor: pointer;
 }
+
 .file-remove:hover {
   background: #fee2e2;
 }
@@ -248,8 +309,42 @@ body {
   gap: 8px;
   font-size: 14px;
 }
+
 .agree a {
   color: #5b6b82;
   text-decoration: underline;
 }
-.agree a:hover { color: #e09a58; }
+
+.agree a:hover {
+  color: #e09a58;
+}
+
+.options input[name="noticeEmail"] {
+  width: 260px;
+  max-width: 100%;
+}
+
+.addr-row #postCode {
+  width: 120px;
+}
+
+.addr-row #addr1 {
+  flex: 1;
+  min-width: 0;
+}
+
+.addr-row #addr2 {
+  width: 220px;
+}
+
+.form-table td .input,
+.form-table td .select,
+.form-table td .textarea {
+  box-sizing: border-box;
+  width: calc(100%);
+}
+
+.form-table td .row .input {
+  box-sizing: border-box;
+  width: calc(100%);
+}
