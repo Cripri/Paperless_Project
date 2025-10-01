@@ -233,62 +233,6 @@
                     </table>
                 </div>
             </div>
-
-            <!-- 알림 수신 설정 -->
-            <h2 class="bu_t1 top20">팽구 알림서비스</h2>
-            <div class="table_wrap">
-                <div class="table_type03">
-                    <table class="none_head write_table">
-                        <colgroup>
-                            <col style="width:15%;">
-                            <col style="width:65%;">
-                            <col style="width:20%;">
-                        </colgroup>
-                        <tbody>
-                            <tr>
-                                <th><label for="newsReceive1"><span class="redDot">*</span> 이메일 수신여부</label></th>
-                                <td>
-                                    <p>팽구청에서 발간하는 각종 소식을 받아보시겠습니까?</p>
-                                </td>
-                                <td>
-                                    <span class="label_box">
-                                        <input type="radio" id="newsReceive1" name="newsReceive" value="Y"
-                                            class="input_radio" th:checked="${emailReceive}" />
-                                        <label for="newsReceive1">예</label>
-                                    </span>
-                                    <span class="label_box">
-                                        <input type="radio" id="newsReceive2" name="newsReceive" value="N"
-                                            class="input_radio" th:checked="${!emailReceive}" />
-                                        <label for="newsReceive2">아니오</label>
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th><label for="smsReceive1"><span class="redDot">*</span> 문자 수신여부</label></th>
-                                <td>
-                                    <p>
-                                        팽구청 SMS서비스를 신청하시겠습니까?<br />
-                                        * SMS는 개인정보 연락처란에 휴대폰 번호의 등록이 필요하며, 해당 휴대폰 번호로 서비스 됩니다
-                                    </p>
-                                </td>
-                                <td>
-                                    <span class="label_box">
-                                        <input type="radio" id="smsReceive1" name="smsReceive" value="Y"
-                                            class="input_radio" th:checked="${smsReceive}" />
-                                        <label for="smsReceive1">예</label>
-                                    </span>
-                                    <span class="label_box">
-                                        <input type="radio" id="smsReceive2" name="smsReceive" value="N"
-                                            class="input_radio" th:checked="${!smsReceive}" />
-                                        <label for="smsReceive2">아니오</label>
-                                    </span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
             <div class="btn_set center_btn">
                 <button type="submit" class="btn btn-sm btn-blue">수정</button>
                 <a href="" class="btn btn-sm btn-darkgray">수정취소</a>

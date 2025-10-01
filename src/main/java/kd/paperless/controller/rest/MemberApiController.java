@@ -3,7 +3,6 @@ package kd.paperless.controller.rest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import kd.paperless.account.PasswordPolicyUtil;

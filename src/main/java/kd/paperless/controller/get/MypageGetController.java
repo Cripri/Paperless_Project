@@ -21,46 +21,14 @@ public class MypageGetController {
     private final PaperlessDocRepository paperlessDocRepository;
     private final UserRepository userRepository;
 
-    // @GetMapping("/mypage_myInfoEdit")
-    // public String mypage_myInfoEdit(@AuthenticationPrincipal(expression = "username") String loginId, Model model) {
-    //     if (loginId == null)
-    //         return "redirect:/login";
-    //     User user = userRepository.findByLoginId(loginId).orElseThrow();
-    //     model.addAttribute("user", user);
-    //     model.addAttribute("userId", user.getLoginId());
-    //     model.addAttribute("userName", user.getUserName());
-    //     return "mypage/mypage_myInfoEdit";
-    // }
-
     @GetMapping("/mypage_myInfoEdit")
-    public String mypage_myInfoEdit(@AuthenticationPrincipal(expression = "username") String loginId,
-                                    Model model) {
-        model.addAttribute("userId", loginId);
-
-        User user = userRepository.findByLoginId(loginId).orElse(null);
+    public String mypage_myInfoEdit(@AuthenticationPrincipal(expression = "username") String loginId, Model model) {
+        if (loginId == null)
+            return "redirect:/login";
+        User user = userRepository.findByLoginId(loginId).orElseThrow();
         model.addAttribute("user", user);
-        model.addAttribute("userName", user != null ? user.getUserName() : "");
-
-        // ↓↓↓ 여기가 핵심: 템플릿이 볼 boolean 값을 안전하게 세팅
-        // 만약 User 엔티티에 수신여부 컬럼이 있다면 아래 라인을 해당 게터로 바꾸세요.
-        //   예) user.getEmailReceiveYn() 가 'Y'/'N'이면: "Y".equals(user.getEmailReceiveYn())
-        boolean emailReceive = false;
-        boolean smsReceive = false;
-
-        if (user != null) {
-            // TODO: 실제 필드명에 맞춰 변경
-            // 예시 A) 불린 필드인 경우:
-            // emailReceive = Boolean.TRUE.equals(user.getEmailReceive());
-            // smsReceive   = Boolean.TRUE.equals(user.getSmsReceive());
-
-            // 예시 B) 'Y'/'N' 문자열 필드인 경우:
-            // emailReceive = "Y".equals(user.getEmailReceiveYn());
-            // smsReceive   = "Y".equals(user.getSmsReceiveYn());
-        }
-
-        model.addAttribute("emailReceive", emailReceive);
-        model.addAttribute("smsReceive", smsReceive);
-
+        model.addAttribute("userId", user.getLoginId());
+        model.addAttribute("userName", user.getUserName());
         return "mypage/mypage_myInfoEdit";
     }
 
