@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import kd.paperless.account.PasswordPolicyUtil;
 import kd.paperless.entity.User;
 import kd.paperless.repository.UserRepository;
 import kd.paperless.service.SnsLinkService;
@@ -63,6 +64,13 @@ public class SignupPostController {
             ra.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
             return "redirect:/signup";
         }
+        
+        var vr = PasswordPolicyUtil.validate(pwd);
+        if (!vr.valid()) {
+            ra.addFlashAttribute("error", "비밀번호 정책 위반: " + vr.firstMessageOrDefault("정책을 확인해 주세요."));
+            return "redirect:/signup";
+        }
+
         // 3) 아이디 중복
         if (userRepository.findByLoginId(id).isPresent()) {
             ra.addFlashAttribute("error", "이미 사용 중인 아이디입니다.");

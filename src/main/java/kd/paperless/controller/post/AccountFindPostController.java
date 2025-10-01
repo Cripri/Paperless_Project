@@ -22,7 +22,7 @@ public class AccountFindPostController {
 
     private final AccountFindService service;
 
-    /** 아이디 찾기 */
+    // 아이디 찾기
     @PostMapping("/find-id")
     public String postFindId(FindIdRequest req, Model model) {
         model.addAttribute("activeTab", "id");
@@ -37,7 +37,7 @@ public class AccountFindPostController {
                 });
     }
 
-    /** 비밀번호 찾기 1단계: 아이디+이메일 검증 → 세션 저장 → /account/reset */
+    // 비밀번호 찾기 1단계: 아이디+이메일 검증 → 세션 저장 → /account/reset
     @PostMapping("/find-pw")
     public String postFindPw(FindPwRequest req, Model model, HttpSession session) {
         model.addAttribute("activeTab", "pw");
@@ -55,15 +55,15 @@ public class AccountFindPostController {
                 });
     }
 
-    /** 비밀번호 재설정 저장 */
+    // 비밀번호 재설정 저장
     @PostMapping("/reset")
     public String postReset(ResetPwRequest req, Model model, HttpSession session) {
         Object uid = session.getAttribute(PW_RESET_UID);
         Object until = session.getAttribute(PW_RESET_EXPIRES);
 
         boolean invalid = (uid == null) ||
-                          (until == null) ||
-                          ((LocalDateTime) until).isBefore(LocalDateTime.now());
+                (until == null) ||
+                ((LocalDateTime) until).isBefore(LocalDateTime.now());
 
         if (invalid) {
             model.addAttribute("activeTab", "pw");
@@ -75,12 +75,15 @@ public class AccountFindPostController {
 
         boolean ok = service.resetPasswordForUserId((Long) uid, req);
 
-        // 사용 후 세션 정리
-        session.removeAttribute(PW_RESET_UID);
-        session.removeAttribute(PW_RESET_EXPIRES);
-
-        model.addAttribute("activeTab", "id");
-        model.addAttribute("msg", ok ? "비밀번호가 변경되었습니다. 로그인해 주세요." : "비밀번호 확인에 실패했습니다.");
+        if (ok) {
+            session.removeAttribute(PW_RESET_UID);
+            session.removeAttribute(PW_RESET_EXPIRES);
+            model.addAttribute("activeTab", "id");
+            model.addAttribute("msg", "비밀번호가 변경되었습니다. 로그인해 주세요.");
+        } else {
+            model.addAttribute("activeTab", "pw");
+            model.addAttribute("msg", "비밀번호 확인에 실패했습니다.");
+        }
         return "login/findAccount";
     }
 }
