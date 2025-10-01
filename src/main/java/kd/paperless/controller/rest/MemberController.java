@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberController {
 
-    private final UserRepository userRepository;   // 주인님 프로젝트의 사용자 리포지토리로 교체
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     /** 비밀번호 확인 API */

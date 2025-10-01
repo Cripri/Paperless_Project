@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -9,8 +9,8 @@
     <link rel="stylesheet" th:href="@{/header-footer/css/header-footer.css}">
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script th:src="@{/portal/js/header.js}"></script>
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
 
 <body>
@@ -23,6 +23,8 @@
             <div class="content-header">
                 <h2 class="content-title">나의 정보관리</h2>
             </div>
+
+            <!-- 1단계: 비밀번호 재확인 -->
             <div class="content-body" id="printArea">
                 <form name="f_regi" method="post" enctype="multipart/form-data" action=""
                     onsubmit="return checkForm(this);">
@@ -50,10 +52,9 @@
                         </div>
                     </div>
                     <div class="gray_bg_box">
-                        <p class="normal_txt align-c">외부로부터 [ <strong class="text-red02" th:text="${userId}">(유저ID)</strong> ]님의 정보를 안전하게
-                            보호하기 위해 비밀번호를 다시 한 번 확인 합니다.</p>
+                        <p class="normal_txt align-c">외부로부터 [ <strong class="text-red02"
+                                th:text="${userId}">(유저ID)</strong> ]님의 정보를 안전하게 보호하기 위해 비밀번호를 다시 한 번 확인 합니다.</p>
                         <p class="normal_txt align-c">항상 비밀번호는 타인에게 노출되지 않도록 주의해 주세요.</p>
-
                     </div>
                     <div class="btn_set center_btn">
                         <button type="submit" class="btn btn-sm btn-blue">확인</button>
@@ -64,25 +65,38 @@
         </article>
     </div>
 
-    <div class="txt_box">
+    <!-- 2단계: 실제 수정 폼 (비번 확인 후 표시) -->
+    <div class="txt_box" style="display:none" th:with="
+            telParts=${user != null and user.telNum != null ? #strings.arraySplit(user.telNum,'-') : null},
+            tel1=${telParts != null and telParts.length > 0 ? telParts[0] : ''},
+            tel2=${telParts != null and telParts.length > 1 ? telParts[1] : ''},
+            tel3=${telParts != null and telParts.length > 2 ? telParts[2] : ''},
+
+            mobParts=${user != null and user.phoneNum != null ? #strings.arraySplit(user.phoneNum,'-') : null},
+            mob2=${mobParts != null and mobParts.length > 1 ? mobParts[1] : ''},
+            mob3=${mobParts != null and mobParts.length > 2 ? mobParts[2] : ''},
+
+            emailParts=${user != null and user.email != null ? #strings.arraySplit(user.email,'@') : null},
+            emailId=${emailParts != null and emailParts.length > 0 ? emailParts[0] : ''},
+            emailDomain=${emailParts != null and emailParts.length > 1 ? emailParts[1] : ''}
+         ">
         <form name="f_regi" method="post" enctype="multipart/form-data" action="/portal/member/update.do"
             onsubmit="return checkForm(this);">
             <input type="hidden" name="programId" value="userMember" />
             <input type="hidden" name="memberType" value="1" />
             <input type="hidden" name="delState" value="1" />
             <input type="hidden" name="menuNo" value="" />
-            <input type="hidden" name="userId" value="" />
+            <input type="hidden" name="userId" th:value="${userId}" />
 
             <input type="hidden" name="dupInfoSave" id="dupInfoSave" value="" />
-            <input type="hidden" name="userKey" id="userKey"
-                value="" />
-            <input type="hidden" name="dupInfo" id="dupInfo"
-                value="" />
-            <input type="hidden" name="userBirthday" id="userBirthday" value="" />
+            <input type="hidden" name="userKey" id="userKey" value="" />
+            <input type="hidden" name="dupInfo" id="dupInfo" value="" />
+            <input type="hidden" name="userBirthday" id="userBirthday" th:value="${user!=null?user.userBirth:''}" />
             <input type="hidden" name="sex" id="sex" value="" />
 
             <h2 class="login_tit no_bg align-c top20">아이디(ID) 정보</h2>
             <p class="small_txt align-r"><span class="text-red02">필수입력 (*)</span> 표시는 필수적으로 입력하셔야 합니다.</p>
+
             <div class="table_wrap">
                 <div class="table_type03">
                     <table class="none_head write_table">
@@ -110,99 +124,117 @@
                             <col style="width:85%;">
                         </colgroup>
                         <tbody>
-
                             <tr>
                                 <th><label for="userName"><span class="redDot">*</span> 사용자 이름</label></th>
                                 <td>
-                                    유저이름
-                                    <input type="hidden" id="userName" name="userName" value="" />
+                                    <span th:text="${userName}">유저이름</span>
+                                    <input type="hidden" id="userName" name="userName" th:value="${userName}" />
+                                </td>
+                            </tr>
+
+                            <!-- 새 비밀번호 -->
+                            <tr>
+                                <th><label for="newPw"><span class="redDot">*</span> 새 비밀번호</label></th>
+                                <td><input type="password" id="newPw" class="input_txt" autocomplete="new-password" />
                                 </td>
                             </tr>
                             <tr>
+                                <th><label for="confirmPw"><span class="redDot">*</span> 새 비밀번호 확인</label></th>
+                                <td><input type="password" id="confirmPw" class="input_txt"
+                                        autocomplete="new-password" /></td>
+                            </tr>
+
+                            <!-- 자택전화 -->
+                            <tr>
                                 <th><label for="userPhone1"> 자택전화</label></th>
                                 <td>
-
                                     <select id="userPhone1" name="userPhone1" class="input_select" title="자택전화 지역번호">
                                         <option value="">선택</option>
-                                        <option value="02">02</option>
-                                        <option value="051">051</option>
-                                        <option value="053">053</option>
-                                        <option value="032">032</option>
-                                        <option value="062">062</option>
-                                        <option value="042">042</option>
-                                        <option value="052">052</option>
-                                        <option value="044">044</option>
-                                        <option value="031">031</option>
-                                        <option value="033">033</option>
-                                        <option value="043">043</option>
-                                        <option value="041">041</option>
-                                        <option value="063">063</option>
-                                        <option value="061">061</option>
-                                        <option value="054">054</option>
-                                        <option value="055">055</option>
-                                        <option value="064">064</option>
-                                        <option value="070">070</option>
-                                        <option value="010">010</option>
+                                        <option value="02" th:selected="${tel1=='02'}">02</option>
+                                        <option value="051" th:selected="${tel1=='051'}">051</option>
+                                        <option value="053" th:selected="${tel1=='053'}">053</option>
+                                        <option value="032" th:selected="${tel1=='032'}">032</option>
+                                        <option value="062" th:selected="${tel1=='062'}">062</option>
+                                        <option value="042" th:selected="${tel1=='042'}">042</option>
+                                        <option value="052" th:selected="${tel1=='052'}">052</option>
+                                        <option value="044" th:selected="${tel1=='044'}">044</option>
+                                        <option value="031" th:selected="${tel1=='031'}">031</option>
+                                        <option value="033" th:selected="${tel1=='033'}">033</option>
+                                        <option value="043" th:selected="${tel1=='043'}">043</option>
+                                        <option value="041" th:selected="${tel1=='041'}">041</option>
+                                        <option value="063" th:selected="${tel1=='063'}">063</option>
+                                        <option value="061" th:selected="${tel1=='061'}">061</option>
+                                        <option value="054" th:selected="${tel1=='054'}">054</option>
+                                        <option value="055" th:selected="${tel1=='055'}">055</option>
+                                        <option value="064" th:selected="${tel1=='064'}">064</option>
+                                        <option value="070" th:selected="${tel1=='070'}">070</option>
+                                        <option value="010" th:selected="${tel1=='010'}">010</option>
                                     </select>
                                     <s>-</s>
-                                    <input type="text" numberOnly id="userPhone2" name="userPhone2" value=""
-                                        class="input_txt tel" title="자택전화 중간 4자리" />
+                                    <input type="text" numberOnly id="userPhone2" name="userPhone2"
+                                        class="input_txt tel" title="자택전화 중간 4자리" th:value="${tel2}" />
                                     <s>-</s>
-                                    <input type="text" numberOnly id="userPhone3" name="userPhone3" value=""
-                                        class="input_txt tel" title="자택전화 끝 4자리" />
+                                    <input type="text" numberOnly id="userPhone3" name="userPhone3"
+                                        class="input_txt tel" title="자택전화 끝 4자리" th:value="${tel3}" />
                                 </td>
                             </tr>
+
+                            <!-- 휴대전화 -->
                             <tr>
                                 <th><label for="userMobile1"><span class="redDot">*</span> 휴대전화</label></th>
                                 <td>
                                     <span>010</span>
                                     <s>-</s>
-                                    <input type="text" numberOnly id="userMobile2" name="userMobile2" value=""
-                                        class="input_txt tel" title="휴대전화 중간자리 입력" />
+                                    <input type="text" numberOnly id="userMobile2" name="userMobile2"
+                                        class="input_txt tel" title="휴대전화 중간자리 입력" th:value="${mob2}" />
                                     <s>-</s>
-                                    <input type="text" numberOnly id="userMobile3" name="userMobile3" value=""
-                                        class="input_txt tel" title="휴대전화 끝 4자리 입력" />
+                                    <input type="text" numberOnly id="userMobile3" name="userMobile3"
+                                        class="input_txt tel" title="휴대전화 끝 4자리 입력" th:value="${mob3}" />
                                 </td>
                             </tr>
+
+                            <!-- 주소 -->
                             <tr>
                                 <th><span class="redDot">*</span> 주소</th>
                                 <td>
                                     <p>
-                                        <a href="/postSearch/jusoPopup.jsp?gubun=1"
-                                            onclick="execDaumPostcode()"
+                                        <a href="/postSearch/jusoPopup.jsp?gubun=1" onclick="execDaumPostcode()"
                                             target="_blank" rel="noreferrer" title="새창열림"
                                             class="btn btn-sm btn-gray">우편번호찾기</a>
                                         <label for="postNo" class="hidden">우편번호</label>
-                                        <input type="text" id="postNo" name="postNo" value=""
-                                            class="input_txt w50 post_s">
+                                        <input type="text" id="postNo" name="postNo" class="input_txt w50 post_s"
+                                            th:value="${user!=null?user.postcode:''}">
                                     </p>
                                     <p>
                                         <label for="address1" class="hidden">기본주소</label>
-                                        <input type="text" id="address1" value=""
-                                            name="address1" class="input_txt w99per add03" />
+                                        <input type="text" id="address1" name="address1" class="input_txt w99per add03"
+                                            th:value="${user!=null?user.addr1:''}" />
                                     </p>
                                     <p>
                                         <label for="address2" class="hidden">주소상세정보</label>
-                                        <input type="text" id="address2" value="" name="address2"
-                                            class="input_txt w99per add03" />
+                                        <input type="text" id="address2" name="address2" class="input_txt w99per add03"
+                                            th:value="${user!=null?user.addr2:''}" />
                                     </p>
                                 </td>
                             </tr>
+
+                            <!-- 이메일 -->
                             <tr>
                                 <th><label for="userEmail"><span class="redDot">*</span> 이메일</label></th>
                                 <td>
-
-                                    <input type="text" id="userEmail1" name="userEmail1" value=""
-                                        class="input_txt" title="이메일 아이디" />
+                                    <input type="text" id="userEmail1" name="userEmail1" class="input_txt"
+                                        title="이메일 아이디" th:value="${emailId}" />
                                     @
-                                    <input type="text" id="userEmail2" name="userEmail2" value=""
-                                        class="input_txt" title="이메일 도메인" />
+                                    <input type="text" id="userEmail2" name="userEmail2" class="input_txt"
+                                        title="이메일 도메인" th:value="${emailDomain}" />
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
+
+            <!-- 알림 수신 설정 -->
             <h2 class="bu_t1 top20">팽구 알림서비스</h2>
             <div class="table_wrap">
                 <div class="table_type03">
@@ -216,19 +248,18 @@
                             <tr>
                                 <th><label for="newsReceive1"><span class="redDot">*</span> 이메일 수신여부</label></th>
                                 <td>
-                                    <p>
-                                        팽구청에서 발간하는 각종 소식을 받아보시겠습니까?<br />
-                                    </p>
+                                    <p>팽구청에서 발간하는 각종 소식을 받아보시겠습니까?</p>
                                 </td>
                                 <td>
                                     <span class="label_box">
                                         <input type="radio" id="newsReceive1" name="newsReceive" value="Y"
-                                            class="input_radio" /> <label for="newsReceive1">예</label>
+                                            class="input_radio" th:checked="${emailReceive}" />
+                                        <label for="newsReceive1">예</label>
                                     </span>
                                     <span class="label_box">
                                         <input type="radio" id="newsReceive2" name="newsReceive" value="N"
-                                            class="input_radio" checked="checked" /> <label
-                                            for="newsReceive2">아니오</label>
+                                            class="input_radio" th:checked="${!emailReceive}" />
+                                        <label for="newsReceive2">아니오</label>
                                     </span>
                                 </td>
                             </tr>
@@ -243,12 +274,13 @@
                                 <td>
                                     <span class="label_box">
                                         <input type="radio" id="smsReceive1" name="smsReceive" value="Y"
-                                            class="input_radio" /> <label for="smsReceive1">예</label>
+                                            class="input_radio" th:checked="${smsReceive}" />
+                                        <label for="smsReceive1">예</label>
                                     </span>
                                     <span class="label_box">
                                         <input type="radio" id="smsReceive2" name="smsReceive" value="N"
-                                            class="input_radio" checked="checked" /> <label
-                                            for="smsReceive2">아니오</label>
+                                            class="input_radio" th:checked="${!smsReceive}" />
+                                        <label for="smsReceive2">아니오</label>
                                     </span>
                                 </td>
                             </tr>
@@ -256,6 +288,7 @@
                     </table>
                 </div>
             </div>
+
             <div class="btn_set center_btn">
                 <button type="submit" class="btn btn-sm btn-blue">수정</button>
                 <a href="" class="btn btn-sm btn-darkgray">수정취소</a>
@@ -266,125 +299,144 @@
     <!-- footer -->
     <div th:replace="~{fragments/footer :: footer}"></div>
     <!-- footer -->
-    
+
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
         function execDaumPostcode() {
-        new daum.Postcode({
-            oncomplete: function(data) {
-                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
-
-                // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
-                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
-                var roadAddr = data.roadAddress; // 도로명 주소 변수
-                var extraRoadAddr = ''; // 참고 항목 변수
-
-                // 법정동명이 있을 경우 추가한다. (법정리는 제외)
-                // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
-                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
-                    extraRoadAddr += data.bname;
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    document.getElementById("postNo").value = data.zonecode; // 우편번호
+                    document.getElementById("address1").value = data.roadAddress; // 도로명 주소
+                    document.getElementById("address2").value = ""; // 상세주소 초기화
                 }
-                // 건물명이 있고, 공동주택일 경우 추가한다.
-                if(data.buildingName !== '' && data.apartment === 'Y'){
-                   extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-                }
-                // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
-                if(extraRoadAddr !== ''){
-                    extraRoadAddr = ' (' + extraRoadAddr + ')';
-                }
-
-                // 우편번호와 주소 정보를 해당 필드에 넣는다.
-                document.getElementById("postNo").value = data.zonecode; // 우편번호
-                document.getElementById("address1").value = roadAddr;    // 도로명 주소
-                document.getElementById("address2").value = ""; // 상세 주소 (추가항목)
-                
-                // 참고항목 문자열이 있을 경우 해당 필드에 넣는다.
-                if(roadAddr !== ''){
-                    document.getElementById("address2").value = extraRoadAddr;
-                } else {
-                    document.getElementById("address2").value = '';
-                }
-            }
-        }).open();
-    }
+            }).open();
+        }
     </script>
 
-<script>
-// 폼 전송 이벤트 가로채기
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.querySelector("#printArea form"); // 첫 번째 비밀번호 확인 폼
-    const txtBox = document.querySelector(".txt_box");
-    const container = document.querySelector("#container");
+    <script>
+        $(function () {
+            $(".txt_box").hide();
 
-    // 처음에는 txt_box 숨기기
-    txtBox.style.display = "none";
+            // CSRF 준비
+            const token = document.querySelector('meta[name="_csrf"]')?.content;
+            const header = document.querySelector('meta[name="_csrf_header"]')?.content;
 
-    form.addEventListener("submit", function (e) {
-        e.preventDefault(); // 실제 전송 막기
+            // 1단계: 현재 비밀번호 확인
+            $("#container form").on("submit", function (e) {
+                e.preventDefault();
+                var pw = $("#pw").val();
+                if (!pw) { alert("비밀번호를 입력해주세요."); return false; }
 
-        const pw = document.getElementById("pw").value.trim();
-        if (pw === "") {
-            alert("비밀번호를 입력해주세요.");
-            return;
-        }
+                $.ajax({
+                    url: "/api/member/password/check",
+                    type: "POST",
+                    // 헤더는 $.ajaxSetup으로 자동 부착됨
+                    // 파라미터에도 _csrf를 같이 실어 안정적으로 처리 (설정에 따라 필요)
+                    data: { password: pw, _csrf: CSRF_TOKEN },
+                    success: function (res) {
+                        if (res === "OK" || res.success) {
+                            window.__currentPw = pw;
+                            $("#container").hide();
+                            $(".txt_box").fadeIn();
+                        } else {
+                            alert(res.message || "비밀번호가 올바르지 않습니다.");
+                        }
+                    },
+                    error: function (xhr) {
+                        // 403 디버깅 보조
+                        if (xhr.status === 403) {
+                            console.warn("CSRF 문제 가능성. 헤더/파라미터 확인 필요.", xhr.responseText);
+                        }
+                        alert("서버와 통신 중 오류가 발생했습니다.");
+                    }
+                });
+            });
+        });
+    </script>
 
-        // AJAX 테스트용 (실제 서버 요청 대신)
-        // 여기서는 setTimeout으로 응답을 흉내냄
-        setTimeout(() => {
-            // 비밀번호가 "1234"면 성공이라고 가정
-            if (pw === "1234") {
-                // alert("비밀번호 확인 성공!");
-                container.style.display = "none";
-                txtBox.style.display = "block"; // 숨겨진 txt_box 표시
-            } else {
-                alert("비밀번호가 올바르지 않습니다.");
+    <!-- 새 비밀번호 클라이언트 검증 (정책 + 기존 동일 금지 + 일치) -->
+    <script>
+        $(function () {
+            const MIN_LEN = 8;
+            const NEED_CAT = 2;
+
+            const $form2 = $(".txt_box form");
+            const $newPw = $("#newPw");
+            const $confirmPw = $("#confirmPw");
+            const $submitBtn = $form2.find('button[type="submit"]');
+
+            const $newPwMsg = $('<div class="pw-msg" id="newPwMsg" style="margin-top:6px;font-size:12px;"></div>');
+            const $cfmPwMsg = $('<div class="pw-msg" id="confirmPwMsg" style="margin-top:6px;font-size:12px;"></div>');
+            if ($newPw.next(".pw-msg").length === 0) $newPw.after($newPwMsg);
+            if ($confirmPw.next(".pw-msg").length === 0) $confirmPw.after($cfmPwMsg);
+
+            function categoriesCount(pw) {
+                let c = 0;
+                if (/[A-Z]/.test(pw)) c++;
+                if (/[a-z]/.test(pw)) c++;
+                if (/\d/.test(pw)) c++;
+                if (/[^A-Za-z0-9]/.test(pw)) c++;
+                return c;
             }
-        }, 500); // 0.5초 후 응답 흉내
-    });
-});
-</script>
+            function unmetRequirements(pw) {
+                const unmet = [];
+                if (pw.length < MIN_LEN) unmet.push(`길이 ${MIN_LEN}자 이상`);
+                if (categoriesCount(pw) < NEED_CAT) unmet.push("영대/영소/숫자/특수문자 중 2종 이상");
+                if (window.__currentPw && pw === window.__currentPw) unmet.push("기존 비밀번호와 동일하게 설정할 수 없습니다.");
+                return unmet;
+            }
+            function strengthText(pw) {
+                const len = pw.length, cat = categoriesCount(pw);
+                if (len >= MIN_LEN && cat >= NEED_CAT) {
+                    if (len >= 12 && cat >= 3) return "강함";
+                    if (len >= 10 && cat >= 2) return "보통";
+                }
+                return "약함";
+            }
+            function validateNewPw() {
+                const pw = $newPw.val();
+                if (!pw) { $newPw.removeClass("is-valid is-invalid"); $newPwMsg.text(""); return false; }
+                const unmet = unmetRequirements(pw);
+                if (unmet.length > 0) {
+                    $newPw.addClass("is-invalid").removeClass("is-valid");
+                    $newPwMsg.html("❌ 비밀번호 조건 미충족: " + unmet.join(" · ")).css("color", "#d00");
+                    return false;
+                } else {
+                    $newPw.addClass("is-valid").removeClass("is-invalid");
+                    $newPwMsg.html("✅ 사용 가능한 비밀번호 · 강도: <b>" + strengthText(pw) + "</b>").css("color", "#067");
+                    return true;
+                }
+            }
+            function validateMatch() {
+                const ok = $newPw.val() && $newPw.val() === $confirmPw.val();
+                if (!$confirmPw.val()) { $confirmPw.removeClass("is-valid is-invalid"); $cfmPwMsg.text(""); return false; }
+                if (ok) { $confirmPw.addClass("is-valid").removeClass("is-invalid"); $cfmPwMsg.text("✅ 새 비밀번호가 일치합니다.").css("color", "#067"); }
+                else { $confirmPw.addClass("is-invalid").removeClass("is-valid"); $cfmPwMsg.text("❌ 새 비밀번호와 확인 비밀번호가 일치하지 않습니다.").css("color", "#d00"); }
+                return ok;
+            }
+            function toggleSubmit() {
+                const entered = ($newPw.val().length + $confirmPw.val().length) > 0;
+                const ok = validateNewPw() && validateMatch();
+                $submitBtn.prop("disabled", entered ? !ok : false);
+            }
+            $newPw.on("input blur", () => { validateNewPw(); validateMatch(); toggleSubmit(); });
+            $confirmPw.on("input blur", () => { validateMatch(); toggleSubmit(); });
+        });
+    </script>
+    <script>
+        // head의 메타에서 CSRF 읽기
+        const CSRF_TOKEN = document.querySelector('meta[name="_csrf"]')?.content;
+        const CSRF_HEADER = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(function () {
-  // 처음에는 txt_box 숨기기
-  $(".txt_box").hide();
-
-  // CSRF 준비
-  const token  = document.querySelector('meta[name="_csrf"]')?.content;
-  const header = document.querySelector('meta[name="_csrf_header"]')?.content;
-
-  $("#container form").on("submit", function (e) {
-    e.preventDefault();
-
-    var pw = $("#pw").val();
-    if (!pw) {
-      alert("비밀번호를 입력해주세요.");
-      return false;
-    }
-
-    $.ajax({
-      url: "/portal/member/checkPw.do",
-      type: "POST",
-      data: { password: pw },
-      beforeSend: function(xhr) {
-        if (token && header) xhr.setRequestHeader(header, token);
-      },
-      success: function (res) {
-        if (res === "OK" || res.success) {
-          $("#container").hide();
-          $(".txt_box").fadeIn();
-        } else {
-          alert(res.message || "비밀번호가 올바르지 않습니다.");
+        // jQuery 전역 설정: 모든 Ajax에 헤더 자동 부착
+        if (CSRF_TOKEN && CSRF_HEADER) {
+            $.ajaxSetup({
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
+                }
+            });
         }
-      },
-      error: function () {
-        alert("서버와 통신 중 오류가 발생했습니다.");
-      }
-    });
-  });
-});
-</script>
+    </script>
 </body>
 
 </html>
