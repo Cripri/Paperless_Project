@@ -34,7 +34,7 @@ public class PassportApplyService {
         PaperlessDoc doc = new PaperlessDoc(userId, "passport_reissue");
         doc.setConsentYn('N');
         doc.setStatus(PaperlessDoc.PaperlessStatus.RECEIVED);
-
+        
         Map<String, Object> json = new LinkedHashMap<>();
 
         // 기본 선택

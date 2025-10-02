@@ -15,18 +15,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * PDFBox 2.0.33
- * - 템플릿: classpath:/pdf/rr_form.pdf
- * - 한글 폰트(권장): classpath:/fonts/NotoSansKR-VariableFont_wght.ttf
- * - 프리뷰 저장: {tmp}/rr_preview/{id}.pdf
- * - 최종본 저장: {user.home}/paperless/rr_final/{id}.pdf
- */
 @Service
 @RequiredArgsConstructor
 public class RrPdfOverlayService {
@@ -48,7 +43,7 @@ public class RrPdfOverlayService {
                 PDFont font = loadFontOrDefault(doc);
 
                 // ---------- 페이지1: 기본정보 ----------
-                PDPage page1 = doc.getPage(0);
+                PDPage page1 = doc.getPage(0);  
 
                 // 페이지1 좌표
                 Coords C1 = new Coords();
@@ -113,6 +108,9 @@ public class RrPdfOverlayService {
                 C2.put("cohabitants_Y",            504, 493);
 
                 C2.put("signImage",                500, 20);
+                C2.put("year",                     400,187);
+                C2.put("month",                    468,187);
+                C2.put("day,",                     520,187);
 
                 try (PDPageContentStream cs2 =
                          new PDPageContentStream(doc, page2, PDPageContentStream.AppendMode.APPEND, true, true)) {
@@ -152,6 +150,18 @@ public class RrPdfOverlayService {
                         float imgW = 50, imgH = 50;
                         cs2.drawImage(img, p.x, p.y, imgW, imgH);
                     }
+
+                    Date today = new Date();
+                    SimpleDateFormat toYear = new SimpleDateFormat("yyyy");
+                    SimpleDateFormat toMonth = new SimpleDateFormat("MM");
+                    SimpleDateFormat toDay = new SimpleDateFormat("dd");
+                    String nowYear = toYear.format(today);
+                    String nowMonth = toMonth.format(today);
+                    String nowDay = toDay.format(today);
+
+                    writeText(doc,page2,nowYear,font,400 ,187); // 연
+                    writeText(doc,page2,nowMonth,font,468 ,187); // 월
+                    writeText(doc,page2,nowDay,font,520 ,187); // 일
                 }
 
                 // 저장
@@ -255,6 +265,16 @@ public class RrPdfOverlayService {
         Map<String,String> m = new HashMap<>();
         for (int i=0; i+1<kv.length; i+=2) m.put(kv[i], kv[i+1]);
         return m;
+    }
+
+    private void writeText(PDDocument doc, PDPage page, String str, PDFont font, int tx, int ty) throws IOException {
+        try(PDPageContentStream con = new PDPageContentStream(doc,page,PDPageContentStream.AppendMode.APPEND,true,true)){
+            con.beginText();
+            con.setFont(font,14);
+            con.newLineAtOffset(tx,ty);
+            con.showText(str);
+            con.endText();
+        }
     }
 
     // 좌표 도우미
