@@ -34,34 +34,34 @@ public class MypageGetController {
 
     // ===== 신문고 목록 =====
     @GetMapping("/mypage_sinmungo")
-    public String mypageSinmungo(
-            @RequestParam(name = "q_searchTy", required = false, defaultValue = "1001") String qSearchTy,
+    public String mypageSinmungo(@AuthenticationPrincipal(expression = "username") String loginId,
+            @RequestParam(name = "q_searchTy", defaultValue = "1001") String qSearchTy,
             @RequestParam(name = "q_searchVal", required = false) String qSearchVal,
-            @RequestParam(name = "q_currPage", required = false, defaultValue = "1") int qCurrPage,
-            @RequestParam(name = "q_rowPerPage", required = false, defaultValue = "10") int qRowPerPage,
-            @RequestParam(name = "status", required = false) String status, // 필요 시 UI에 추가해서 사용
+            @RequestParam(name = "q_currPage", defaultValue = "1") int qCurrPage,
+            @RequestParam(name = "q_rowPerPage", defaultValue = "10") int qRowPerPage,
+            @RequestParam(name = "status", required = false) String status,
             Model model) {
-        // 0-base PageRequest
+        if (loginId == null)
+            return "redirect:/login";
+        User user = userRepository.findByLoginId(loginId).orElseThrow();
+
         int pageIndex = Math.max(qCurrPage - 1, 0);
         Pageable pageable = PageRequest.of(pageIndex, qRowPerPage, Sort.by(Sort.Direction.DESC, "smgId"));
 
-        // searchType 매핑 (1001=title, 1002=content, 나머지=all)
         String searchType = switch (qSearchTy) {
             case "1001" -> "title";
             case "1002" -> "content";
             default -> "all";
         };
-
         String keyword = (qSearchVal == null || qSearchVal.isBlank()) ? null : qSearchVal.trim();
         String statusParam = (status == null || status.isBlank()) ? null : status.trim();
 
-        Page<Sinmungo> page = sinmungoRepository.search(keyword, statusParam, searchType, pageable);
+        Page<Sinmungo> page = sinmungoRepository
+                .searchByUser(user.getId(), keyword, statusParam, searchType, pageable);
 
         model.addAttribute("page", page);
         model.addAttribute("items", page.getContent());
         model.addAttribute("totalCount", page.getTotalElements());
-
-        // 폼 값 유지용
         model.addAttribute("q_searchTy", qSearchTy);
         model.addAttribute("q_searchVal", qSearchVal);
         model.addAttribute("q_rowPerPage", qRowPerPage);
@@ -73,22 +73,29 @@ public class MypageGetController {
 
     // ===== 간편서류 목록 =====
     @GetMapping("/mypage_simpleDoc")
-    public String mypageSimpleDoc(
-            @RequestParam(name = "q_currPage", required = false, defaultValue = "1") int qCurrPage,
-            @RequestParam(name = "q_rowPerPage", required = false, defaultValue = "10") int qRowPerPage,
+    public String mypageSimpleDoc(@AuthenticationPrincipal(expression = "username") String loginId,
+            @RequestParam(name = "q_currPage", defaultValue = "1") int qCurrPage,
+            @RequestParam(name = "q_rowPerPage", defaultValue = "10") int qRowPerPage,
             Model model) {
+        if (loginId == null)
+            return "redirect:/login";
+        User user = userRepository.findByLoginId(loginId).orElseThrow();
+
         int pageIndex = Math.max(qCurrPage - 1, 0);
         Pageable pageable = PageRequest.of(pageIndex, qRowPerPage, Sort.by(Sort.Direction.DESC, "plId"));
 
-        Page<PaperlessDoc> page = paperlessDocRepository.findAll(pageable);
+        // 엔티티에 맞춰 한 줄 선택
+        Page<PaperlessDoc> page = paperlessDocRepository.findByUserId(user.getId(), pageable);
+        // Page<PaperlessDoc> page = paperlessDocRepository.findByUser_Id(user.getId(),
+        // pageable);
 
         model.addAttribute("page", page);
         model.addAttribute("docs", page.getContent());
         model.addAttribute("totalCount", page.getTotalElements());
-
         model.addAttribute("q_rowPerPage", qRowPerPage);
         model.addAttribute("q_currPage", qCurrPage);
 
         return "mypage/mypage_simpleDoc";
     }
+
 }

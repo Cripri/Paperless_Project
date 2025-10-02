@@ -5,119 +5,120 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>마이페이지 - 간편 서류</title>
-  <link rel="stylesheet" href="/mypage/css/mypage_simpleDoc.css"
-        th:href="@{/mypage/css/mypage_simpleDoc.css}">
-  <link rel="stylesheet" href="/header-footer/css/header-footer.css"
-        th:href="@{/header-footer/css/header-footer.css}">
+  <link rel="stylesheet" href="/mypage/css/mypage_simpleDoc.css" th:href="@{/mypage/css/mypage_simpleDoc.css}">
+  <link rel="stylesheet" href="/header-footer/css/header-footer.css" th:href="@{/header-footer/css/header-footer.css}">
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-  <script src="/header-footer/js/header-footer.js"
-          th:src="@{/header-footer/js/header-footer.js}" defer></script>
+  <script src="/header-footer/js/header-footer.js" th:src="@{/header-footer/js/header-footer.js}" defer></script>
 </head>
 
 <body>
-<!-- header -->
-<div th:replace="~{fragments/header :: header}"></div>
-<!-- header -->
+  <!-- header -->
+  <div th:replace="~{fragments/header :: header}"></div>
+  <!-- header -->
 
-<div id="container">
-  <article id="content">
-    <div class="content-header">
-      <h2 class="content-title">간편 서류</h2>
-    </div>
-
-    <div class="content-body" id="printArea">
-      <form class="bbs-search" id="dataForm" name="dataForm" th:action="@{/mypage_simpleDoc}" method="get">
-        <fieldset>
-          <div class="input-area select-length2">
-            <span class="form-control" aria-label="검색분류">서류종류/상태는 차후 추가</span>
-            <input type="text" id="q_searchVal" name="q_searchVal" class="form-control form-control-keyword"
-                   title="검색어" value="" disabled />
-          </div>
-          <div class="btn-area">
-            <span class="col"><button type="submit" class="btn btn-lg btn-primary" disabled>검색</button></span>
-            <span class="col"><a class="btn btn-lg btn-outline-light" th:href="@{/mypage_simpleDoc}">초기화</a></span>
-          </div>
-        </fieldset>
-        <input type="hidden" name="q_rowPerPage" id="q_rowPerPage" th:value="${q_rowPerPage}">
-        <input type="hidden" name="q_currPage" id="q_currPage" th:value="${q_currPage}">
-      </form>
-
-      <div class="list-info">
-        <div class="float-left">
-          <p class="total">
-            총 <strong th:text="${#numbers.formatInteger(totalCount, 0, 'COMMA')}">0</strong>
-            건 (<span th:text="${page.number + 1}">1</span>/<span th:text="${page.totalPages == 0 ? 1 : page.totalPages}">1</span> page)
-          </p>
-        </div>
+  <div id="container">
+    <article id="content">
+      <div class="content-header">
+        <h2 class="content-title">간편 서류</h2>
       </div>
 
-      <table class="table table-list" style="table-layout: fixed">
-        <colgroup>
-          <col style="width: 7%">
-          <col style="width: 15%;">
-          <col>
-          <col style="width: 10%;">
-          <col style="width: 13%;">
-          <col style="width: 10%;">
-        </colgroup>
-        <thead>
-        <tr>
-          <th scope="col">번호</th>
-          <th scope="col">구분</th>
-          <th scope="col">발급서류</th>
-          <th scope="col">진행상황</th>
-          <th scope="col">발급일자</th>
-          <th scope="col">담당자</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="doc, stat : ${docs}">
-          <td th:text="${page.totalElements - (page.number * page.size) - stat.index}">1</td>
-          <td th:text="${doc.docType}">구분</td>
-          <td>
-            <span th:text="${doc.docType}">서류명</span>
-          </td>
-          <td th:text="${doc.status}">상태</td>
-          <td th:text="${#temporals.format(doc.submittedAt, 'yyyy-MM-dd')}">2025-10-01</td>
-          <td th:text="${doc.adminId}">담당자</td>
-        </tr>
-        <tr th:if="${#lists.isEmpty(docs)}">
-          <td colspan="6" class="nodata">게시물이 없습니다.</td>
-        </tr>
-        </tbody>
-      </table>
+      <div class="content-body" id="printArea">
+        <form class="bbs-search" id="dataForm" name="dataForm" th:action="@{/mypage_simpleDoc}" method="get">
+          <fieldset>
+            <div class="input-area select-length2">
+              <span class="form-control" aria-label="검색분류">서류종류/상태는 차후 추가</span>
+              <input type="text" id="q_searchVal" name="q_searchVal" class="form-control form-control-keyword"
+                title="검색어" value="" disabled />
+            </div>
+            <div class="btn-area">
+              <span class="col"><button type="submit" class="btn btn-lg btn-primary" disabled>검색</button></span>
+              <span class="col"><a class="btn btn-lg btn-outline-light" th:href="@{/mypage_simpleDoc}">초기화</a></span>
+            </div>
+          </fieldset>
+          <input type="hidden" name="q_rowPerPage" id="q_rowPerPage" th:value="${q_rowPerPage}">
+          <input type="hidden" name="q_currPage" id="q_currPage" th:value="${q_currPage}">
+        </form>
 
-      <nav class="pager" aria-label="페이지 이동">
-        <button id="prev" class="btn" type="button" aria-label="이전 페이지"
-                th:disabled="${page.first}">이전</button>
-        <span id="page-info" class="page-info" aria-live="polite"
-              th:text="${page.number + 1} + ' / ' + (page.totalPages == 0 ? 1 : page.totalPages)">1 / 1</span>
-        <button id="next" class="btn" type="button" aria-label="다음 페이지"
-                th:disabled="${page.last}">다음</button>
-      </nav>
-    </div>
-  </article>
-</div>
+        <div class="list-info">
+          <div class="float-left">
+            <p class="total">
+              총 <strong th:text="${#numbers.formatInteger(totalCount, 0, 'COMMA')}">0</strong>
+              건 (<span th:text="${page.number + 1}">1</span>/<span
+                th:text="${page.totalPages == 0 ? 1 : page.totalPages}">1</span> page)
+            </p>
+          </div>
+        </div>
 
-<!-- footer -->
-<div th:replace="~{fragments/footer :: footer}"></div>
-<!-- footer -->
+        <table class="table table-list" style="table-layout: fixed">
+          <colgroup>
+            <col style="width: 7%">
+            <col style="width: 15%;">
+            <col>
+            <col style="width: 10%;">
+            <col style="width: 13%;">
+            <col style="width: 10%;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col">번호</th>
+              <th scope="col">구분</th>
+              <th scope="col">발급서류</th>
+              <th scope="col">진행상황</th>
+              <th scope="col">발급일자</th>
+              <th scope="col">담당자</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="doc, stat : ${docs}">
+              <td th:text="${page.totalElements - (page.number * page.size) - stat.index}">1</td>
+              <td th:text="${doc.docType}">구분</td>
+              <td>
+                <span th:text="${doc.docType}">서류명</span>
+              </td>
+              <td th:text="${doc.status}">상태</td>
+              <td th:text="${#temporals.format(doc.submittedAt, 'yyyy-MM-dd')}">2025-10-01</td>
+              <td th:text="${doc.adminId}">담당자</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(docs)}">
+              <td colspan="6" class="nodata">게시물이 없습니다.</td>
+            </tr>
+          </tbody>
+        </table>
 
-<script>
-  (function () {
-    const form = document.getElementById('dataForm');
-    const curr = document.getElementById('q_currPage');
-    const totalPages = /*[[${page.totalPages}]]*/ 1;
+        <!-- 페이지 네비게이션 -->
+        <nav class="pager" aria-label="페이지 이동" th:attr="data-total-pages=${page.totalPages == 0 ? 1 : page.totalPages}">
+          <button id="prev" class="btn" type="button" aria-label="이전 페이지" th:disabled="${page.first}">이전</button>
+          <span id="page-info" class="page-info" aria-live="polite"
+            th:text="${page.number + 1} + ' / ' + ${(page.totalPages == 0 ? 1 : page.totalPages)}">
+            1 / 1
+          </span>
+          <button id="next" class="btn" type="button" aria-label="다음 페이지" th:disabled="${page.last}">다음</button>
+        </nav>
+      </div>
+    </article>
+  </div>
 
-    document.getElementById('prev').addEventListener('click', function () {
-      let p = parseInt(curr.value || '1', 10);
-      if (p > 1) { curr.value = String(p - 1); form.submit(); }
-    });
-    document.getElementById('next').addEventListener('click', function () {
-      let p = parseInt(curr.value || '1', 10);
-      if (p < totalPages) { curr.value = String(p + 1); form.submit(); }
-    });
-  })();
-</script>
+  <!-- footer -->
+  <div th:replace="~{fragments/footer :: footer}"></div>
+  <!-- footer -->
+
+  <script>
+    (function () {
+      const form = document.getElementById('dataForm');
+      const curr = document.getElementById('q_currPage');
+      const pager = document.querySelector('nav.pager');
+      const totalPages = parseInt(pager.dataset.totalPages || '1', 10);
+
+      document.getElementById('prev').addEventListener('click', function () {
+        let p = parseInt(curr.value || '1', 10);
+        if (p > 1) { curr.value = String(p - 1); form.submit(); }
+      });
+      document.getElementById('next').addEventListener('click', function () {
+        let p = parseInt(curr.value || '1', 10);
+        if (p < totalPages) { curr.value = String(p + 1); form.submit(); }
+      });
+    })();
+  </script>
 </body>
+
 </html>

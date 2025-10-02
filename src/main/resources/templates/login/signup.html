@@ -92,13 +92,8 @@
             </table>
 
             <div class="btn-set">
-                <!-- 가입 완료 후(서버에서 newUserId 세팅했을 때) -->
-                <form method="post" action="/sns/connect/signup-complete" id="snsLinkCompleteForm">
-                    <input type="hidden" name="newUserId" th:value="${newUserId}">
-                    <button type="submit" class="btn btn-blue">SNS 연동 마치기</button>
-                </form>
                 <button type="submit" class="btn btn-blue">회원가입</button>
-                <button type="reset" class="btn btn-gray">가입취소</button>
+                <button type="reset" class="btn btn-gray" onclick="location.href='/login'">가입취소</button>
             </div>
         </form>
     </div>
