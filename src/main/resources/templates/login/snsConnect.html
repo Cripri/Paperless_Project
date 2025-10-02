@@ -35,7 +35,7 @@
         <form method="post" action="/sns/connect/existing">
           <input type="text" name="loginId" placeholder="아이디 입력" required>
           <input type="password" name="password" placeholder="비밀번호 입력" required>
-          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
           <button type="submit" class="btn primary">연결설정</button>
           <a href="/findAccount" class="find-link" onclick="openFindPopup(event)">아이디/비밀번호 찾기</a>
         </form>
@@ -45,9 +45,9 @@
       <div class="signup-box">
         <h3>아직 회원이 아니신가요?</h3>
         <p>회원가입을 해주시면 소셜계정과 연동됩니다.</p>
-        <form method="get" action="/signup">
+        <!-- <a class="btn secondary" th:href="@{/signup(sns=1)}">회원가입</a> -->
+        <form method="get" th:action="@{/signup(sns=1)}">
           <button type="submit" class="btn secondary">회원가입</button>
-          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         </form>
       </div>
 

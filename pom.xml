@@ -11,9 +11,9 @@
   </parent>
 
   <groupId>kd</groupId>
-  <artifactId>papperless</artifactId>
+  <artifactId>paperless</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>papperless</name>
+  <name>paperless</name>
   <description>Demo project for Spring Boot</description>
 
   <properties>

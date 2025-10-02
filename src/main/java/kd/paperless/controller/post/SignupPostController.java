@@ -4,28 +4,32 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import kd.paperless.account.PasswordPolicyUtil;
 import kd.paperless.entity.User;
 import kd.paperless.repository.UserRepository;
 import kd.paperless.service.SnsLinkService;
+import kd.paperless.support.AuthLoginHelper;
 
 @Controller
 @RequiredArgsConstructor
 public class SignupPostController {
 
-    @Autowired PasswordEncoder encoder;
-
+    private final PasswordEncoder encoder;
     private final UserRepository userRepository;
     private final SnsLinkService snsLinkService;
+    private final AuthLoginHelper authLoginHelper;
 
     @PostMapping("/signup")
     public String processSignup(
@@ -45,7 +49,9 @@ public class SignupPostController {
             @RequestParam(required = false) String addr1,
             @RequestParam(required = false) String addr2,
             RedirectAttributes ra,
-            HttpSession session) {
+            HttpSession session,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         // 0) 입력 정규화
         String id = nz(loginId).trim();
@@ -53,17 +59,25 @@ public class SignupPostController {
         String pwd2 = nz(passwordConfirm);
         String name = nz(userName).trim();
 
-        // 1) 필수값
+        // 1) 필수값 검증
         if (id.isEmpty() || pwd.isEmpty() || name.isEmpty()) {
             ra.addFlashAttribute("error", "아이디/비밀번호/이름은 필수입니다.");
             return "redirect:/signup";
         }
+
         // 2) 비밀번호 확인
         if (!pwd.equals(pwd2)) {
             ra.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
             return "redirect:/signup";
         }
-        // 3) 아이디 중복
+
+        var vr = PasswordPolicyUtil.validate(pwd);
+        if (!vr.valid()) {
+            ra.addFlashAttribute("error", "비밀번호 정책 위반: " + vr.firstMessageOrDefault("정책을 확인해 주세요."));
+            return "redirect:/signup";
+        }
+
+        // 3) 아이디 중복 체크
         if (userRepository.findByLoginId(id).isPresent()) {
             ra.addFlashAttribute("error", "이미 사용 중인 아이디입니다.");
             return "redirect:/signup";
@@ -72,12 +86,12 @@ public class SignupPostController {
         // 4) 엔티티 매핑
         User u = new User();
         u.setLoginId(id);
-        u.setPasswordHash(encoder.encode(pwd)); // 운영: 반드시 해시 저장
+        u.setPasswordHash(encoder.encode(pwd));
         u.setUserName(name);
 
         if (!isBlank(userBirth)) {
             try {
-                LocalDate birth = LocalDate.parse(userBirth.trim()); // "1990-05-10"
+                LocalDate birth = LocalDate.parse(userBirth.trim());
                 u.setUserBirth(birth);
             } catch (DateTimeParseException e) {
                 ra.addFlashAttribute("error", "올바른 생년월일을 입력해주세요.");
@@ -103,24 +117,28 @@ public class SignupPostController {
         // 5) 저장
         try {
             userRepository.save(u);
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             ra.addFlashAttribute("error", "이미 사용 중인 아이디(또는 이메일)입니다.");
             return "redirect:/signup";
         }
 
-        // 6) SNS 연동 대기(PENDING)가 있으면 즉시 연동 저장
+        // 6) SNS 연동 대기가 있으면: 즉시 매핑 + 자동 로그인 + 랜딩
         var pendingOpt = snsLinkService.getPending(session);
         if (pendingOpt.isPresent()) {
             var pending = pendingOpt.get();
 
-            Long newUserId = u.getId(); // PK 접근
+            // (1) SNS 매핑 저장
+            snsLinkService.connectAfterSignup(u.getId(), pending.provider(), pending.providerId());
+            snsLinkService.clearPending(session); // 세션 정리
 
-            snsLinkService.connectAfterSignup(newUserId, pending.provider(), pending.providerId());
-            snsLinkService.clearPending(session);
+            // (2) 자동 로그인 (SNS 경로만)
+            authLoginHelper.login(request, response, u.getLoginId(), password); // raw pwd 사용
 
-            return "redirect:/login?joined=1&linkedSns=1";
+            // (3) 원하는 랜딩으로 이동 (홈/마이페이지 등)
+            return "redirect:/";
         }
 
+        // 일반 가입: 자동 로그인 없이 로그인 페이지로
         return "redirect:/login?joined=1";
     }
 

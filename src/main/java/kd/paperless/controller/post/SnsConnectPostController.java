@@ -14,7 +14,7 @@ public class SnsConnectPostController {
 
   private final SnsLinkService snsLinkService;
 
-  /** 기존 계정과 연결 (아이디/비밀번호 확인 → social_link 저장 → 로그인) */
+  // 기존 계정과 연결 (아이디/비밀번호 확인 → social_link 저장 → 로그인)
   @PostMapping("/connect/existing")
   public String connectExisting(@RequestParam String loginId,
       @RequestParam String password,
@@ -36,7 +36,7 @@ public class SnsConnectPostController {
     }
   }
 
-  /** 회원가입 완료 후 연동 (신규 PK 전달) */
+  // 회원가입 완료 후 연동 (신규 PK 전달)
   @PostMapping("/connect/signup-complete")
   public String connectAfterSignup(@RequestParam("newUserId") Long newUserId,
       HttpSession session) {

@@ -16,7 +16,7 @@
 
 <body class="site">
   <!-- header -->
-  <div th:replace="fragments/header :: header"></div>
+  <div th:replace="~{fragments/header :: header}"></div>
   <!-- /header -->
 
   <div class="container">
@@ -48,7 +48,7 @@
             </td>
           </tr>
 
-          <tr>
+          <!-- <tr>
             <th class="req">주소</th>
             <td colspan="3">
               <div class="row addr-row">
@@ -56,6 +56,19 @@
                 <input type="text" class="input addr-input" name="addr1" placeholder="도로명/지번 주소" required>
                 <input type="text" class="input addr-input" name="addr2" placeholder="상세 주소" required>
                 <button type="button" class="btn addr-btn" disabled>주소검색</button>
+              </div>
+            </td>
+          </tr> -->
+
+          <tr>
+            <th class="req">주소</th>
+            <td colspan="3">
+              <div class="row addr-row">
+                <button type="button" class="btn addr-btn" onclick="execDaumPostcode()">우편번호
+                  검색</button>
+                <input type="text" class="input addr-input" id="postCode" name="postcode" placeholder="우편번호" readonly required>
+                <input type="text" class="input addr-input" id="addr1" name="addr1" placeholder="기본주소" readonly required>
+                <input type="text" class="input addr-input" id="addr2" name="addr2" placeholder="상세주소" required>
               </div>
             </td>
           </tr>
@@ -134,8 +147,21 @@
   </div>
 
   <!-- footer -->
-  <div th:replace="fragments/footer :: footer"></div>
+  <div th:replace="~{fragments/footer :: footer}"></div>
   <!-- /footer -->
+
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <script>
+    function execDaumPostcode() {
+      new daum.Postcode({
+        oncomplete: function (data) {
+          document.getElementById("postCode").value = data.zonecode; // 우편번호
+          document.getElementById("addr1").value = data.roadAddress; // 기본주소
+          document.getElementById("addr2").value = ""; // 상세주소는 직접 입력
+        }
+      }).open();
+    }
+  </script>
 
   <script>
     (function () {

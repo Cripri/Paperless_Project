@@ -34,24 +34,23 @@ public class SecurityConfig {
   /** 🔐 단일 SecurityFilterChain */
 
   @Bean
-public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+  public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
 
     http
-      .headers(h -> h.frameOptions(fo -> fo.sameOrigin()))
-      .authorizeHttpRequests(auth -> auth
-          .requestMatchers("/", "/error",
-              "/favicon.ico",
-              "/login/**", "/logout", "/signup/**", "/api/**",
-              "/css/**", "/js/**", "/images/**",
-              "/residentregistration/apply",
-              "/residentregistration/preview/**",
-              "/residentregistration/pdf/**",
-              "/findAccount/**", "/resetPassword/**", "/account/**",
-              "paperless/**","main/**","/residentregistration/**","paperless/fragments/**",
-              "/oauth/**", "/sns/**","portal","portal/js/**","portal/css/**","header-footer/**"
-          ).permitAll()
-          .anyRequest().authenticated()
-      )
+        .headers(h -> h.frameOptions(fo -> fo.sameOrigin()))
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/", "/error",
+                "/favicon.ico",
+                "/login/**", "/logout", "/signup/**", "/api/**",
+                "/css/**", "/js/**", "/images/**",
+                "/residentregistration/apply",
+                "/residentregistration/preview/**",
+                "/residentregistration/pdf/**",
+                "/findAccount/**", "/resetPassword/**", "/account/**",
+                "paperless/**", "main/**", "/residentregistration/**", "paperless/fragments/**",
+                "/oauth/**", "/sns/**", "portal", "portal/js/**", "portal/css/**", "header-footer/**")
+            .permitAll()
+            .anyRequest().authenticated())
 
         .formLogin(login -> login
             .loginPage("/login")

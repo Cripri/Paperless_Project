@@ -37,8 +37,7 @@
                     <td>
                         <input type="password" name="password">
                         <p style="font-size:12px; color:#555;">
-                            * 영대문자, 영소문자, 숫자 및 특수문자 2종류 이상 포함시 10자리 이상 입력하십시오.<br>
-                            <!-- * 영대문자, 영소문자, 숫자 및 특수문자 3종류 이상 포함시 최소 8자리 이상으로 입력하세요. -->
+                            * 영대문자, 영소문자, 숫자 및 특수문자 2종류 이상 포함시 8자리 이상 입력하십시오.<br>
                         </p>
                     </td>
                 </tr>
@@ -91,15 +90,10 @@
                     </td>
                 </tr>
             </table>
-            
+
             <div class="btn-set">
-                <!-- 가입 완료 후(서버에서 newUserId 세팅했을 때) -->
-                <form method="post" action="/sns/connect/signup-complete" id="snsLinkCompleteForm">
-                    <input type="hidden" name="newUserId" th:value="${newUserId}">
-                    <button type="submit" class="btn btn-blue">SNS 연동 마치기</button>
-                </form>
                 <button type="submit" class="btn btn-blue">회원가입</button>
-                <button type="reset" class="btn btn-gray">가입취소</button>
+                <button type="reset" class="btn btn-gray" onclick="location.href='/login'">가입취소</button>
             </div>
         </form>
     </div>
@@ -126,11 +120,10 @@
     </script>
     <script>
         (function () {
-            const form = document.querySelector('#signupForm');        // ← 폼 id 지정
+            const form = document.querySelector('#signupForm');
             const birthInput = document.getElementById('userBirth');
             const birthError = document.getElementById('birthError');
 
-            // 입력 중 자동 하이픈 + 숫자만 허용 + 길이 제한
             birthInput.addEventListener('input', function (e) {
                 let v = e.target.value.replace(/[^\d]/g, '').slice(0, 8); // YYYYMMDD 최대 8자리
                 if (v.length >= 5) {
@@ -144,7 +137,6 @@
                 const val = birthInput.value.trim();
                 clearError();
 
-                // 선택값: 공란이면 통과
                 if (val === '') return;
 
                 const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(val);
@@ -152,8 +144,7 @@
 
                 const y = +m[1], mo = +m[2], d = +m[3];
 
-                // 실제 달력 날짜인지(윤년 포함)
-                const dt = new Date(y, mo - 1, d); // JS는 월 0~11
+                const dt = new Date(y, mo - 1, d);
                 const isSame =
                     dt.getFullYear() === y &&
                     dt.getMonth() === (mo - 1) &&
@@ -161,14 +152,9 @@
 
                 if (!isSame) return fail(e, '유효하지 않은 날짜입니다.');
 
-                // 미래 금지, 연도 하한(필요 시 조정)
                 const today = new Date(); today.setHours(0, 0, 0, 0);
                 if (dt > today) return fail(e, '미래 날짜는 입력할 수 없습니다.');
                 if (y < 1900) return fail(e, '연도는 1900년 이후만 허용합니다.');
-
-                // 나이 제한(필요 시 사용; 주석 해제)
-                // const age = calcAge(dt, today);
-                // if (age < 14 || age > 120) return fail(e, '만 14세 이상, 120세 이하만 가입할 수 있습니다.');
 
                 // 통과 시 에러표시 숨김
                 clearError();
@@ -202,6 +188,111 @@
             } else if (p.get('joined') === '1') {
                 alert('회원가입이 완료되었습니다. 로그인해 주세요.');
             }
+        })();
+
+        (function () {
+            const MIN_LEN = 8;
+            const NEED_CAT = 2;
+
+            const form = document.getElementById('signupForm');
+            const pw = form.querySelector('input[name="password"]');
+            const pwCfm = form.querySelector('input[name="passwordConfirm"]');
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            // 메시지 영역 동적 생성
+            const msgPw = document.createElement('div');
+            const msgCfm = document.createElement('div');
+            msgPw.id = 'pwPolicyMsg';
+            msgCfm.id = 'pwConfirmMsg';
+            msgPw.style.cssText = 'margin-top:6px;font-size:12px;';
+            msgCfm.style.cssText = 'margin-top:6px;font-size:12px;';
+            if (!pw.nextElementSibling || pw.nextElementSibling.id !== 'pwPolicyMsg') {
+                pw.insertAdjacentElement('afterend', msgPw);
+            }
+            if (!pwCfm.nextElementSibling || pwCfm.nextElementSibling.id !== 'pwConfirmMsg') {
+                pwCfm.insertAdjacentElement('afterend', msgCfm);
+            }
+
+            function categoriesCount(s) {
+                let c = 0;
+                if (/[A-Z]/.test(s)) c++;
+                if (/[a-z]/.test(s)) c++;
+                if (/\d/.test(s)) c++;
+                if (/[^A-Za-z0-9]/.test(s)) c++;
+                return c;
+            }
+
+            function unmetRequirements(s) {
+                const unmet = [];
+                if (s.length < MIN_LEN) unmet.push(`길이 ${MIN_LEN}자 이상`);
+                if (categoriesCount(s) < NEED_CAT) unmet.push('영대/영소/숫자/특수문자 중 2종 이상');
+                return unmet;
+            }
+
+            function strengthLabel(s) {
+                const len = s.length;
+                const cat = categoriesCount(s);
+                if (len >= 12 && cat >= 3) return '강함';
+                if (len >= 10 && cat >= 2) return '보통';
+                return '약함';
+            }
+
+            function validateNew() {
+                const v = pw.value;
+                if (!v) {
+                    msgPw.textContent = '';
+                    pw.classList.remove('is-valid', 'is-invalid');
+                    return false;
+                }
+                const unmet = unmetRequirements(v);
+                if (unmet.length) {
+                    msgPw.innerHTML = '❌ 비밀번호 조건 미충족: ' + unmet.join(' · ');
+                    msgPw.style.color = '#d00';
+                    pw.classList.add('is-invalid'); pw.classList.remove('is-valid');
+                    return false;
+                } else {
+                    msgPw.innerHTML = '✅ 사용 가능한 비밀번호 · 강도: <b>' + strengthLabel(v) + '</b>';
+                    msgPw.style.color = '#067';
+                    pw.classList.add('is-valid'); pw.classList.remove('is-invalid');
+                    return true;
+                }
+            }
+
+            function validateMatch() {
+                const a = pw.value, b = pwCfm.value;
+                if (!b) {
+                    msgCfm.textContent = '';
+                    pwCfm.classList.remove('is-valid', 'is-invalid');
+                    return false;
+                }
+                if (a === b) {
+                    msgCfm.textContent = '✅ 비밀번호가 일치합니다.'; msgCfm.style.color = '#067';
+                    pwCfm.classList.add('is-valid'); pwCfm.classList.remove('is-invalid');
+                    return true;
+                } else {
+                    msgCfm.textContent = '❌ 비밀번호가 일치하지 않습니다.'; msgCfm.style.color = '#d00';
+                    pwCfm.classList.add('is-invalid'); pwCfm.classList.remove('is-valid');
+                    return false;
+                }
+            }
+
+            function toggleSubmit() {
+                const entered = pw.value.length + pwCfm.value.length > 0;
+                const ok = validateNew() && validateMatch();
+                submitBtn.disabled = entered ? !ok : false;
+            }
+
+            pw.addEventListener('input', () => { validateNew(); validateMatch(); toggleSubmit(); });
+            pwCfm.addEventListener('input', () => { validateMatch(); toggleSubmit(); });
+
+
+            form.addEventListener('submit', (e) => {
+                const ok = validateNew() && validateMatch();
+                if (!ok) {
+                    e.preventDefault();
+                    alert('비밀번호 정책을 확인해 주세요: 길이 8자 이상, 대/소/숫자/특수 중 2종 이상 포함, 그리고 확인과 일치해야 합니다.');
+                }
+            });
         })();
     </script>
 </body>

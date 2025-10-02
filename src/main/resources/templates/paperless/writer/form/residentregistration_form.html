@@ -32,7 +32,7 @@
 
 <body>
   <!-- ✅ 헤더는 main 밖(전폭) -->
-  <div th:replace="fragments/header :: header"></div>
+  <div th:replace="~{fragments/header :: header}"></div>
 
   <main>
     <h2>주민등록등본 교부 신청</h2>
@@ -269,6 +269,6 @@
   </main>
 
   <!-- ✅ 푸터도 main 밖(전폭) -->
-  <div th:replace="fragments/footer :: footer"></div>
+  <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>
