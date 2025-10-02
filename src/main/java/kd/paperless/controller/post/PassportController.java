@@ -21,22 +21,18 @@ public class PassportController {
     private final PassportApplyService passportApplyService;
     private final PaperlessDocRepository paperlessDocRepository;
 
-    /** 신청 폼 진입 */
     @GetMapping("/apply")
     public String applyForm(@ModelAttribute("passportForm") PassportForm passportForm) {
         // 초기값이 필요하면 여기서 세팅
         return "/paperless/writer/form/passport_apply";
     }
 
-    /**
-     * 신청 저장 → plId로 프리뷰 페이지 리다이렉트
-     * (사진 업로드/Attachment 생성 및 extra_json 기록은 Service에서 처리)
-     */
+
     @PostMapping("/preview")
     public String submitAndRedirect(@ModelAttribute("passportForm") PassportForm passportForm,
                                     BindingResult bindingResult,
                                     @SessionAttribute("loginUserId") Long userId) {
-        // 간단 필수값 체크 (정식 검증 추가 시 DTO에 @NotBlank 등 애노테이션 권장)
+
         if (passportForm.getKoreanName() == null || passportForm.getKoreanName().isBlank()) {
             bindingResult.rejectValue("koreanName", "required", "한글 성명을 입력하세요.");
         }
