@@ -66,6 +66,9 @@ body{
 }
 .bbs-search .form-control-keyword{ width:320px; max-width:100%; }
 .bbs-search .btn-area{ display:flex; gap:8px; margin-left:auto; }
+#q_searchVal {
+  width: 90%;
+}
 
 /* 버튼 공통 */
 .btn{
