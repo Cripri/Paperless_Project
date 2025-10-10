@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PaperlessDocRepository extends JpaRepository<PaperlessDoc, Long> {
     Page<PaperlessDoc> findByUserId(Long userId, Pageable pageable);
+    Page<PaperlessDoc> findByUserIdAndStatus(Long userId, PaperlessDoc.PaperlessStatus status, Pageable pageable);
 }

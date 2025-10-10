@@ -71,4 +71,28 @@ public class PaperlessDoc {
     public enum PaperlessStatus {
         PENDING, RECEIVED, IN_PROGRESS, APPROVED, REJECTED, CANCELED, COMPLETED
     }
+
+    @Transient
+    public String getStatusKo() {
+        if (status == null) return "";
+        return switch (status) {
+            case PENDING       -> "접수대기";
+            case RECEIVED      -> "접수완료";
+            case IN_PROGRESS   -> "처리중";
+            case APPROVED      -> "승인";
+            case REJECTED      -> "반려";
+            case CANCELED      -> "신청취소";
+            case COMPLETED     -> "완료";
+        };
+    }
+
+    @Transient
+    public String getDocTypeKo() {
+        if (docType == null) return "";
+        return switch (docType.toUpperCase()) {
+            case "RESIDENT", "RESIDENT_REGISTRATION" -> "주민등록등본";
+            case "PASSPORT"                          -> "여권";
+            default                                  -> docType;
+        };
+    }
 }

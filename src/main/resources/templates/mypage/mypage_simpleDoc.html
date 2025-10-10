@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>마이페이지 - 간편 서류</title>
+  <title>마이페이지</title>
   <link rel="stylesheet" href="/mypage/css/mypage_simpleDoc.css" th:href="@{/mypage/css/mypage_simpleDoc.css}">
   <link rel="stylesheet" href="/header-footer/css/header-footer.css" th:href="@{/header-footer/css/header-footer.css}">
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -19,21 +19,32 @@
   <div id="container">
     <article id="content">
       <div class="content-header">
-        <h2 class="content-title">간편 서류</h2>
+        <h2 class="content-title">내 행정</h2>
       </div>
 
       <div class="content-body" id="printArea">
         <form class="bbs-search" id="dataForm" name="dataForm" th:action="@{/mypage_simpleDoc}" method="get">
           <fieldset>
             <div class="input-area select-length2">
-              <span class="form-control" aria-label="검색분류">서류종류/상태는 차후 추가</span>
-              <input type="text" id="q_searchVal" name="q_searchVal" class="form-control form-control-keyword"
-                title="검색어" value="" disabled />
-            </div>
-            <div class="btn-area">
-              <span class="col"><button type="submit" class="btn btn-lg btn-primary" disabled>검색</button></span>
-              <span class="col"><a class="btn btn-lg btn-outline-light" th:href="@{/mypage_simpleDoc}">초기화</a></span>
-            </div>
+              <div class="input-area select-length2">
+                <label for="q_status" class="sr-only">상태</label>
+                <select id="q_status" name="q_status" class="form-control" aria-label="상태 선택">
+                  <option value="" th:selected="${q_status == null or q_status == ''}">전체</option>
+                  <option value="PENDING" th:selected="${q_status == 'PENDING'}">접수대기</option>
+                  <option value="RECEIVED" th:selected="${q_status == 'RECEIVED'}">접수완료</option>
+                  <option value="IN_PROGRESS" th:selected="${q_status == 'IN_PROGRESS'}">처리중</option>
+                  <option value="APPROVED" th:selected="${q_status == 'APPROVED'}">승인</option>
+                  <option value="REJECTED" th:selected="${q_status == 'REJECTED'}">반려</option>
+                  <option value="CANCELED" th:selected="${q_status == 'CANCELED'}">신청취소</option>
+                  <option value="COMPLETED" th:selected="${q_status == 'COMPLETED'}">완료</option>
+                </select>
+                <input type="text" id="q_searchVal" name="q_searchVal" class="form-control form-control-keyword"
+                  title="검색어" value="" />
+              </div>
+              <div class="btn-area">
+                <span class="col"><button type="submit" class="btn btn-lg btn-primary" disabled>검색</button></span>
+                <!-- <span class="col"><a class="btn btn-lg btn-outline-light" th:href="@{/mypage_simpleDoc}">초기화</a></span> -->
+              </div>
           </fieldset>
           <input type="hidden" name="q_rowPerPage" id="q_rowPerPage" th:value="${q_rowPerPage}">
           <input type="hidden" name="q_currPage" id="q_currPage" th:value="${q_currPage}">
@@ -73,9 +84,9 @@
               <td th:text="${page.totalElements - (page.number * page.size) - stat.index}">1</td>
               <td th:text="${doc.docType}">구분</td>
               <td>
-                <span th:text="${doc.docType}">서류명</span>
+                <a th:href="@{|/mypage_simpleDoc/${doc.plId}|}" th:text="${doc.docTypeKo}" class="link-underline">서류종류</a>
               </td>
-              <td th:text="${doc.status}">상태</td>
+              <td th:text="${doc.statusKo}">상태</td>
               <td th:text="${#temporals.format(doc.submittedAt, 'yyyy-MM-dd')}">2025-10-01</td>
               <td th:text="${doc.adminId}">담당자</td>
             </tr>
