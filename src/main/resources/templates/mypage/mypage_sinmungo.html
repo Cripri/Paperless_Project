@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>마이페이지 - 신문고</title>
+  <title>마이페이지</title>
   <link rel="stylesheet" href="/mypage/css/mypage_sinmungo.css" th:href="@{/mypage/css/mypage_sinmungo.css}">
   <link rel="stylesheet" href="/header-footer/css/header-footer.css" th:href="@{/header-footer/css/header-footer.css}">
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -19,7 +19,7 @@
   <div id="container">
     <article id="content">
       <div class="content-header">
-        <h2 class="content-title">신문고</h2>
+        <h2 class="content-title">내 민원</h2>
       </div>
 
       <div class="content-body" id="printArea">
@@ -88,7 +88,18 @@
             <tr th:each="item, stat : ${items}">
               <td th:text="${page.totalElements - (page.number * page.size) - stat.index}">1</td>
               <td>민원</td>
-              <td th:text="${item.title}">제목</td>
+              <td>
+                <a th:href="@{/sinmungo/detail/{id}(
+                      id=${item.smgId},
+                      page=${q_currPage},
+                      size=${q_rowPerPage},
+                      keyword=${q_searchVal},
+                      status=${status},
+                      searchType=${q_searchTy}
+                    )}" th:text="${item.title}" class="link-underline">
+                  민원제목
+                </a>
+              </td>
               <td th:text="${item.status}">상태</td>
               <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd')}">2025-10-01</td>
               <td th:text="${item.adminId}">담당자</td>

@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 
 @Controller
 @RequiredArgsConstructor
@@ -73,6 +74,58 @@ public class MypageGetController {
         model.addAttribute("status", status);
 
         return "mypage/mypage_sinmungo";
+    }
+
+    @GetMapping("mypage/mypage_sinmungo/detail/{id}")
+    public String sinmungoDetail(@PathVariable Long id,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(name = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "status", required = false) String status,
+            @RequestParam(name = "searchType", required = false, defaultValue = "all") String searchType,
+            Model model) {
+
+        Sinmungo it = sinmungoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("민원을 찾을 수 없습니다."));
+
+        // 이전/다음
+        Long prevId = sinmungoRepository.findPrevId(id);
+        Long nextId = sinmungoRepository.findNextId(id);
+        Sinmungo prev = (prevId == null) ? null : sinmungoRepository.findById(prevId).orElse(null);
+        Sinmungo next = (nextId == null) ? null : sinmungoRepository.findById(nextId).orElse(null);
+
+        // 본문/답변: HTML escape + 줄바꿈 처리(안전하고 단순)
+        String contentHtml = nl2brEscape(it.getContent());
+        String adminAnswerHtml = nl2brEscape(it.getAdminAnswer());
+
+        // 작성자 마스킹 (원하시는 규칙으로 교체 가능)
+        String writerNameMasked = "김○○";
+
+        // 상세 템플릿 모델
+        model.addAttribute("it", it);
+        model.addAttribute("prev", prev);
+        model.addAttribute("next", next);
+        model.addAttribute("contentHtml", contentHtml);
+        model.addAttribute("adminAnswerHtml", adminAnswerHtml);
+        model.addAttribute("files", null); // 첨부는 추후 연동
+        model.addAttribute("writerNameMasked", writerNameMasked);
+
+        // 목록 복귀용 파라미터 유지
+        model.addAttribute("page", page);
+        model.addAttribute("size", size);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("status", status);
+        model.addAttribute("searchType", searchType);
+
+        return "sinmungo/sinmungo_detail";
+    }
+
+    // 안전한 줄바꿈 변환
+    private String nl2brEscape(String src) {
+        if (src == null || src.isBlank())
+            return "";
+        String escaped = HtmlUtils.htmlEscape(src);
+        return escaped.replace("\n", "<br/>");
     }
 
     // ===== 간편서류 목록 =====

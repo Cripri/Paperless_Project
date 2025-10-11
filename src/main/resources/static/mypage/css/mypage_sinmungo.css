@@ -78,6 +78,9 @@ body{
 .bbs-search .btn-area{
   display:flex; gap:8px; margin-left:auto;
 }
+#q_searchVal {
+  width: 90%;
+}
 .btn{
   display:inline-flex; align-items:center; justify-content:center;
   height:38px; padding:0 14px; border-radius:8px;
