@@ -48,7 +48,8 @@ public class SecurityConfig {
                 "/residentregistration/pdf/**",
                 "/findAccount/**", "/resetPassword/**", "/account/**",
                 "paperless/**", "main/**", "/residentregistration/**", "paperless/fragments/**",
-                "/oauth/**", "/sns/**", "portal", "portal/js/**", "portal/css/**", "header-footer/**")
+                "/oauth/**", "/sns/**", "portal", "portal/js/**", "portal/css/**", "header-footer/**",
+                "/notice/**", "/sinmungo/guide", "/sinmungo/list", "/sinmungo/detail/**", "/sinmungo/css/**")
             .permitAll()
             .anyRequest().authenticated())
 
