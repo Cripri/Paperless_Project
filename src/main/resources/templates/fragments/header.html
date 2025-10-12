@@ -8,7 +8,7 @@
           <span class="welcome-text">환영합니다&nbsp;<span th:text="${loginName}"></span>님</span>
         </li>
 
-        <li><a th:href="@{/minwon/my}">나의 민원 조회</a></li>
+        <li><a th:href="@{/mypage_sinmungo}">나의 민원 조회</a></li>
 
         <li sec:authorize="!isAuthenticated()">
           <a th:href="@{/login}">로그인</a>

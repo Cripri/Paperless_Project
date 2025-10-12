@@ -1,9 +1,12 @@
 package kd.paperless.controller.rest;
 
-import jakarta.servlet.http.HttpSession;
-import kd.paperless.service.SocialAuthService;
-import kd.paperless.service.SnsLinkService;
+import jakarta.servlet.http.*;
+import kd.paperless.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.*;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,10 +17,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OauthRestController {
 
-  private final SocialAuthService socialAuthService; // 외부 OAuth
-  private final SnsLinkService snsLinkService;       // 내부 연동
+  private final SocialAuthService socialAuthService;
+  private final SnsLinkService snsLinkService;
 
-  /** 인가 시작: 네이버/카카오 인가 URL로 리다이렉트 */
+  // ✅ 추가 주입
+  private final UserDetailsByIdService userDetailsByIdService;
+  private final SecurityContextRepository securityContextRepository;
+
   @GetMapping("/{provider}/login")
   public String start(@PathVariable String provider, HttpSession session) {
     String state = UUID.randomUUID().toString();
@@ -26,36 +32,47 @@ public class OauthRestController {
     return "redirect:" + url;
   }
 
-  /** 콜백: code/state → 토큰 교환 → 프로필 조회 → providerId 확보 */
   @GetMapping("/{provider}/callback")
   public String callback(@PathVariable String provider,
-                         @RequestParam String code,
+                         @RequestParam(required = false) String code,
                          @RequestParam(required = false) String state,
+                         @RequestParam(required = false, name = "error") String providerError,
+                         HttpServletRequest request,
+                         HttpServletResponse response,
                          HttpSession session) {
 
-    // (선택) CSRF 방지: state 검증
-    Object saved = session.getAttribute("OAUTH_STATE");
-    if (saved instanceof String savedState) {
-      if (state == null || !savedState.equals(state)) {
-        throw new IllegalStateException("잘못된 state 값입니다.");
-      }
-    }
+    if (providerError != null || code == null) return "redirect:/login?error";
+
+    String saved = (String) session.getAttribute("OAUTH_STATE");
+    session.removeAttribute("OAUTH_STATE");
+    if (saved == null || state == null || !saved.equals(state)) return "redirect:/login?error";
 
     String prov = provider.toUpperCase();
 
-    // 토큰 교환 → 프로필 조회 → 소셜 고유 PK(providerId)
     String accessToken = socialAuthService.exchangeAccessToken(prov, code, state);
     String providerId  = socialAuthService.fetchProviderId(prov, accessToken);
 
-    // 이미 연동 → 즉시 로그인
-    var linkedUserId = snsLinkService.findLinkedUserId(prov, providerId);
+    var linkedUserId = snsLinkService.findLinkedUserId(prov, providerId); // Optional<Long>
     if (linkedUserId.isPresent()) {
-      session.setAttribute("LOGIN_USER_ID", linkedUserId.get()); // 필요 시 SecurityContext로 교체
-      return "redirect:/";
+      forceLoginById(request, response, linkedUserId.get());   // ✅ PK로 바로 로그인
+      return "redirect:/portal";
     }
 
-    // 미연동 → 연동 대기 저장 후 연결 화면으로
+    // 미연동 → 연동 대기
     snsLinkService.putPending(session, prov, providerId);
     return "redirect:/sns/connect";
+  }
+
+  /** PK로 강제 로그인: SecurityContext + 세션 저장 */
+  private void forceLoginById(HttpServletRequest request, HttpServletResponse response, Long userId) {
+    UserDetails user = userDetailsByIdService.loadUserById(userId);
+    var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+
+    SecurityContext context = SecurityContextHolder.createEmptyContext();
+    context.setAuthentication(auth);
+    SecurityContextHolder.setContext(context);
+
+    // ★ 세션에 SPRING_SECURITY_CONTEXT 저장 (이후 글쓰기 등에서도 인증 유지)
+    securityContextRepository.saveContext(context, request, response);
   }
 }

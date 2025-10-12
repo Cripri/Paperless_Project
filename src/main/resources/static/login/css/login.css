@@ -283,14 +283,17 @@ main {
   margin-top: 56px;
 }
 
-/* 그리드: 회원/ SNS / 비회원 */
+/* 그리드: 회원/ SNS */
 .form-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;                 
   display: grid;
-  gap: 18px;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(2, 520px); 
+  justify-content: center;
+  column-gap: 28px; 
+  row-gap: 20px;
+  max-width: 1100px; 
 }
 
 .form-item {
