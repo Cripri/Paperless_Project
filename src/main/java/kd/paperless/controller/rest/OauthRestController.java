@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 
 import java.util.UUID;
 
@@ -19,8 +21,6 @@ public class OauthRestController {
 
   private final SocialAuthService socialAuthService;
   private final SnsLinkService snsLinkService;
-
-  // ✅ 추가 주입
   private final UserDetailsByIdService userDetailsByIdService;
   private final SecurityContextRepository securityContextRepository;
 
@@ -55,7 +55,7 @@ public class OauthRestController {
     var linkedUserId = snsLinkService.findLinkedUserId(prov, providerId); // Optional<Long>
     if (linkedUserId.isPresent()) {
       forceLoginById(request, response, linkedUserId.get());   // ✅ PK로 바로 로그인
-      return "redirect:/portal";
+      return redirectToSavedOrDefault(request, response, "/portal"); // ✅ 변경 포인트
     }
 
     // 미연동 → 연동 대기
@@ -72,7 +72,17 @@ public class OauthRestController {
     context.setAuthentication(auth);
     SecurityContextHolder.setContext(context);
 
-    // ★ 세션에 SPRING_SECURITY_CONTEXT 저장 (이후 글쓰기 등에서도 인증 유지)
+    // ★ 세션에 SPRING_SECURITY_CONTEXT 저장 (이후 요청에서도 인증 유지)
     securityContextRepository.saveContext(context, request, response);
+  }
+
+  /** ✅ SavedRequest 있으면 그쪽으로, 없으면 기본값으로 */
+  private String redirectToSavedOrDefault(HttpServletRequest request,
+                                          HttpServletResponse response,
+                                          String defaultUrl) {
+    var cache = new HttpSessionRequestCache();
+    SavedRequest saved = cache.getRequest(request, response);
+    String target = (saved != null) ? saved.getRedirectUrl() : defaultUrl;
+    return "redirect:" + target;
   }
 }

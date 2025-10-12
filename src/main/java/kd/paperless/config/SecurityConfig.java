@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import kd.paperless.service.CustomUserDetailsService;
@@ -60,13 +61,15 @@ public class SecurityConfig {
                 "/notice/**", "/sinmungo/guide", "/sinmungo/list", "/sinmungo/detail/**", "/sinmungo/css/**")
             .permitAll()
             .anyRequest().authenticated())
-
+        .requestCache(rc -> rc
+            .requestCache(new HttpSessionRequestCache())
+        )
         .formLogin(login -> login
             .loginPage("/login")
             .loginProcessingUrl("/login")
             .usernameParameter("userId")
             .passwordParameter("password")
-            .defaultSuccessUrl("/portal", true)
+            .defaultSuccessUrl("/portal", false)
             .failureUrl("/login?error"))
         .logout(
             l -> l.logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true).deleteCookies("JSESSIONID"))
