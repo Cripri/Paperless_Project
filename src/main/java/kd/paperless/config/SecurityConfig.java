@@ -6,9 +6,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import kd.paperless.service.CustomUserDetailsService;
@@ -31,6 +34,11 @@ public class SecurityConfig {
     return cfg.getAuthenticationManager();
   }
 
+  @Bean
+  public SecurityContextRepository securityContextRepository() {
+    return new HttpSessionSecurityContextRepository();
+  }
+
   /** 🔐 단일 SecurityFilterChain */
 
   @Bean
@@ -40,7 +48,7 @@ public class SecurityConfig {
         .headers(h -> h.frameOptions(fo -> fo.sameOrigin()))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/", "/error",
-                "/favicon.ico",
+                "/favicon.ico", "/oauth/**",
                 "/login/**", "/logout", "/signup/**", "/api/**",
                 "/css/**", "/js/**", "/images/**",
                 "/residentregistration/apply",
@@ -58,11 +66,13 @@ public class SecurityConfig {
             .loginProcessingUrl("/login")
             .usernameParameter("userId")
             .passwordParameter("password")
-            .defaultSuccessUrl("/", true)
+            .defaultSuccessUrl("/portal", true)
             .failureUrl("/login?error"))
         .logout(
             l -> l.logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true).deleteCookies("JSESSIONID"))
-        .sessionManagement(sess -> sess.sessionFixation(fix -> fix.migrateSession()));
+        .sessionManagement(sess -> sess
+            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+            .sessionFixation(fix -> fix.migrateSession()));
 
     return http.build();
   }

@@ -35,6 +35,9 @@
                                 <form action="/login" id="loginForm" method="post">
                                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                     <div class="login-inp-box">
+                                        <!-- <div th:if="${param.error}" class="login-error-msg">
+                                            아이디 또는 비밀번호가 올바르지 않습니다.
+                                        </div> -->
                                         <div class="login-inp id">
                                             <label for="userId"></label>
                                             <input type="text" name="userId" id="userId" placeholder="아이디 입력">
@@ -68,19 +71,6 @@
                                     </p>
                                 </div>
                             </li>
-                            <li class="form-item n03">
-                                <span class="form-title">비회원 로그인</span>
-                                <div class="btn-box">
-                                    <button type="button" class="check-btn phone">휴대폰 본인인증</button>
-                                    <button type="button" class="check-btn ipin">아이핀 인증</button>
-                                    <p class="login-caution">
-                                        본인 명의의 휴대폰 본인인증을 통해 로그인하는 경우 <br>
-                                        일부 홈페이지 서비스 이용이 제한됩니다. <br>
-                                        PASS 앱이 없으신 분은 휴대폰 인증시 인증창 하단의 <br>
-                                        문자(SMS)로 인증하기"를 선택하여 인증해주세요.
-                                    </p>
-                                </div>
-                            </li>
                         </ul>
                     </div>
                 </div>
@@ -108,12 +98,12 @@
             window.open('/findAccount', 'findPopup', 'width=600,height=700,scrollbars=yes,resizable=no');
         }
 
-        function onNaverLogin() { 
-            location.href = '/oauth/naver/login'; 
+        function onNaverLogin() {
+            location.href = '/oauth/naver/login';
         }
 
-        function onKakaoLogin() { 
-            location.href = '/oauth/kakao/login'; 
+        function onKakaoLogin() {
+            location.href = '/oauth/kakao/login';
         }
 
 
@@ -154,6 +144,17 @@
                 alert('회원가입이 완료되었습니다. 로그인해 주세요.');
             }
         })();
+    </script>
+    <script th:inline="javascript">
+        const loginError = /*[[${param.error} != null]]*/ false;
+        if (loginError) {
+            alert('아이디 또는 비밀번호가 올바르지 않습니다.');
+            // UX: 비번 비우고 아이디로 포커스
+            const idEl = document.getElementById('userId');
+            const pwEl = document.getElementById('password');
+            if (pwEl) pwEl.value = '';
+            if (idEl) idEl.focus();
+        }
     </script>
 </body>
 
