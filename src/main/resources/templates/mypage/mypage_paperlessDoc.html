@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>마이페이지</title>
-  <link rel="stylesheet" href="/mypage/css/mypage_simpleDoc.css" th:href="@{/mypage/css/mypage_simpleDoc.css}">
+  <link rel="stylesheet" href="/mypage/css/mypage_paperlessDoc.css" th:href="@{/mypage/css/mypage_paperlessDoc.css}">
   <link rel="stylesheet" href="/header-footer/css/header-footer.css" th:href="@{/header-footer/css/header-footer.css}">
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script src="/header-footer/js/header-footer.js" th:src="@{/header-footer/js/header-footer.js}" defer></script>
@@ -23,7 +23,7 @@
       </div>
 
       <div class="content-body" id="printArea">
-        <form class="bbs-search" id="dataForm" name="dataForm" th:action="@{/mypage_simpleDoc}" method="get">
+        <form class="bbs-search" id="dataForm" name="dataForm" th:action="@{/mypage_paperlessDoc}" method="get">
           <fieldset>
             <div class="input-area select-length2">
               <div class="input-area select-length2">
@@ -42,8 +42,8 @@
                   title="검색어" value="" />
               </div>
               <div class="btn-area">
-                <span class="col"><button type="submit" class="btn btn-lg btn-primary" disabled>검색</button></span>
-                <!-- <span class="col"><a class="btn btn-lg btn-outline-light" th:href="@{/mypage_simpleDoc}">초기화</a></span> -->
+                <span class="col"><button type="submit" class="btn btn-lg btn-primary">검색</button></span>
+                <!-- <span class="col"><a class="btn btn-lg btn-outline-light" th:href="@{/mypage_paperlessDoc}">초기화</a></span> -->
               </div>
           </fieldset>
           <input type="hidden" name="q_rowPerPage" id="q_rowPerPage" th:value="${q_rowPerPage}">
@@ -84,7 +84,8 @@
               <td th:text="${page.totalElements - (page.number * page.size) - stat.index}">1</td>
               <td th:text="${doc.docType}">구분</td>
               <td>
-                <a th:href="@{|/mypage_simpleDoc/${doc.plId}|}" th:text="${doc.docTypeKo}" class="link-underline">서류종류</a>
+                <a th:href="@{|/mypage_paperlessDoc/${doc.plId}|}" th:text="${doc.docTypeKo}"
+                  class="link-underline">서류종류</a>
               </td>
               <td th:text="${doc.statusKo}">상태</td>
               <td th:text="${#temporals.format(doc.submittedAt, 'yyyy-MM-dd')}">2025-10-01</td>
@@ -129,6 +130,11 @@
         if (p < totalPages) { curr.value = String(p + 1); form.submit(); }
       });
     })();
+
+    document.getElementById("q_status").addEventListener("change", function () {
+      document.getElementById("dataForm").submit();
+    });
+
   </script>
 </body>
 

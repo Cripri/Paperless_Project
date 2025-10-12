@@ -129,8 +129,8 @@ public class MypageGetController {
     }
 
     // ===== 간편서류 목록 =====
-    @GetMapping("/mypage_simpleDoc")
-    public String mypageSimpleDoc(
+    @GetMapping("/mypage_paperlessDoc")
+    public String mypagePaperlessDoc(
             @AuthenticationPrincipal(expression = "username") String loginId,
             @RequestParam(name = "q_status", required = false) String qStatus,
             @RequestParam(name = "q_currPage", defaultValue = "1") int qCurrPage,
@@ -170,10 +170,10 @@ public class MypageGetController {
         model.addAttribute("q_rowPerPage", qRowPerPage);
         model.addAttribute("q_currPage", qCurrPage);
 
-        return "mypage/mypage_simpleDoc";
+        return "mypage/mypage_paperlessDoc";
     }
 
-    @GetMapping("/mypage_simpleDoc/{plId}")
+    @GetMapping("/mypage_paperlessDoc/{plId}")
     public String paperlessDocDetail(@PathVariable Long plId,
             @AuthenticationPrincipal(expression = "username") String loginId,
             Model model) {
@@ -186,7 +186,7 @@ public class MypageGetController {
 
         // 소유자 보호
         if (!doc.getUserId().equals(me.getId())) {
-            return "redirect:/mypage_simpleDoc";
+            return "redirect:/mypage_paperlessDoc";
         }
 
         model.addAttribute("doc", doc); // 공통
