@@ -41,4 +41,8 @@ public class Notice {
 
   @Column(name = "STATUS", length = 20, nullable = false)
   private String status; // POSTED / HIDDEN / DELETED
-}       
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "ADMIN_ID", referencedColumnName = "ADMIN_ID", insertable = false, updatable = false)
+  private Admin admin;
+}

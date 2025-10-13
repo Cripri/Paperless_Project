@@ -17,6 +17,7 @@ public class NoticeDetailDto {
   private LocalDateTime createdAt;
   private Long viewCount;
   private String content;
+  private String adminName;
 
   public static NoticeDetailDto from(Notice e) {
     return NoticeDetailDto.builder()
@@ -26,6 +27,7 @@ public class NoticeDetailDto {
         .createdAt(e.getCreatedAt())
         .viewCount(e.getViewCount() == null ? 0L : e.getViewCount())
         .content(e.getContent())
+        .adminName(e.getAdmin() != null ? e.getAdmin().getAdminName() : null)
         .build();
   }
 }
