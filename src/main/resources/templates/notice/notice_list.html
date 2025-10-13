@@ -38,6 +38,7 @@
         <tr>
           <th style="width:80px">번호</th>
           <th>제목</th>
+          <th>작성자</th>
           <th style="width:120px">공지일</th>
           <th style="width:80px">조회</th>
         </tr>
@@ -49,6 +50,7 @@
             <span th:if="${it.isPinned == 'Y'}" class="tag-pinned">[공지]</span>
             <a th:href="@{|/notice/detail/${it.noticeId}|}" th:text="${it.title}">제목</a>
           </td>
+          <td th:text="${it.adminName}">작성자</td>
           <td style="width:120px"
             th:text="${it.createdAt != null ? #temporals.format(it.createdAt, 'yyyy-MM-dd') : ''}">
             2025-09-01
