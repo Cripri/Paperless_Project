@@ -102,7 +102,11 @@
               </td>
               <td th:text="${item.status}">상태</td>
               <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd')}">2025-10-01</td>
-              <td th:text="${item.adminId}">담당자</td>
+              <td th:text="${item.admin != null and !#strings.isEmpty(item.admin.adminName) 
+              ? item.admin.adminName 
+              : '-'}">
+                담당자
+              </td>
             </tr>
             <tr th:if="${#lists.isEmpty(items)}">
               <td colspan="6" class="nodata">게시물이 없습니다.</td>

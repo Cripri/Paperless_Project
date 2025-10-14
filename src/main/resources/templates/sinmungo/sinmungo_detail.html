@@ -7,11 +7,9 @@
   <title>신문고 상세</title>
   <link rel="stylesheet" th:href="@{/sinmungo/css/sinmungo_detail.css}">
   <!-- 공통 헤더/푸터 -->
-  <link rel="stylesheet" href="/header-footer/css/header-footer.css"
-        th:href="@{/header-footer/css/header-footer.css}">
+  <link rel="stylesheet" href="/header-footer/css/header-footer.css" th:href="@{/header-footer/css/header-footer.css}">
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-  <script src="/header-footer/js/header-footer.js"
-          th:src="@{/header-footer/js/header-footer.js}" defer></script>
+  <script src="/header-footer/js/header-footer.js" th:src="@{/header-footer/js/header-footer.js}" defer></script>
 </head>
 
 <body class="site">
@@ -58,9 +56,10 @@
 
           <th class="label">결과통지여부</th>
           <td class="value" colspan="3">
-            <span th:text="${#strings.equalsIgnoreCase(it.noticeSms, 'Y') 
-                ? '게시판답변, 휴대전화 문자메시지(SMS)' 
-                : '게시판답변'}">게시판답변</span>
+            <span
+              th:text="|게시판답변${it.noticeSms == 'Y' ? ', 휴대전화 문자메시지(SMS)' : ''}${(it.noticeEmail != null and !#strings.isEmpty(it.noticeEmail)) ? ', 이메일' : ''}|">
+              게시판답변
+            </span>
           </td>
         </tr>
       </table>
@@ -95,17 +94,18 @@
           <col style="width:220px">
         </colgroup>
         <tr>
-          <th>담당부서</th>
-          <td><span th:text="${it.adminId != null ? '관리자ID: ' + it.adminId : '-'}">미지정</span></td>
+          <!-- <th>담당부서</th>
+          <td><span th:text="${it.adminId != null ? '관리자ID: ' + it.adminId : '-'}">미지정</span></td> -->
 
           <th>답변일자</th>
-          <td th:text="${it.answerDate != null ? #temporals.format(it.answerDate, 'yyyy-MM-dd HH:mm:ss') : '-'}">&nbsp;
+          <td colspan="3"
+            th:text="${it.answerDate != null ? #temporals.format(it.answerDate, 'yyyy-MM-dd HH:mm:ss') : '-'}">&nbsp;
           </td>
         </tr>
 
         <tr>
           <th>작성자</th>
-          <td><span th:text="${it.adminId != null ? '관리자이름' : '-'}">-</span></td>
+          <td><span th:text="${adminNameMasked == null ? '미배정' : adminNameMasked}">-</span></td>
 
           <th>접수번호</th>
           <td th:text="${it.smgId}">-</td>
@@ -113,11 +113,11 @@
 
         <tr>
           <th>전화번호</th>
-          <td colspan="3" th:text="${it.telNum != null ? '-' : '-'}">&nbsp;</td>
+          <td colspan="3" th:text="${it.phoneNum != null ? it.phoneNum : '-'}">&nbsp;</td>
         </tr>
         <tr>
           <td colspan="4" style="height:160px; line-height:1.8; background:#fff;" th:utext="${#strings.isEmpty(adminAnswerHtml) ? 
-                     '담당부서에서 처리중입니다.<br><br>처리기한 내 답변 예정입니다.' : adminAnswerHtml}">
+                     '담당부서에서 처리중입니다.' : adminAnswerHtml}">
             답변
           </td>
         </tr>
