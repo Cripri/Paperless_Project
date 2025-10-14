@@ -9,6 +9,7 @@ import kd.paperless.repository.SinmungoRepository;
 import kd.paperless.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.data.domain.*;
@@ -63,6 +64,14 @@ public class MypageGetController {
 
         Page<Sinmungo> page = sinmungoRepository
                 .searchByUser(user.getId(), keyword, statusParam, searchType, pageable);
+
+        Map<Long, String> adminNamesMasked = new HashMap<>();
+        for (Sinmungo s : page.getContent()) {
+            String name = (s.getAdmin() != null) ? s.getAdmin().getAdminName() : null;
+            String masked = (name != null && !name.isBlank()) ? maskName(name) : "-";
+            adminNamesMasked.put(s.getSmgId(), masked);
+        }
+        model.addAttribute("adminNamesMasked", adminNamesMasked);
 
         model.addAttribute("page", page);
         model.addAttribute("items", page.getContent());
@@ -277,5 +286,14 @@ public class MypageGetController {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private static String maskName(String name) {
+        if (name == null || name.isBlank())
+            return "-";
+        String trimmed = name.trim();
+        if (trimmed.length() == 1)
+            return trimmed.charAt(0) + "○";
+        return trimmed.charAt(0) + "OO";
     }
 }
