@@ -1,11 +1,101 @@
+@font-face {
+    font-family: 'Escoredream';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff');
+    font-weight: 300;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Escoredream';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-4Regular.woff') format('woff');
+    font-weight: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Escoredream';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-5Medium.woff') format('woff');
+    font-weight: 500;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'YeogiOttaeJalnanGothic';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_231029@1.1/JalnanGothic.woff') format('woff');
+    font-weight: normal;
+    font-display: swap;
+}
+
+:after, :before {
+  display: none;
+  content: ''
+}
+
 body {
     font-family: Arial, sans-serif;
-    background: #fff;
+    background: #5942d0 url(/login/images/login_bg.png) no-repeat left top;
+    line-height: 24px;
+    font-weight: 400;
+    font-family: 'Escoredream', 'NotoKr', 'Malgun Gothic', '맑은 고딕', Dotum, '돋움', Helvetica, AppleSDGothicNeo, sans-serif;
     margin: 20px;
+    color: white;
 }
 
 #container {
     max-width: 1170px;
+    margin: 0 auto;
+}
+
+.first-box {
+  position: relative;
+  padding-top: 111px;
+  text-align: center;
+}
+
+.home-link {
+  margin-bottom: 8px;
+  display: block;
+  position: absolute;
+  top: 50px;
+  left: 0;
+}
+
+.home-link .home-btn {
+  display: inline-block;
+  font-size: 14px;
+  color: #FFF;
+  text-decoration: none;
+  background: rgba(49, 108, 255, 0.08);
+  border: 1px solid rgba(49, 108, 255, 0.25);
+  padding: 6px 10px;
+  border-radius: 8px;
+  position: relative;
+  z-index: 1;
+  width: 191px;
+  padding: 11px 0 11px 20px;
+  border: 1px solid #fff;
+  border-radius: 10px;
+  background: transparent;
+  transition: all 0.25s ease-in-out;
+}
+
+.first-box .home-link .home-btn:before {
+  display: block;
+  top: 0;
+  bottom: 0;
+  left: 19px;
+  width: 19px;
+  height: 19px;
+  margin: auto 0;
+  background: url('/login/images/login_sprite.png') no-repeat;
+  position: absolute;
+}
+
+.first-box .home-link .home-btn > span {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
 }
 
 h2 {
@@ -26,7 +116,7 @@ td {
 }
 
 th {
-    background: #f8f8f8;
+    background: #7b6cf6;
     width: 20%;
 }
 
@@ -53,7 +143,7 @@ input[type="email"] {
 }
 
 .btn-blue {
-    background: #5942d0;
+    background: #7b6cf6;
     color: #fff;
 }
 
@@ -76,3 +166,43 @@ input[type="email"] {
     color: #d9534f;
     font-size: 20px;
 }
+
+#footer {
+  margin-top: 22px;
+}
+
+.footer-inner {
+  margin-top: 94px;
+  font-size: 15px;
+  line-height: 26px;
+  font-weight: 400;
+  color: #fff;
+  letter-spacing: 0;
+  text-align: center;
+}
+
+.footer-info {
+  margin-bottom: 8px;
+}
+
+.footer-info .address {
+  margin: 0 0 6px;
+}
+
+.footer-info .tel {
+  margin: 0;
+}
+
+.footer-inner p span {
+  font-weight: 500;
+}
+
+.copyright p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #fff;
+}
+
+/* #signupForm {
+    background-color: ;
+} */

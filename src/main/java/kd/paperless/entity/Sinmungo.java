@@ -64,4 +64,8 @@ public class Sinmungo {
 
   @Column(name = "REJECT_REASON", length = 500)
   private String rejectReason;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "ADMIN_ID", referencedColumnName = "ADMIN_ID", insertable = false, updatable = false)
+  private Admin admin;
 }

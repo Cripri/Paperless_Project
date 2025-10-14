@@ -18,6 +18,7 @@ public class SinmungoListDto {
   private LocalDateTime createdAt;
   private String status;
   private Long viewCount;
+  private String adminName;
 
   public static SinmungoListDto from(Sinmungo e) {
     return SinmungoListDto.builder()
@@ -27,6 +28,7 @@ public class SinmungoListDto {
         .createdAt(e.getCreatedAt())
         .status(e.getStatus())
         .viewCount(e.getViewCount() == null ? 0L : e.getViewCount())
+        .adminName(e.getAdmin() != null ? e.getAdmin().getAdminName() : null)
         .build();
   }
 }

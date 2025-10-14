@@ -1,5 +1,7 @@
 package kd.paperless.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,20 +15,21 @@ import kd.paperless.entity.Sinmungo;
 public interface SinmungoRepository extends JpaRepository<Sinmungo, Long> {
 
   @Query("""
-      SELECT s
-      FROM Sinmungo s
-      WHERE (:status IS NULL OR s.status = :status)
-        AND (:keyword IS NULL OR (
-             (:searchType = 'title'   AND LOWER(s.title) LIKE LOWER(CONCAT('%', :keyword, '%')))
-          OR (:searchType = 'content' AND LOWER(function('dbms_lob.substr', s.content, 4000, 1))
-                                       LIKE LOWER(CONCAT('%', :keyword, '%')))
-                                       OR (:searchType = 'all'     AND (
-                                        LOWER(s.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
-            OR LOWER(function('dbms_lob.substr', s.content, 4000, 1))
-            LIKE LOWER(CONCAT('%', :keyword, '%'))
+        SELECT s
+        FROM Sinmungo s
+        LEFT JOIN FETCH s.admin a
+        WHERE (:status IS NULL OR s.status = :status)
+          AND (:keyword IS NULL OR (
+               (:searchType = 'title'   AND LOWER(s.title) LIKE LOWER(CONCAT('%', :keyword, '%')))
+            OR (:searchType = 'content' AND LOWER(function('dbms_lob.substr', s.content, 4000, 1))
+                                         LIKE LOWER(CONCAT('%', :keyword, '%')))
+            OR (:searchType = 'all'     AND (
+                   LOWER(s.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                OR LOWER(function('dbms_lob.substr', s.content, 4000, 1))
+                   LIKE LOWER(CONCAT('%', :keyword, '%'))
+            ))
           ))
-          ))
-          """)
+      """)
   Page<Sinmungo> search(@Param("keyword") String keyword,
       @Param("status") String status,
       @Param("searchType") String searchType,
@@ -35,6 +38,7 @@ public interface SinmungoRepository extends JpaRepository<Sinmungo, Long> {
   @Query("""
       SELECT s
       FROM Sinmungo s
+      LEFT JOIN FETCH s.admin a
       WHERE s.writerId = :userId
         AND (:status IS NULL OR s.status = :status)
         AND (:keyword IS NULL OR (
@@ -60,4 +64,12 @@ public interface SinmungoRepository extends JpaRepository<Sinmungo, Long> {
 
   @Query("select min(s.smgId) from Sinmungo s where s.smgId > :id")
   Long findNextId(@Param("id") Long id);
+
+  @Query("""
+        SELECT s
+        FROM Sinmungo s
+        LEFT JOIN FETCH s.admin a
+        WHERE s.smgId = :id
+      """)
+  Optional<Sinmungo> findByIdWithAdmin(@Param("id") Long id);
 }

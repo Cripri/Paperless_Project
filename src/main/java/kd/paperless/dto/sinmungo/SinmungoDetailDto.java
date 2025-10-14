@@ -17,9 +17,12 @@ public class SinmungoDetailDto {
   private LocalDateTime createdAt;
   private Long viewCount;
   private char noticeSms;
+  private String noticeEmail;
   private Long adminId;
   private LocalDateTime answerDate;
   private String telNum;
+  private String adminName;
+  private String phoneNum;
 
   public static SinmungoDetailDto from(Sinmungo e) {
     return SinmungoDetailDto.builder()
@@ -32,6 +35,8 @@ public class SinmungoDetailDto {
         .adminId(e.getAdminId())
         .answerDate(e.getAnswerDate())
         .telNum(e.getTelNum())
+        .adminName(e.getAdmin() != null ? e.getAdmin().getAdminName() : null)
+        .phoneNum(e.getAdmin() != null ? e.getAdmin().getPhoneNum() : null)
         .build();
   }
 }

@@ -196,7 +196,7 @@ public class SinmungoController {
       @RequestParam(required = false) String searchType,
       Model model) {
 
-    Sinmungo item = sinmungoRepository.findById(smgId)
+    Sinmungo item = sinmungoRepository.findByIdWithAdmin(smgId)
         .orElseThrow(() -> new IllegalArgumentException("해당 글이 없습니다. smgId=" + smgId));
 
     // 조회수 증가
@@ -245,6 +245,11 @@ public class SinmungoController {
           .orElse("-");
     }
     model.addAttribute("writerNameMasked", writerNameMasked);
+
+    String adminNameMasked = (it.getAdminName() != null && !it.getAdminName().isBlank())
+        ? maskName(it.getAdminName())
+        : "-";
+    model.addAttribute("adminNameMasked", adminNameMasked);
 
     model.addAttribute("prev", prev);
     model.addAttribute("next", next);

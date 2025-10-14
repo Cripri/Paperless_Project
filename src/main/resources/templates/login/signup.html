@@ -8,6 +8,11 @@
 </head>
 
 <body>
+    <header class="first-box">
+        <div class="home-link">
+            <a href="/portal" class="home-btn"><span>팽구청 바로가기</span></a>
+        </div>
+    </header>
     <div id="container">
         <h2>회원정보 입력</h2>
         <p><span class="redDot">*</span> 표시는 필수 항목입니다.</p>
@@ -36,7 +41,7 @@
                     <th>비밀번호 <span class="redDot">*</span></th>
                     <td>
                         <input type="password" name="password">
-                        <p style="font-size:12px; color:#555;">
+                        <p style="font-size:12px; color:#ffffff;">
                             * 영대문자, 영소문자, 숫자 및 특수문자 2종류 이상 포함시 8자리 이상 입력하십시오.<br>
                         </p>
                     </td>
@@ -51,7 +56,7 @@
                         010 -
                         <input type="text" name="phoneMid" size="4"> -
                         <input type="text" name="phoneLast" size="4">
-                        <span style="font-size:12px; color:#777;">※ 분실된 회원정보 찾기 및 알림 등에 사용됩니다.</span>
+                        <span style="font-size:12px; color:#ffffff;">※ 분실된 회원정보 찾기 및 알림 등에 사용됩니다.</span>
                     </td>
                 </tr>
                 <tr>
@@ -73,8 +78,16 @@
                         <input type="text" name="emailDomain" value="naver.com">
                         <select onchange="document.querySelector('[name=emailDomain]').value=this.value">
                             <option>naver.com</option>
-                            <option>gmail.com</option>
                             <option>daum.net</option>
+                            <option>gmail.com</option>
+                            <option>nate.com</option>
+                            <option>kakao.com</option>
+                            <option>hotmail.com</option>
+                            <option>outlook.com</option>
+                            <option>icloud.com</option>
+                            <option>yahoo.com</option>
+                            <option>proton.me</option>
+                            <option value="">직접 입력</option>
                         </select>
                     </td>
                 </tr>
@@ -97,6 +110,20 @@
             </div>
         </form>
     </div>
+    <footer id="footer">
+        <div class="footer-inner">
+            <div class="footer-info">
+                <p class="address">[01689] 서울시 노원구 노해로 437(상계동)</p>
+                <p class="tel">TEL <span>02-2116-3114 (120 다산콜센터로 연결)</span> <em>|</em> <span>02-2116-3000,3301
+                        (야간,공휴일/당직실)</span> <em>|</em> <span>FAX 02-2116-4666</span></p>
+            </div>
+            <div class="copyright">
+                <p>
+                    COPYRIGHT ⓒ NOWON-GU OFFICE ALL RIGHT RESERVED
+                </p>
+            </div>
+        </div>
+    </footer>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
         function execDaumPostcode() {
