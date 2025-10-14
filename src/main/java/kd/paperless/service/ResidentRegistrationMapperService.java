@@ -12,11 +12,15 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ResidentRegistrationMapperService {
+    public PaperlessDoc toEntity(ResidentRegistrationForm f, Long loginId){
+        PaperlessDoc e = toEntity(f);
+        e.setUserId(loginId);
+        return e;
+    }
 
     public PaperlessDoc toEntity(ResidentRegistrationForm f) {
         PaperlessDoc e = new PaperlessDoc();
-        // userId는 나중에 → null
-        e.setUserId(101l);
+        e.setUserId(null);
 
         // 고정값
         e.setConsentYn('Y');

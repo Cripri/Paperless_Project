@@ -3,19 +3,25 @@ package kd.paperless.controller.post;
 import jakarta.validation.Valid;
 import kd.paperless.dto.ResidentRegistrationForm;
 import kd.paperless.entity.PaperlessDoc;
+import kd.paperless.entity.User;
 import kd.paperless.repository.PaperlessDocRepository;
 import kd.paperless.service.ResidentRegistrationMapperService;
 import kd.paperless.service.RrPdfOverlayService;
 import lombok.RequiredArgsConstructor;
+
+import java.security.Principal;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
+import kd.paperless.repository.UserRepository;
 
 @Controller
 @RequestMapping("/residentregistration")
@@ -27,6 +33,7 @@ public class ResidentRegistrationFlowController {
     private final RrPdfOverlayService pdfService;               // <-- makePreview / loadBytes / promoteToFinal 사용
     private final ResidentRegistrationMapperService mapper;     // DTO -> Entity 매핑
     private final PaperlessDocRepository docRepo;               // 저장
+    private final UserRepository userRepository;
 
     /** 세션에 rrForm 없을 때 기본값 생성 */
     @ModelAttribute("rrForm")
@@ -37,18 +44,21 @@ public class ResidentRegistrationFlowController {
     // ==== 1) 작성 폼 진입 ====
 
     /** 새 주소 (/apply) */
+    
     @GetMapping("/apply")
-    public String apply(Model model) {
+    public String apply(Model model, @AuthenticationPrincipal(expression = "userId") Long userId) {
+
+        if(userId == null) return "redirect:/login";
+
         if (!model.containsAttribute("rrForm")) {
             model.addAttribute("rrForm", ResidentRegistrationForm.defaultForGet());
         }
         return "paperless/writer/form/residentregistration_form";
     }
 
-    /** 구 주소 호환 (/form) */
     @GetMapping("/form")
-    public String form(Model model) {
-        return apply(model);
+    public String form(Model model, @AuthenticationPrincipal(expression = "userId") Long userId) {
+        return apply(model,userId); // 동일하게 인증 주체로 위임
     }
 
     // ==== 2) 프리뷰 생성 ====
@@ -120,29 +130,28 @@ public class ResidentRegistrationFlowController {
      */
     @PostMapping("/submit")
     public String submit(@ModelAttribute("rrForm") ResidentRegistrationForm rrForm,
-                         @RequestParam(value = "fileId", required = false) String fileId,
-                         SessionStatus status,
-                         Model model) {
+                        @RequestParam(value = "fileId", required = false) String fileId,
+                        SessionStatus status,
+                        Model model,
+                        @AuthenticationPrincipal(expression = "userId") Long userId) {
         try {
             // DB 저장
             PaperlessDoc entity = mapper.toEntity(rrForm);
+            entity.setUserId(userId); // 👈 여기에 PK 저장
             docRepo.save(entity);
 
-            // 프리뷰 파일 최종 승격(선택: fileId가 있으면)
             if (fileId != null && !fileId.isBlank()) {
                 pdfService.promoteToFinal(fileId);
             }
 
-            // 세션 정리
             status.setComplete();
-
             model.addAttribute("plId", entity.getPlId());
-            return "paperless/writer/form/residentregistration_done";
+            return "redirect:/mypage_paperlessDoc";
         } catch (Exception e) {
             model.addAttribute("submitError", "제출 처리 중 오류가 발생했습니다.");
-            // 제출 실패 시에도 프리뷰로 다시 보여주고 싶다면 fileId를 유지해야 함
             if (fileId != null) model.addAttribute("fileId", fileId);
             return "paperless/writer/form/residentregistration_preview";
         }
     }
+
 }

@@ -7,6 +7,8 @@ import lombok.Data;
 
 @Data
 public class ResidentRegistrationForm implements Serializable {
+    private String id;
+
     // ① 신청인 기본정보
     @NotBlank(message = "성명을 입력하세요.")
     @Size(max = 100)

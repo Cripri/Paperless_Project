@@ -26,7 +26,7 @@ public class MypageGetController {
     private final PaperlessDocRepository paperlessDocRepository;
     private final UserRepository userRepository;
 
-    @GetMapping("/mypage_myInfoEdit")
+    @GetMapping("/mypage_myInfoEdit")   
     public String mypage_myInfoEdit(@AuthenticationPrincipal(expression = "username") String loginId, Model model) {
         if (loginId == null)
             return "redirect:/login";
@@ -203,11 +203,16 @@ public class MypageGetController {
                 return "paperless/writer/form/residentregistration_form";
                 // 내가 신청한 파일로 가게 하고 싶은데 그건 나중에 물어봐서 해야겠담. 양식이랑 프리뷰밖에 없어서 못보는듯
                 // 아니면 걍 내가 뭔가 잘못 햇을수도 있고 암튼암튼이다 ~
+                // 암튼암튼 거머더라 어떻게하기로했지
+                // 처리전에는 신청서류
+                // 처리완료되면 등본입니당
             }
             case "PASSPORT": {
                 // 여권 폼(ppForm)을 기대한다면 동일하게 만들어 넣어주세요.
                 // PassportForm ppForm = toPassportDto(doc);
                 // model.addAttribute("ppForm", ppForm);
+                // 신청하고나서는 신청서류
+                // 처리완료되면 암것도 안뜸 ㅇㅇ window alter 그냥 다됨 가서 찾으러가셈 ㅇㅇ
                 return "paperless/writer/form/passport_form";
             }
             default: {
