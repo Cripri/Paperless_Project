@@ -12,11 +12,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Admin {
-  
+
   @Id
   @Column(name = "admin_id")
   private Long adminId;
 
   @Column(name = "admin_name", nullable = false)
   private String adminName;
+
+  @Column(name = "phone_num")
+  private String phoneNum;
 }
