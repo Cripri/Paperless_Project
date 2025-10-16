@@ -111,7 +111,7 @@ body{
   color:var(--ink); word-break:break-word;
 }
 .table tbody tr:first-child td{ border-top:0; }
-.table td:nth-child(3){ text-align:left; } /* 발급서류(제목) 좌정렬 */
+.table td:nth-child(3){ text-align:center; } /* 발급서류(제목) 좌정렬 */
 .table .nodata{ padding:26px 10px; color:var(--muted); }
 
 /* ===== 페이징 ===== */
