@@ -1,17 +1,14 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>공지사항 상세</title>
   <link rel="stylesheet" th:href="@{/notice/css/notice_detail.css}">
-  <!-- 공통 헤더/푸터 -->
-  <link rel="stylesheet" href="/header-footer/css/header-footer.css"
-        th:href="@{/header-footer/css/header-footer.css}">
+  <link rel="stylesheet" href="/header-footer/css/header-footer.css" th:href="@{/header-footer/css/header-footer.css}">
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-  <script src="/header-footer/js/header-footer.js"
-          th:src="@{/header-footer/js/header-footer.js}" defer></script>
+  <script src="/header-footer/js/header-footer.js" th:src="@{/header-footer/js/header-footer.js}" defer></script>
 </head>
 
 <body>
@@ -21,10 +18,6 @@
   <!-- header -->
 
   <div class="container">
-    <!-- <div class="page-actions">
-      <a href="javascript:window.print()" class="btn">🖨 인쇄</a>
-    </div> -->
-
     <h1 class="page-title">공지사항</h1>
 
     <table class="head-table">
@@ -51,15 +44,24 @@
       본문내용
     </div>
 
-    <!-- <div class="attach" th:if="${notice.attachments != null}">
-      <strong>첨부파일</strong>
-      <ul>
-        <li th:each="file : ${notice.attachments}">
-          <a th:href="@{|/uploads/${file.saveName}|}" th:text="${file.originalName}"></a>
-          (<span th:text="${file.size}">245KB</span>)
-        </li>
-      </ul>
-    </div> -->
+    <section class="section" th:if="${files != null and !#lists.isEmpty(files)}">
+      <div class="attach-card">
+        <h2 class="attach-title">첨부파일</h2>
+        <ul class="attach-list">
+          <li class="attach-item" th:each="f : ${files}">
+            <div class="attach-left">
+              <span class="attach-badge"
+                th:text="${#strings.substring(f.mimeType,0,5) == 'image' ? 'IMG' : 'FILE'}">FILE</span>
+              <a class="attach-name" th:href="@{|/files/${f.fileId}/download|}" th:text="${f.fileName}" target="_blank"
+                rel="noopener">
+                첨부파일명
+              </a>
+            </div>
+            <div class="attach-size" th:text="${#numbers.formatInteger(f.fileSize, 0) + ' B'}">0 B</div>
+          </li>
+        </ul>
+      </div>
+    </section>
 
     <table class="nav-table">
       <tr>
