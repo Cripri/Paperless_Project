@@ -63,7 +63,6 @@
         <table class="table table-list" style="table-layout: fixed">
           <colgroup>
             <col style="width: 7%">
-            <col style="width: 15%;">
             <col>
             <col style="width: 10%;">
             <col style="width: 13%;">
@@ -72,7 +71,6 @@
           <thead>
             <tr>
               <th scope="col">번호</th>
-              <th scope="col">구분</th>
               <th scope="col">발급서류</th>
               <th scope="col">진행상황</th>
               <th scope="col">발급일자</th>
@@ -82,7 +80,6 @@
           <tbody>
             <tr th:each="doc, stat : ${docs}">
               <td th:text="${page.totalElements - (page.number * page.size) - stat.index}">1</td>
-              <td th:text="${doc.docType}">구분</td>
               <td>
                 <a th:href="@{|/mypage_paperlessDoc/${doc.plId}|}" th:text="${doc.docTypeKo}"
                   class="link-underline">서류종류</a>
