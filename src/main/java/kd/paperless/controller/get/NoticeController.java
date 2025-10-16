@@ -4,12 +4,16 @@ import kd.paperless.dto.notice.NoticeDetailDto;
 import kd.paperless.dto.notice.NoticeListDto;
 import kd.paperless.dto.notice.NoticePrevNextDto;
 import kd.paperless.entity.Notice;
+import kd.paperless.entity.Attachment;
 import kd.paperless.repository.NoticeRepository;
+import kd.paperless.repository.AttachmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/notice")
@@ -17,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 public class NoticeController {
 
   private final NoticeRepository noticeRepository;
+  private final AttachmentRepository attachmentRepository;
+
+  private static final String ATTACH_TARGET = "NOTICE";
 
   @GetMapping("/list")
   public String list(@RequestParam(defaultValue = "1") int page,
@@ -72,12 +79,15 @@ public class NoticeController {
             .orElse(null)
         : null;
 
+    List<Attachment> files = attachmentRepository.findByTargetTypeAndTargetIdOrderByFileIdAsc(ATTACH_TARGET, id);
+
     model.addAttribute("notice", notice);
+    model.addAttribute("files", files);
     model.addAttribute("prev", prev);
     model.addAttribute("next", next);
-
     model.addAttribute("page", page);
     model.addAttribute("size", size);
+
     return "notice/notice_detail";
   }
 }
