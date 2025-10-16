@@ -43,7 +43,7 @@ public class RrPdfOverlayService {
                 PDFont font = loadFontOrDefault(doc);
 
                 // ---------- 페이지1: 기본정보 ----------
-                PDPage page1 = doc.getPage(0);  
+                PDPage page1 = doc.getPage(0);
 
                 // 페이지1 좌표
                 Coords C1 = new Coords();
@@ -53,7 +53,7 @@ public class RrPdfOverlayService {
                 C1.put("address1",      170, 620);
                 C1.put("address2",      300, 620);
                 C1.put("phone",         400, 530);
-                C1.put("feeExempt_Y",          113, 493);
+                C1.put("feeExempt_Y",   113, 493);
 
                 try (PDPageContentStream cs =
                          new PDPageContentStream(doc, page1, PDPageContentStream.AppendMode.APPEND, true, true)) {
@@ -66,7 +66,6 @@ public class RrPdfOverlayService {
                     drawText(cs, font, 11, C1.at("phone"),         nvl(f.getPhone()));
 
                     markIfYes(cs, font, C1, "feeExempt_Y", ynTrue(f.getFeeExempt()));
-                    
                 }
 
                 // ---------- 페이지2: 라디오/체크/서명 ----------
@@ -108,15 +107,15 @@ public class RrPdfOverlayService {
                 C2.put("cohabitants_Y",            504, 493);
 
                 C2.put("signImage",                500, 20);
-                C2.put("year",                     400,187);
-                C2.put("month",                    468,187);
-                C2.put("day,",                     520,187);
+                C2.put("year",                     400, 187);
+                C2.put("month",                    468, 187);
+                C2.put("day,",                     520, 187);
 
                 try (PDPageContentStream cs2 =
                          new PDPageContentStream(doc, page2, PDPageContentStream.AppendMode.APPEND, true, true)) {
-                    
+
                     markDot(cs2, font, C2.at("residentregistration"));
-                    
+
                     // 라디오
                     markRadio(cs2, font, C2, nvl(f.getIncludeAll()),
                               mapOf("ALL","includeAll_ALL", "PART","includeAll_PART"));
@@ -126,7 +125,7 @@ public class RrPdfOverlayService {
 
                     if ("RECENT".equalsIgnoreCase(nvl(f.getAddressHistoryMode())) && f.getAddressHistoryYears()!=null) {
                         drawText(cs2, font, 11, C2.at("addrHist_RECENT_YRS"), f.getAddressHistoryYears() + "");
-                    }   
+                    }
 
                     // 체크(Y/N 또는 true/false)
                     markIfYes(cs2, font, C2, "householdReason_Y",   ynTrue(f.getIncludeHouseholdReason()));
@@ -139,8 +138,6 @@ public class RrPdfOverlayService {
                     // 라디오: 주민번호 뒷자리 포함 범위
                     markRadio(cs2, font, C2, nvl(f.getRrnBackInclusion()),
                               mapOf("NONE","rrnBack_NONE", "SELF","rrnBack_SELF", "HOUSEHOLD","rrnBack_HOUSEHOLD"));
-
-                    
 
                     // 서명 이미지
                     if (isDataUrl(f.getSignatureBase64())) {
@@ -155,13 +152,13 @@ public class RrPdfOverlayService {
                     SimpleDateFormat toYear = new SimpleDateFormat("yyyy");
                     SimpleDateFormat toMonth = new SimpleDateFormat("MM");
                     SimpleDateFormat toDay = new SimpleDateFormat("dd");
-                    String nowYear = toYear.format(today);
+                    String nowYear  = toYear.format(today);
                     String nowMonth = toMonth.format(today);
-                    String nowDay = toDay.format(today);
+                    String nowDay   = toDay.format(today);
 
-                    writeText(doc,page2,nowYear,font,400 ,187); // 연
-                    writeText(doc,page2,nowMonth,font,468 ,187); // 월
-                    writeText(doc,page2,nowDay,font,520 ,187); // 일
+                    writeText(doc, page2, nowYear,  font, 400, 187); // 연
+                    writeText(doc, page2, nowMonth, font, 468, 187); // 월
+                    writeText(doc, page2, nowDay,   font, 520, 187); // 일
                 }
 
                 // 저장
@@ -192,6 +189,34 @@ public class RrPdfOverlayService {
         }
     }
 
+    // ========= 업로드/정리를 위한 헬퍼 =========
+    /** 프리뷰 PDF 읽기 스트림 (MinIO/S3 업로드에 사용) */
+    public InputStream openPreviewStream(String fileId) throws IOException {
+        Path p = PREVIEW_DIR.resolve(fileId + ".pdf");
+        return Files.newInputStream(p, StandardOpenOption.READ);
+    }
+
+    /** 프리뷰 PDF 사이즈 */
+    public long sizeOfPreview(String fileId) throws IOException {
+        Path p = PREVIEW_DIR.resolve(fileId + ".pdf");
+        return Files.size(p);
+    }
+
+    /** 프리뷰 PDF 삭제(정리) */
+    public void cleanupPreview(String fileId) {
+        try {
+            Files.deleteIfExists(PREVIEW_DIR.resolve(fileId + ".pdf"));
+        } catch (IOException ignore) {}
+    }
+
+    /** 프리뷰 PDF를 사용자 홈 하위의 최종 디렉터리로 이동(로컬에 보관하고 싶을 때) */
+    public Path movePreviewToFinal(String fileId, String finalName) throws IOException {
+        Path src = PREVIEW_DIR.resolve(fileId + ".pdf");
+        Files.createDirectories(FINAL_DIR);
+        Path dst = FINAL_DIR.resolve(finalName);
+        return Files.move(src, dst, StandardCopyOption.REPLACE_EXISTING);
+    }
+
     // ========= 내부 유틸 =========
 
     private PDFont loadFontOrDefault(PDDocument doc) throws IOException {
@@ -210,13 +235,13 @@ public class RrPdfOverlayService {
 
     // Y/N, "true"/"false", Boolean 모두 지원
     private static boolean ynTrue(String v) {
-    if (v == null) return false;
-    String s = v.trim();
-    return "Y".equalsIgnoreCase(s)
-        || "YES".equalsIgnoreCase(s)
-        || "TRUE".equalsIgnoreCase(s)
-        || "ON".equalsIgnoreCase(s)
-        || "1".equals(s);
+        if (v == null) return false;
+        String s = v.trim();
+        return "Y".equalsIgnoreCase(s)
+            || "YES".equalsIgnoreCase(s)
+            || "TRUE".equalsIgnoreCase(s)
+            || "ON".equalsIgnoreCase(s)
+            || "1".equals(s);
     }
     private static boolean ynTrue(Boolean v) { return Boolean.TRUE.equals(v); }
     private static boolean ynTrue(Object v) {
@@ -268,10 +293,10 @@ public class RrPdfOverlayService {
     }
 
     private void writeText(PDDocument doc, PDPage page, String str, PDFont font, int tx, int ty) throws IOException {
-        try(PDPageContentStream con = new PDPageContentStream(doc,page,PDPageContentStream.AppendMode.APPEND,true,true)){
+        try (PDPageContentStream con = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
             con.beginText();
-            con.setFont(font,14);
-            con.newLineAtOffset(tx,ty);
+            con.setFont(font, 14);
+            con.newLineAtOffset(tx, ty);
             con.showText(str);
             con.endText();
         }

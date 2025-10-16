@@ -1,16 +1,19 @@
 package kd.paperless.controller.post;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import kd.paperless.dto.ResidentRegistrationForm;
+import kd.paperless.entity.Attachment;
 import kd.paperless.entity.PaperlessDoc;
-import kd.paperless.entity.User;
+import kd.paperless.repository.AttachmentRepository;
 import kd.paperless.repository.PaperlessDocRepository;
 import kd.paperless.service.ResidentRegistrationMapperService;
 import kd.paperless.service.RrPdfOverlayService;
 import lombok.RequiredArgsConstructor;
 
-import java.security.Principal;
+import java.io.InputStream;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +24,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
-import kd.paperless.repository.UserRepository;
+
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
 
 @Controller
 @RequestMapping("/residentregistration")
@@ -33,7 +38,11 @@ public class ResidentRegistrationFlowController {
     private final RrPdfOverlayService pdfService;               // <-- makePreview / loadBytes / promoteToFinal 사용
     private final ResidentRegistrationMapperService mapper;     // DTO -> Entity 매핑
     private final PaperlessDocRepository docRepo;               // 저장
-    private final UserRepository userRepository;
+    private final MinioClient minioClient;
+    private final AttachmentRepository attachmentRepository;
+
+    @Value("${storage.minio.bucket}")
+    private String bucket;
 
     /** 세션에 rrForm 없을 때 기본값 생성 */
     @ModelAttribute("rrForm")
@@ -129,29 +138,76 @@ public class ResidentRegistrationFlowController {
      * - hidden input name="fileId" 로 프리뷰 파일 id를 함께 전송하도록 프리뷰 템플릿 구성 필요
      */
     @PostMapping("/submit")
+    @Transactional
     public String submit(@ModelAttribute("rrForm") ResidentRegistrationForm rrForm,
                         @RequestParam(value = "fileId", required = false) String fileId,
+                        @AuthenticationPrincipal(expression = "userId") Long userId,
                         SessionStatus status,
-                        Model model,
-                        @AuthenticationPrincipal(expression = "userId") Long userId) {
+                        Model model) {
+        System.out.println("submit() fileId=" + fileId);
         try {
-            // DB 저장
-            PaperlessDoc entity = mapper.toEntity(rrForm);
-            entity.setUserId(userId); // 👈 여기에 PK 저장
-            docRepo.save(entity);
+            if (userId == null) return "redirect:/login";
 
+            // 1) 문서 저장 (plId 확보)
+            PaperlessDoc entity = mapper.toEntity(rrForm);
+            entity.setUserId(userId);
+            entity.setDocType("RESIDENT_REGISTRATION");
+            // 필요 시 초기 상태
+            // entity.setStatus(PaperlessDoc.PaperlessStatus.WAITING);
+            docRepo.save(entity); // plId 생성
+
+            // 2) 프리뷰 파일이 있으면 업로드 + 첨부 저장
             if (fileId != null && !fileId.isBlank()) {
-                pdfService.promoteToFinal(fileId);
+
+                // 업로드 키 규약: paperless/{plId}/resident_{fileId}.pdf
+                String objectKey = buildObjectKey(entity.getPlId(), fileId);
+
+                long size = pdfService.sizeOfPreview(fileId);
+                try (InputStream in = pdfService.openPreviewStream(fileId)) {
+                    minioClient.putObject(
+                        PutObjectArgs.builder()
+                            .bucket(bucket) // 주입된 버킷명
+                            .object(objectKey)
+                            .contentType("application/pdf")
+                            .stream(in, size, -1)
+                            .build()
+                    );
+
+                    attachmentRepository.save(Attachment.builder()
+                        .targetType("PAPERLESS_DOC")
+                        .targetId(entity.getPlId())
+                        .fileUri(objectKey)
+                        .fileName("resident_registration.pdf")
+                        .mimeType("application/pdf")
+                        .fileSize(size)
+                        .build());
+
+                } catch (Exception e) {
+                    throw new RuntimeException("PDF 업로드 실패", e);
+                }
+
+                // 4) 프리뷰 파일 정리(선택적으로 남기고 싶으면 movePreviewToFinal로 이동)
+                pdfService.cleanupPreview(fileId);
             }
 
+            // 5) 세션 정리 + 완료 페이지로
             status.setComplete();
             model.addAttribute("plId", entity.getPlId());
+            System.out.println("submit() fileId=" + fileId);
             return "redirect:/mypage_paperlessDoc";
+
         } catch (Exception e) {
             model.addAttribute("submitError", "제출 처리 중 오류가 발생했습니다.");
             if (fileId != null) model.addAttribute("fileId", fileId);
             return "paperless/writer/form/residentregistration_preview";
         }
     }
+
+    // 업로드 키 규약 헬퍼
+    private String buildObjectKey(Long plId, String fileId) {
+        // 예: paperless/123/resident_8f7a2e.pdf
+        return "paperless/" + plId + "/resident_" + fileId + ".pdf";
+    }
+
 
 }
