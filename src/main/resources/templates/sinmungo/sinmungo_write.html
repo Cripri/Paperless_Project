@@ -7,11 +7,9 @@
   <title>신문고 등록</title>
   <link rel="stylesheet" th:href="@{/sinmungo/css/sinmungo_write.css}">
   <!-- 공통 헤더/푸터 -->
-  <link rel="stylesheet" href="/header-footer/css/header-footer.css"
-        th:href="@{/header-footer/css/header-footer.css}">
+  <link rel="stylesheet" href="/header-footer/css/header-footer.css" th:href="@{/header-footer/css/header-footer.css}">
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-  <script src="/header-footer/js/header-footer.js"
-          th:src="@{/header-footer/js/header-footer.js}" defer></script>
+  <script src="/header-footer/js/header-footer.js" th:src="@{/header-footer/js/header-footer.js}" defer></script>
 </head>
 
 <body class="site">
@@ -66,8 +64,10 @@
               <div class="row addr-row">
                 <button type="button" class="btn addr-btn" onclick="execDaumPostcode()">우편번호
                   검색</button>
-                <input type="text" class="input addr-input" id="postCode" name="postcode" placeholder="우편번호" readonly required>
-                <input type="text" class="input addr-input" id="addr1" name="addr1" placeholder="기본주소" readonly required>
+                <input type="text" class="input addr-input" id="postCode" name="postcode" placeholder="우편번호" readonly
+                  required>
+                <input type="text" class="input addr-input" id="addr1" name="addr1" placeholder="기본주소" readonly
+                  required>
                 <input type="text" class="input addr-input" id="addr2" name="addr2" placeholder="상세주소" required>
               </div>
             </td>
@@ -138,10 +138,13 @@
       </div>
 
       <div class="actions">
-        <button type="button" class="btn btn-cancel" onclick="history.back()">취소</button>
-        <a class="btn" th:href="@{/sinmungo/list}">목록</a>
-        <button type="button" class="btn btn-warn" disabled>임시저장</button>
-        <button type="submit" class="btn btn-primary">등록</button>
+        <div class="left-actions">
+          <a class="btn" th:href="@{/sinmungo/list}">목록</a>
+        </div>
+        <div class="right-actions">
+          <button type="button" class="btn btn-cancel" onclick="history.back()">취소</button>
+          <button type="submit" class="btn btn-primary">등록</button>
+        </div>
       </div>
     </form>
   </div>
