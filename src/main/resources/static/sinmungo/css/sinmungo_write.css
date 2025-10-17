@@ -1,9 +1,7 @@
 @charset "UTF-8";
 
-/* ===== 전역 ===== */
 body {
   background: #f9f4ef;
-  /* 통일된 배경 */
   color: #0f172a;
   font-family: "맑은 고딕", "Malgun Gothic", sans-serif;
   margin: 0;
@@ -15,14 +13,12 @@ body {
   margin: 32px auto 80px;
 }
 
-/* ===== 페이지 타이틀/상단 안내 ===== */
 .page-title {
   font-size: 26px;
   font-weight: 800;
   margin: 10px 0 24px;
   color: #0c1324;
   border-left: 6px solid #e09a58;
-  /* 주황 포인트 */
   padding-left: 10px;
 }
 
@@ -46,7 +42,6 @@ body {
   background: #faf7f2;
 }
 
-/* ===== 폼 카드 ===== */
 .form-card {
   border: 1.5px solid #e6dccf;
   border-radius: 10px;
@@ -79,11 +74,9 @@ body {
 .req::before {
   content: "· ";
   color: #e53935;
-  /* 강조 빨강 */
   font-weight: 800;
 }
 
-/* ===== 입력 요소 ===== */
 .input,
 .select,
 .textarea {
@@ -121,7 +114,6 @@ body {
   white-space: nowrap;
 }
 
-/* ===== 옵션 ===== */
 .options {
   display: flex;
   gap: 18px;
@@ -135,64 +127,6 @@ body {
   align-items: center;
 }
 
-/* ===== 버튼 ===== */
-.btn {
-  display: inline-block;
-  height: 36px;
-  line-height: 34px;
-  padding: 0 14px;
-  border: 1px solid #cfd6dc;
-  border-radius: 6px;
-  background: #fff;
-  color: #333;
-  font-weight: 700;
-  cursor: pointer;
-  transition: .2s;
-}
-
-.btn:hover {
-  background: #f2f2f2;
-}
-
-.btn-primary {
-  background: #5b6b82;
-  /* 네이비 */
-  border-color: #5b6b82;
-  color: #fff;
-}
-
-.btn-primary:hover {
-  filter: brightness(1.1);
-}
-
-.btn-warn {
-  background: #e09a58;
-  /* 주황 */
-  border-color: #e09a58;
-  color: #fff;
-}
-
-.btn-warn:hover {
-  filter: brightness(1.05);
-}
-
-.btn-cancel {
-  background: #eee;
-  border-color: #ddd;
-}
-
-.btn-cancel:hover {
-  background: #e2e2e2;
-}
-
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-/* ===== 첨부파일 업로더 ===== */
 .hint {
   font-size: 12px;
   color: #666;
@@ -302,7 +236,6 @@ body {
   background: #fee2e2;
 }
 
-/* ===== 개인정보 동의 ===== */
 .agree {
   display: flex;
   align-items: center;
@@ -347,4 +280,74 @@ body {
 .form-table td .row .input {
   box-sizing: border-box;
   width: calc(100%);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  gap: 12px;
+}
+
+.actions .left-actions,
+.actions .right-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn,
+.actions a.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  min-width: 92px;
+  padding: 0 16px;
+  border: 1px solid #cfd6dc;
+  border-radius: 8px;
+  background: #fff;
+  color: #333;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .2s ease, transform .1s ease, filter .15s ease;
+}
+
+.btn:hover,
+.actions a.btn:hover {
+  background: #f2f2f2;
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: #5b6b82;
+  border-color: #5b6b82;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.06);
+}
+
+.btn-cancel {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+.btn-cancel:hover {
+  background: #e5e7eb;
+}
+
+.actions .left-actions .btn {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+.actions .left-actions .btn:hover {
+  background: #f3f4f6;
 }
