@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>여권 (재)발급 – 미리보기</title>
+
+  <!-- CSRF -->
+  <meta name="_csrf_parameter" th:if="${_csrf != null}" th:content="${_csrf.parameterName}"/>
+  <meta name="_csrf"           th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+
+  <!-- 공통 헤더/푸터 테마 -->
+  <link rel="stylesheet" href="/header-footer/css/header-footer.css"
+        th:href="@{/header-footer/css/header-footer.css}">
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="/header-footer/js/header-footer.js"
+          th:src="@{/header-footer/js/header-footer.js}" defer></script>
+
+  <style>
+    :root{
+      --bg:#f9f4ef; --ink:#0f172a; --muted:#6b7280;
+      --line:#e6dccf; --card:#ffffff;
+      --navy:#5b6b82; --navy-d:#4d5c70;
+      --orange:#e09a58;
+      --shadow:0 6px 16px rgba(15,23,42,.06);
+      --radius:10px;
+    }
+    *{box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);margin:0}
+    main{max-width:1100px;margin:32px auto 80px;padding:0 16px}
+    h2{margin:0 0 12px;font-weight:800;color:#0c1324;border-left:6px solid var(--orange);padding-left:10px}
+    .subtle{color:var(--muted);font-weight:500}
+    .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+    .grid{display:grid;grid-template-columns:minmax(320px,1fr) minmax(520px,2fr);gap:20px;align-items:start}
+    .card{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+    .row{display:flex;gap:10px;margin:8px 0}
+    .row dt{min-width:140px;color:#374151;font-weight:700}
+    .stat{display:inline-flex;gap:6px;align-items:center;padding:3px 8px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:12px}
+    .muted{color:var(--muted);font-size:13px}
+    .photo-box{display:flex;gap:12px;align-items:flex-start;margin-top:6px}
+    .photo-box img{width:110px;height:140px;object-fit:cover;border:1px solid var(--line);border-radius:6px;background:#fff}
+    iframe{width:100%;height:860px;border:1.5px solid var(--line);border-radius:var(--radius);background:#fff;box-shadow:var(--shadow)}
+    .btns{display:flex;gap:10px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700;text-decoration:none;transition:.2s;border:1px solid var(--line);background:#fff;color:var(--ink)}
+    .btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+    .btn.primary:hover{background:var(--navy-d);border-color:var(--navy-d)}
+    .btn:hover{background:#f6f7f8}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .alert{background:#FEF2F2;border:1px solid #FCA5A5;color:#991B1B;border-radius:var(--radius);padding:10px 12px;margin:12px 0}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}iframe{height:600px}}
+  </style>
+</head>
+<body>
+  <!-- ✅ 헤더: main 바깥 -->
+  <div th:replace="~{fragments/header :: header}"></div>
+
+  <main>
+    <div class="bar">
+      <div>
+        <h2>미리보기</h2>
+        <div class="subtle">제출 전에 생성된 PDF와 입력 정보를 확인하세요.</div>
+      </div>
+    </div>
+
+    <!-- 서버 전송 에러 -->
+    <div class="alert" th:if="${submitError != null}" th:text="${submitError}">
+      제출 처리 중 오류가 발생했습니다.
+    </div>
+
+    <div class="grid">
+      <!-- 좌측: 입력 요약 -->
+      <section class="card">
+        <h3 style="margin:0 0 8px">신청 정보 요약</h3>
+
+        <!-- ① 기본 선택 -->
+        <dl class="row"><dt>여권 종류</dt>
+          <dd><span class="stat"
+              th:text="${passportForm.passportType}=='NORMAL'?'일반':(${passportForm.passportType}=='OFFICIAL'?'관용':(${passportForm.passportType}=='DIPLOMAT'?'외교관':(${passportForm.passportType}=='EMERGENCY'?'긴급':(${passportForm.passportType}=='TRAVEL_CERT'?'여행증명서':'-'))))">일반</span></dd>
+        </dl>
+
+        <dl class="row" th:if="${passportForm.passportType}=='TRAVEL_CERT'"><dt>여행증명서 구분</dt>
+          <dd><span class="stat" th:text="${passportForm.travelMode}=='ROUND'?'왕복':'편도'">왕복</span></dd>
+        </dl>
+
+        <dl class="row"><dt>면수</dt>
+          <dd><span class="stat" th:text="${passportForm.pageCount} + '면'">26면</span></dd>
+        </dl>
+
+        <dl class="row"><dt>기간</dt>
+          <dd><span class="stat"
+               th:text="${passportForm.validity}=='10Y'?'10년':(${passportForm.validity}=='1Y_SINGLE'?'단수 1년':'잔여기간')">10년</span></dd>
+        </dl>
+
+        <!-- ② 인적 사항 -->
+        <hr style="border:none;border-top:1px solid var(--line);margin:12px 0"/>
+        <dl class="row"><dt>한글 성명</dt><dd th:text="${passportForm.koreanName}">-</dd></dl>
+        <dl class="row"><dt>영문 성명</dt>
+          <dd th:text="${passportForm.engLastName} + ' ' + ${passportForm.engFirstName}">-</dd>
+        </dl>
+        <dl class="row"><dt>본인 연락처</dt><dd th:text="${passportForm.phone}">-</dd></dl>
+        <dl class="row"><dt>점자여권</dt>
+          <dd><span class="stat" th:text="${passportForm.braillePassport}=='Y'?'희망':'희망 안 함'">희망 안 함</span></dd>
+        </dl>
+
+        <!-- ③ 우편 배송 -->
+        <hr style="border:none;border-top:1px solid var(--line);margin:12px 0"/>
+        <dl class="row"><dt>우편배송</dt>
+          <dd><span class="stat" th:text="${passportForm.deliveryWanted}=='Y'?'희망':'희망 안 함'">희망 안 함</span></dd>
+        </dl>
+        <div th:if="${passportForm.deliveryWanted}=='Y'">
+          <dl class="row"><dt>수령 주소</dt>
+            <dd>
+              <div th:text="'(' + ${passportForm.deliveryPostcode} + ') ' + ${passportForm.deliveryAddress1}">-</div>
+              <div th:text="${passportForm.deliveryAddress2}">-</div>
+            </dd>
+          </dl>
+        </div>
+
+        <!-- 사진 미리보기(선택) -->
+        <hr style="border:none;border-top:1px solid var(--line);margin:12px 0"/>
+        <div class="photo-box" th:if="${photoUrl != null}">
+          <div>
+            <div class="muted">제출 사진</div>
+            <img th:src="${photoUrl}" alt="여권 사진 미리보기">
+          </div>
+          <div class="muted">
+            • 최근 6개월, 3.5×4.5cm, 배경 흰색 권장<br>
+            • 고개 기울임/그림자/안경 반사/모자 금지
+          </div>
+        </div>
+
+        <div class="muted" style="margin-top:10px">
+          • 내용이 다르면 아래 ‘뒤로가기(수정)’을 눌러 수정하세요.
+        </div>
+      </section>
+
+      <!-- 우측: PDF 미리보기 -->
+      <section>
+        <!-- 서버에서 생성한 미리보기 PDF 경로: /passport/preview/file/{fileId}.pdf -->
+        <iframe th:src="@{|/passport/preview/file/${fileId}.pdf|}" title="여권 미리보기 PDF" id="pdfFrame"></iframe>
+
+        <div class="bar" style="margin-top:12px">
+          <!-- 뒤로(수정) -->
+          <form method="get" th:action="@{/passport/apply}">
+            <button type="submit" class="btn">뒤로가기(수정)</button>
+          </form>
+
+          <div class="btns">
+            <!-- 새 창으로 보기 -->
+            <a class="btn"
+               th:href="@{|/passport/preview/file/${fileId}.pdf|}"
+               target="_blank" rel="noopener">PDF 새 창으로</a>
+
+            <!-- 제출 -->
+            <form method="post" th:action="@{/passport/submit}">
+              <input type="hidden" name="fileId" th:value="${fileId}"/>
+              <input type="hidden" th:if="${_csrf != null}"
+                     th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+              <button type="submit" class="btn primary">제출</button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ✅ 푸터: main 바깥 -->
+  <div th:replace="~{fragments/footer :: footer}"></div>
+
+  <script>
+    (function(){
+      const frame = document.getElementById('pdfFrame');
+      if (!frame) return;
+      let loaded = false;
+      frame.addEventListener('load', () => { loaded = true; });
+      setTimeout(() => {
+        if (!loaded) {
+          const warn = document.createElement('div');
+          warn.className = 'alert';
+          warn.textContent =
+            'PDF를 불러오지 못했습니다. 새로고침하거나 "PDF 새 창으로" 버튼을 이용해 확인해 주세요.';
+          frame.parentElement.insertBefore(warn, frame);
+        }
+      }, 3000);
+    })();
+  </script>
+</body>
+</html>

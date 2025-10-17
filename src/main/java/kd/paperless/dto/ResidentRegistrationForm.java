@@ -114,10 +114,4 @@ public class ResidentRegistrationForm implements Serializable {
         // 체크박스/라디오는 미선택(null) 또는 "N"으로 초기화 가능
         return f;
     }
-
-    /** 보안을 위해 rrnBack을 마스킹한 값을 돌려줌 (예: 1******) */
-    public String getMaskedRrnBack() {
-        if (rrnBack == null || rrnBack.length() != 7) return null;
-        return rrnBack.charAt(0) + "******";
-    }
 }
