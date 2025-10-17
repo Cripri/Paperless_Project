@@ -40,7 +40,7 @@ public class PaperlessDoc {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    private PaperlessStatus status = PaperlessStatus.PENDING;
+    private PaperlessStatus status = PaperlessStatus.RECEIVED;
 
     @Column(name = "submitted_at", insertable = false, updatable = false)
     private LocalDateTime submittedAt;
@@ -69,19 +69,17 @@ public class PaperlessDoc {
 
     // 상태 Enum (DB CHECK 제약과 일치)
     public enum PaperlessStatus {
-        PENDING, RECEIVED, IN_PROGRESS, APPROVED, REJECTED, CANCELED, COMPLETED
+        RECEIVED, IN_PROGRESS, APPROVED, REJECTED, COMPLETED
     }
 
     @Transient
     public String getStatusKo() {
         if (status == null) return "";
         return switch (status) {
-            case PENDING       -> "접수대기";
             case RECEIVED      -> "접수완료";
             case IN_PROGRESS   -> "처리중";
             case APPROVED      -> "승인";
             case REJECTED      -> "반려";
-            case CANCELED      -> "신청취소";
             case COMPLETED     -> "완료";
         };
     }
