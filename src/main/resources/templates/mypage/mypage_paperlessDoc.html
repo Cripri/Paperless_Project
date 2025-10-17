@@ -66,7 +66,6 @@
             <col>
             <col style="width: 10%;">
             <col style="width: 13%;">
-            <col style="width: 10%;">
           </colgroup>
           <thead>
             <tr>
@@ -74,7 +73,6 @@
               <th scope="col">발급서류</th>
               <th scope="col">진행상황</th>
               <th scope="col">발급일자</th>
-              <th scope="col">담당자</th>
             </tr>
           </thead>
           <tbody>
@@ -86,7 +84,6 @@
               </td>
               <td th:text="${doc.statusKo}">상태</td>
               <td th:text="${#temporals.format(doc.submittedAt, 'yyyy-MM-dd')}">2025-10-01</td>
-              <td th:text="${doc.adminId}">담당자</td>
             </tr>
             <tr th:if="${#lists.isEmpty(docs)}">
               <td colspan="6" class="nodata">게시물이 없습니다.</td>

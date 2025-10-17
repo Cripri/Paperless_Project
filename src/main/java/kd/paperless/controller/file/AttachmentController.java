@@ -2,11 +2,14 @@ package kd.paperless.controller.file;
 
 import io.minio.*;
 import kd.paperless.entity.Attachment;
+import kd.paperless.entity.PaperlessDoc;
 import kd.paperless.repository.AttachmentRepository;
+import kd.paperless.repository.PaperlessDocRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,7 @@ public class AttachmentController {
 
   private final MinioClient minioClient;
   private final AttachmentRepository attachmentRepository;
+  private final PaperlessDocRepository paperlessDocRepository;
 
   @Value("${storage.minio.bucket}")
   private String bucket;
@@ -175,5 +179,48 @@ public class AttachmentController {
     LocalDate d = LocalDate.now();
     return "%04d/%02d/%02d/%s__%s".formatted(
         d.getYear(), d.getMonthValue(), d.getDayOfMonth(), UUID.randomUUID(), filename);
+  }
+
+  @GetMapping("/inline/by-doc/{plId}")
+  public ResponseEntity<InputStreamResource> inlineByDoc(
+      @PathVariable Long plId,
+      @AuthenticationPrincipal(expression = "userId") Long userId) throws Exception {
+
+    // 1) 문서 존재/소유권 확인
+    PaperlessDoc doc = paperlessDocRepository.findById(plId)
+        .orElseThrow(() -> new IllegalArgumentException("문서를 찾을 수 없습니다."));
+    if (userId == null || !doc.getUserId().equals(userId)) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    // 2) 최신 첨부 1건 조회 (PAPERLESS_DOC)
+    Attachment att = attachmentRepository
+        .findTopByTargetTypeAndTargetIdOrderByFileIdDesc("PAPERLESS_DOC", plId)
+        .orElseThrow(() -> new IllegalArgumentException("첨부 파일이 없습니다."));
+
+    // 3) MinIO에서 스트림 열기
+    GetObjectArgs args = GetObjectArgs.builder()
+        .bucket(bucket)
+        .object(att.getFileUri())
+        .build();
+    InputStream in = minioClient.getObject(args);
+
+    // 4) Content-Type: PDF/이미지면 inline, 그 외는 다운로드
+    MediaType ct = (att.getMimeType() != null)
+        ? MediaType.parseMediaType(att.getMimeType())
+        : MediaType.APPLICATION_OCTET_STREAM;
+
+    boolean inlineOk = MediaType.APPLICATION_PDF.equals(ct) || ct.getType().equalsIgnoreCase("image");
+
+    HttpHeaders headers = new HttpHeaders();
+    ContentDisposition cd = inlineOk
+        ? ContentDisposition.inline().filename(att.getFileName(), StandardCharsets.UTF_8).build()
+        : ContentDisposition.attachment().filename(att.getFileName(), StandardCharsets.UTF_8).build();
+    headers.setContentDisposition(cd);
+    headers.setContentType(ct);
+
+    return ResponseEntity.ok()
+        .headers(headers)
+        .body(new InputStreamResource(in));
   }
 }
