@@ -35,9 +35,9 @@ import io.minio.PutObjectArgs;
 @SessionAttributes("rrForm") // ✅ DTO를 프리뷰/제출까지 세션에 유지
 public class ResidentRegistrationFlowController {
 
-    private final RrPdfOverlayService pdfService;               // <-- makePreview / loadBytes / promoteToFinal 사용
-    private final ResidentRegistrationMapperService mapper;     // DTO -> Entity 매핑
-    private final PaperlessDocRepository docRepo;               // 저장
+    private final RrPdfOverlayService pdfService; // <-- makePreview / loadBytes / promoteToFinal 사용
+    private final ResidentRegistrationMapperService mapper; // DTO -> Entity 매핑
+    private final PaperlessDocRepository docRepo; // 저장
     private final MinioClient minioClient;
     private final AttachmentRepository attachmentRepository;
 
@@ -53,11 +53,12 @@ public class ResidentRegistrationFlowController {
     // ==== 1) 작성 폼 진입 ====
 
     /** 새 주소 (/apply) */
-    
+
     @GetMapping("/apply")
     public String apply(Model model, @AuthenticationPrincipal(expression = "userId") Long userId) {
 
-        if(userId == null) return "redirect:/login";
+        if (userId == null)
+            return "redirect:/login";
 
         if (!model.containsAttribute("rrForm")) {
             model.addAttribute("rrForm", ResidentRegistrationForm.defaultForGet());
@@ -67,7 +68,7 @@ public class ResidentRegistrationFlowController {
 
     @GetMapping("/form")
     public String form(Model model, @AuthenticationPrincipal(expression = "userId") Long userId) {
-        return apply(model,userId); // 동일하게 인증 주체로 위임
+        return apply(model, userId); // 동일하게 인증 주체로 위임
     }
 
     // ==== 2) 프리뷰 생성 ====
@@ -79,8 +80,7 @@ public class ResidentRegistrationFlowController {
     public String preview(
             @Valid @ModelAttribute("rrForm") ResidentRegistrationForm rrForm,
             BindingResult binding,
-            Model model
-    ) {
+            Model model) {
         // 조건부 검증: 주소변동사항이 RECENT면 년수 필수
         if ("RECENT".equalsIgnoreCase(rrForm.getAddressHistoryMode())
                 && rrForm.getAddressHistoryYears() == null) {
@@ -88,8 +88,10 @@ public class ResidentRegistrationFlowController {
         }
 
         // 기본값 보정
-        if (rrForm.getIncludeAll() == null) rrForm.setIncludeAll("ALL");
-        if (rrForm.getFeeExempt() == null) rrForm.setFeeExempt("N");
+        if (rrForm.getIncludeAll() == null)
+            rrForm.setIncludeAll("ALL");
+        if (rrForm.getFeeExempt() == null)
+            rrForm.setFeeExempt("N");
 
         if (binding.hasErrors()) {
             // 에러 있으면 다시 폼
@@ -109,12 +111,13 @@ public class ResidentRegistrationFlowController {
 
     /**
      * 프리뷰 페이지(직접 URL 접근 허용)
-     * - 템플릿에서 <iframe th:src="@{|/residentregistration/preview/file/${fileId}.pdf|}"/>
+     * - 템플릿에서
+     * <iframe th:src="@{|/residentregistration/preview/file/${fileId}.pdf|}"/>
      */
     @GetMapping("/preview/{fileId}")
     public String previewPage(@PathVariable String fileId,
-                              @ModelAttribute("rrForm") ResidentRegistrationForm rrForm,
-                              Model model) {
+            @ModelAttribute("rrForm") ResidentRegistrationForm rrForm,
+            Model model) {
         model.addAttribute("fileId", fileId);
         return "paperless/writer/form/residentregistration_preview";
     }
@@ -125,7 +128,8 @@ public class ResidentRegistrationFlowController {
     @GetMapping("/preview/file/{fileId}.pdf")
     public ResponseEntity<byte[]> previewFile(@PathVariable String fileId) throws Exception {
         byte[] bytes = pdfService.loadBytes(fileId);
-        if (bytes == null) return ResponseEntity.notFound().build();
+        if (bytes == null)
+            return ResponseEntity.notFound().build();
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"preview.pdf\"")
@@ -140,13 +144,14 @@ public class ResidentRegistrationFlowController {
     @PostMapping("/submit")
     @Transactional
     public String submit(@ModelAttribute("rrForm") ResidentRegistrationForm rrForm,
-                        @RequestParam(value = "fileId", required = false) String fileId,
-                        @AuthenticationPrincipal(expression = "userId") Long userId,
-                        SessionStatus status,
-                        Model model) {
+            @RequestParam(value = "fileId", required = false) String fileId,
+            @AuthenticationPrincipal(expression = "userId") Long userId,
+            SessionStatus status,
+            Model model) {
         System.out.println("submit() fileId=" + fileId);
         try {
-            if (userId == null) return "redirect:/login";
+            if (userId == null)
+                return "redirect:/login";
 
             // 1) 문서 저장 (plId 확보)
             PaperlessDoc entity = mapper.toEntity(rrForm);
@@ -165,22 +170,21 @@ public class ResidentRegistrationFlowController {
                 long size = pdfService.sizeOfPreview(fileId);
                 try (InputStream in = pdfService.openPreviewStream(fileId)) {
                     minioClient.putObject(
-                        PutObjectArgs.builder()
-                            .bucket(bucket) // 주입된 버킷명
-                            .object(objectKey)
-                            .contentType("application/pdf")
-                            .stream(in, size, -1)
-                            .build()
-                    );
+                            PutObjectArgs.builder()
+                                    .bucket(bucket) // 주입된 버킷명
+                                    .object(objectKey)
+                                    .contentType("application/pdf")
+                                    .stream(in, size, -1)
+                                    .build());
 
                     attachmentRepository.save(Attachment.builder()
-                        .targetType("PAPERLESS_DOC")
-                        .targetId(entity.getPlId())
-                        .fileUri(objectKey)
-                        .fileName("resident_registration.pdf")
-                        .mimeType("application/pdf")
-                        .fileSize(size)
-                        .build());
+                            .targetType("PAPERLESS_DOC")
+                            .targetId(entity.getPlId())
+                            .fileUri(objectKey)
+                            .fileName("resident_registration.pdf")
+                            .mimeType("application/pdf")
+                            .fileSize(size)
+                            .build());
 
                 } catch (Exception e) {
                     throw new RuntimeException("PDF 업로드 실패", e);
@@ -198,7 +202,8 @@ public class ResidentRegistrationFlowController {
 
         } catch (Exception e) {
             model.addAttribute("submitError", "제출 처리 중 오류가 발생했습니다.");
-            if (fileId != null) model.addAttribute("fileId", fileId);
+            if (fileId != null)
+                model.addAttribute("fileId", fileId);
             return "paperless/writer/form/residentregistration_preview";
         }
     }
@@ -209,5 +214,27 @@ public class ResidentRegistrationFlowController {
         return "paperless/" + plId + "/resident_" + fileId + ".pdf";
     }
 
+    @GetMapping("/preview/by-doc/{plId}")
+    public String previewByDoc(@PathVariable Long plId,
+            @AuthenticationPrincipal(expression = "userId") Long userId,
+            Model model) {
+        if (userId == null)
+            return "redirect:/login";
 
+        PaperlessDoc doc = docRepo.findById(plId)
+                .orElseThrow(() -> new IllegalArgumentException("문서를 찾을 수 없습니다."));
+        if (!doc.getUserId().equals(userId))
+            return "redirect:/mypage_paperlessDoc";
+
+        try {
+            ResidentRegistrationForm rrForm = mapper.toForm(doc);
+            String fileId = pdfService.makePreview(rrForm); // ✅ Exception 처리됨
+            model.addAttribute("fileId", fileId);
+            model.addAttribute("rrForm", rrForm);
+            return "paperless/writer/form/residentregistration_preview";
+        } catch (Exception e) {
+            model.addAttribute("submitError", "미리보기 생성 중 오류가 발생했습니다.");
+            return "redirect:/mypage_paperlessDoc";
+        }
+    }
 }

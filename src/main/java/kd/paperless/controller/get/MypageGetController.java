@@ -4,6 +4,7 @@ import kd.paperless.dto.ResidentRegistrationForm;
 import kd.paperless.entity.PaperlessDoc;
 import kd.paperless.entity.Sinmungo;
 import kd.paperless.entity.User;
+import kd.paperless.repository.AttachmentRepository;
 import kd.paperless.repository.PaperlessDocRepository;
 import kd.paperless.repository.SinmungoRepository;
 import kd.paperless.repository.UserRepository;
@@ -26,8 +27,9 @@ public class MypageGetController {
     private final SinmungoRepository sinmungoRepository;
     private final PaperlessDocRepository paperlessDocRepository;
     private final UserRepository userRepository;
+    private final AttachmentRepository attachmentRepository;
 
-    @GetMapping("/mypage_myInfoEdit")   
+    @GetMapping("/mypage_myInfoEdit")
     public String mypage_myInfoEdit(@AuthenticationPrincipal(expression = "username") String loginId, Model model) {
         if (loginId == null)
             return "redirect:/login";
@@ -186,42 +188,39 @@ public class MypageGetController {
     public String paperlessDocDetail(@PathVariable Long plId,
             @AuthenticationPrincipal(expression = "username") String loginId,
             Model model) {
+
         if (loginId == null)
             return "redirect:/login";
-
         User me = userRepository.findByLoginId(loginId).orElseThrow();
         PaperlessDoc doc = paperlessDocRepository.findById(plId)
                 .orElseThrow(() -> new IllegalArgumentException("문서를 찾을 수 없습니다."));
-
-        // 소유자 보호
         if (!doc.getUserId().equals(me.getId())) {
             return "redirect:/mypage_paperlessDoc";
         }
 
-        model.addAttribute("doc", doc); // 공통
+        // 첨부가 있으면 바로 인라인 미리보기로
+        boolean hasAttachment = attachmentRepository
+                .findTopByTargetTypeAndTargetIdOrderByFileIdDesc("PAPERLESS_DOC", plId)
+                .isPresent();
+        if (hasAttachment) {
+            model.addAttribute("mode", "viewer"); // 뷰어 모드
+            model.addAttribute("viewerUrl", "/files/inline/by-doc/" + plId); // 현재 쓰는 뷰어 URL
+            return "paperless/writer/form/residentregistration_preview";
+        }
 
+        // 없으면 기존처럼 유형별 폼/프리뷰로 분기
+        model.addAttribute("doc", doc);
         String type = doc.getDocType() == null ? "" : doc.getDocType().toUpperCase();
         switch (type) {
             case "RESIDENT":
             case "RESIDENT_REGISTRATION":
             case "RESIDENT_REGISTRATION_CERT":
             case "RESIDENT_REGISTRATION_COPY": {
-                // ★ rrForm 바인딩 (extraJson -> DTO)
                 ResidentRegistrationForm rrForm = toResidentDto(doc);
                 model.addAttribute("rrForm", rrForm);
                 return "paperless/writer/form/residentregistration_form";
-                // 내가 신청한 파일로 가게 하고 싶은데 그건 나중에 물어봐서 해야겠담. 양식이랑 프리뷰밖에 없어서 못보는듯
-                // 아니면 걍 내가 뭔가 잘못 햇을수도 있고 암튼암튼이다 ~
-                // 암튼암튼 거머더라 어떻게하기로했지
-                // 처리전에는 신청서류
-                // 처리완료되면 등본입니당
             }
             case "PASSPORT": {
-                // 여권 폼(ppForm)을 기대한다면 동일하게 만들어 넣어주세요.
-                // PassportForm ppForm = toPassportDto(doc);
-                // model.addAttribute("ppForm", ppForm);
-                // 신청하고나서는 신청서류
-                // 처리완료되면 암것도 안뜸 ㅇㅇ window alter 그냥 다됨 가서 찾으러가셈 ㅇㅇ
                 return "paperless/writer/form/passport_form";
             }
             default: {
