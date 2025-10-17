@@ -274,12 +274,12 @@
                 const unmet = unmetRequirements(v);
                 if (unmet.length) {
                     msgPw.innerHTML = '❌ 비밀번호 조건 미충족: ' + unmet.join(' · ');
-                    msgPw.style.color = '#d00';
+                    msgPw.style.color = '#ffffff';
                     pw.classList.add('is-invalid'); pw.classList.remove('is-valid');
                     return false;
                 } else {
                     msgPw.innerHTML = '✅ 사용 가능한 비밀번호 · 강도: <b>' + strengthLabel(v) + '</b>';
-                    msgPw.style.color = '#067';
+                    msgPw.style.color = '#ffffff';
                     pw.classList.add('is-valid'); pw.classList.remove('is-invalid');
                     return true;
                 }
@@ -293,11 +293,11 @@
                     return false;
                 }
                 if (a === b) {
-                    msgCfm.textContent = '✅ 비밀번호가 일치합니다.'; msgCfm.style.color = '#067';
+                    msgCfm.textContent = '✅ 비밀번호가 일치합니다.'; msgCfm.style.color = '#ffffff';
                     pwCfm.classList.add('is-valid'); pwCfm.classList.remove('is-invalid');
                     return true;
                 } else {
-                    msgCfm.textContent = '❌ 비밀번호가 일치하지 않습니다.'; msgCfm.style.color = '#d00';
+                    msgCfm.textContent = '❌ 비밀번호가 일치하지 않습니다.'; msgCfm.style.color = '#ffffff';
                     pwCfm.classList.add('is-invalid'); pwCfm.classList.remove('is-valid');
                     return false;
                 }

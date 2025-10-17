@@ -1,49 +1,50 @@
 @font-face {
-    font-family: 'Escoredream';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff');
-    font-weight: 300;
-    font-display: swap;
+  font-family: 'Escoredream';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff');
+  font-weight: 300;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'Escoredream';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-4Regular.woff') format('woff');
-    font-weight: normal;
-    font-display: swap;
+  font-family: 'Escoredream';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-4Regular.woff') format('woff');
+  font-weight: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'Escoredream';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-5Medium.woff') format('woff');
-    font-weight: 500;
-    font-display: swap;
+  font-family: 'Escoredream';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-5Medium.woff') format('woff');
+  font-weight: 500;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'YeogiOttaeJalnanGothic';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_231029@1.1/JalnanGothic.woff') format('woff');
-    font-weight: normal;
-    font-display: swap;
+  font-family: 'YeogiOttaeJalnanGothic';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_231029@1.1/JalnanGothic.woff') format('woff');
+  font-weight: normal;
+  font-display: swap;
 }
 
-:after, :before {
+:after,
+:before {
   display: none;
   content: ''
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background: #5942d0 url(/login/images/login_bg.png) no-repeat left top;
-    line-height: 24px;
-    font-weight: 400;
-    font-family: 'Escoredream', 'NotoKr', 'Malgun Gothic', '맑은 고딕', Dotum, '돋움', Helvetica, AppleSDGothicNeo, sans-serif;
-    margin: 20px;
-    color: white;
+  font-family: Arial, sans-serif;
+  background: #5942d0 url(/login/images/login_bg.png) no-repeat left top;
+  line-height: 24px;
+  font-weight: 400;
+  font-family: 'Escoredream', 'NotoKr', 'Malgun Gothic', '맑은 고딕', Dotum, '돋움', Helvetica, AppleSDGothicNeo, sans-serif;
+  margin: 20px;
+  color: white;
 }
 
 #container {
-    max-width: 1170px;
-    margin: 0 auto;
+  max-width: 1170px;
+  margin: 0 auto;
 }
 
 .first-box {
@@ -91,7 +92,7 @@ body {
   position: absolute;
 }
 
-.first-box .home-link .home-btn > span {
+.first-box .home-link .home-btn>span {
   color: #fff;
   font-size: 16px;
   font-weight: 400;
@@ -99,72 +100,72 @@ body {
 }
 
 h2 {
-    font-size: 18px;
-    margin-bottom: 15px;
+  font-size: 18px;
+  margin-bottom: 15px;
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 th,
 td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
 }
 
 th {
-    background: #7b6cf6;
-    width: 20%;
+  background: #7b6cf6;
+  width: 20%;
 }
 
 input,
 select {
-    padding: 6px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    width: auto;
+  padding: 6px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  width: auto;
 }
 
 input[type="text"],
 input[type="password"],
 input[type="email"] {
-    width: 250px;
+  width: 250px;
 }
 
 .btn {
-    display: inline-block;
-    padding: 7px 15px;
-    font-size: 14px;
-    border: none;
-    cursor: pointer;
+  display: inline-block;
+  padding: 7px 15px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
 }
 
 .btn-blue {
-    background: #7b6cf6;
-    color: #fff;
+  background: #7b6cf6;
+  color: #fff;
 }
 
 .btn-gray {
-    background: #eee;
-    color: #333;
+  background: #eee;
+  color: #333;
 }
 
 .btn-sm {
-    padding: 5px 10px;
-    font-size: 12px;
+  padding: 5px 10px;
+  font-size: 12px;
 }
 
 .btn-set {
-    margin-top: 20px;
-    text-align: center;
+  margin-top: 20px;
+  text-align: center;
 }
 
 .redDot {
-    color: #d9534f;
-    font-size: 20px;
+  color: #d9534f;
+  font-size: 20px;
 }
 
 #footer {
