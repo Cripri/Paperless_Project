@@ -45,7 +45,7 @@ public class SinmungoController {
 
   @GetMapping("/guide")
   public String sinmungo_guide() {
-    return "/sinmungo/sinmungo_guide";
+    return "sinmungo/sinmungo_guide";
   }
 
   @GetMapping("/list")
