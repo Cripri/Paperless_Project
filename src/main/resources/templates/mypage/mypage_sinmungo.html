@@ -39,20 +39,12 @@
             </div>
 
             <div class="btn-area">
-              <span class="col">
-                <button type="submit" class="btn btn-lg btn-primary">검색</button>
-              </span>
-              <span class="col">
-                <a class="btn btn-lg btn-outline-light" th:href="@{/mypage_sinmungo}">초기화</a>
-              </span>
+              <span class="col"><button type="submit" class="btn btn-lg btn-primary">검색</button></span>
+              <span class="col"><a class="btn btn-lg btn-outline-light" th:href="@{/mypage_sinmungo}">초기화</a></span>
             </div>
           </fieldset>
-
           <input type="hidden" name="q_rowPerPage" id="q_rowPerPage" th:value="${q_rowPerPage}">
           <input type="hidden" name="q_currPage" id="q_currPage" th:value="${q_currPage}">
-          <!-- status 필터가 필요하면 주석 해제해서 사용
-        <input type="hidden" name="status" th:value="${status}">
-        -->
         </form>
 
         <div class="list-info">
@@ -99,9 +91,13 @@
                     )}" th:text="${item.title}" class="link-underline">
                   민원제목
                 </a>
+                <span th:if="${item.status == '반려' || item.status?.toUpperCase() == 'REJECTED'}" class="badge"
+                  style="margin-left:6px;background:#ef4444;color:#fff;padding:2px 6px;border-radius:4px;">
+                  반려
+                </span>
               </td>
               <td th:text="${item.status}">상태</td>
-              <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd')}">2025-10-01</td>
+              <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd')}">-</td>
               <td th:text="${adminNamesMasked[item.smgId]}">담당자</td>
             </tr>
             <tr th:if="${#lists.isEmpty(items)}">
@@ -110,13 +106,10 @@
           </tbody>
         </table>
 
-        <!-- 페이지 네비게이션 -->
         <nav class="pager" aria-label="페이지 이동" th:attr="data-total-pages=${page.totalPages == 0 ? 1 : page.totalPages}">
           <button id="prev" class="btn" type="button" aria-label="이전 페이지" th:disabled="${page.first}">이전</button>
           <span id="page-info" class="page-info" aria-live="polite"
-            th:text="${page.number + 1} + ' / ' + ${(page.totalPages == 0 ? 1 : page.totalPages)}">
-            1 / 1
-          </span>
+            th:text="${page.number + 1} + ' / ' + ${(page.totalPages == 0 ? 1 : page.totalPages)}">1 / 1</span>
           <button id="next" class="btn" type="button" aria-label="다음 페이지" th:disabled="${page.last}">다음</button>
         </nav>
       </div>

@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>신문고 상세</title>
   <link rel="stylesheet" th:href="@{/sinmungo/css/sinmungo_detail.css}">
-  <!-- 공통 헤더/푸터 -->
   <link rel="stylesheet" href="/header-footer/css/header-footer.css" th:href="@{/header-footer/css/header-footer.css}">
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script src="/header-footer/js/header-footer.js" th:src="@{/header-footer/js/header-footer.js}" defer></script>
@@ -18,7 +17,13 @@
   <!-- header -->
 
   <div class="container">
-    <h1 class="page-title">공개 상담민원</h1>
+    <h1 class="page-title" th:text="${rejected} ? '비공개 민원(반려)' : '공개 상담민원'">공개 상담민원</h1>
+
+    <section class="section" th:if="${rejected}">
+      <div class="notice danger" style="margin-bottom:12px;">
+        반려된 민원입니다. 반려 사유는 아래에서 확인하실 수 있습니다.
+      </div>
+    </section>
 
     <section class="section">
       <table class="kv-table">
@@ -32,39 +37,38 @@
         </colgroup>
         <tr>
           <th class="label">목록번호</th>
-          <td class="value" th:text="${it.smgId}">293350</td>
-
+          <td class="value" th:text="${it.smgId}">-</td>
           <th class="label">제목</th>
-          <td class="value" colspan="3" th:text="${it.title}">파크골프장 복구</td>
+          <td class="value" colspan="3" th:text="${it.title}">-</td>
         </tr>
         <tr>
           <th class="label">작성자</th>
-          <td class="value" th:text="${writerNameMasked != null ? writerNameMasked : '-'}">김○○</td>
-
+          <td class="value" th:text="${writerNameMasked != null ? writerNameMasked : '-'}">-</td>
           <th class="label">작성일</th>
           <td class="value"
-            th:text="${it.createdAt != null ? #temporals.format(it.createdAt, 'yyyy-MM-dd HH:mm:ss') : ''}">
-            2025-09-05 15:48:31
-          </td>
-
+            th:text="${it.createdAt != null ? #temporals.format(it.createdAt, 'yyyy-MM-dd HH:mm:ss') : ''}">-</td>
           <th class="label">조회수</th>
-          <td class="value" th:text="${it.viewCount}">11</td>
+          <td class="value" th:text="${it.viewCount}">0</td>
         </tr>
         <tr>
           <th class="label">공개여부</th>
-          <td class="value">내용공개</td>
-
+          <td class="value" th:text="${rejected} ? '비공개(반려)' : '내용공개'">내용공개</td>
           <th class="label">결과통지여부</th>
           <td class="value" colspan="3">
             <span
-              th:text="|게시판답변${it.noticeSms == 'Y' ? ', 휴대전화 문자메시지(SMS)' : ''}${(it.noticeEmail != null and !#strings.isEmpty(it.noticeEmail)) ? ', 이메일' : ''}|">
-              게시판답변
-            </span>
+              th:text="|게시판답변${it.noticeSms == 'Y' ? ', 휴대전화 문자메시지(SMS)' : ''}${(it.noticeEmail != null and !#strings.isEmpty(it.noticeEmail)) ? ', 이메일' : ''}|">게시판답변</span>
           </td>
         </tr>
       </table>
 
       <div class="content-box" th:utext="${contentHtml}">본문</div>
+    </section>
+
+    <section class="section" th:if="${rejected}">
+      <div class="attach-card">
+        <h2 class="attach-title">반려 사유</h2>
+        <div class="content-box" th:utext="${rejectReason != null ? rejectReason : ''}">사유</div>
+      </div>
     </section>
 
     <section class="section" th:if="${files != null and !#lists.isEmpty(files)}">
@@ -74,9 +78,7 @@
           <li class="attach-item" th:each="f : ${files}">
             <div class="attach-left">
               <span class="attach-badge">FILE</span>
-              <a class="attach-name" th:href="${f.url}" th:text="${f.filename}" target="_blank" rel="noopener">
-                첨부파일명
-              </a>
+              <a class="attach-name" th:href="${f.url}" th:text="${f.filename}" target="_blank" rel="noopener">첨부파일명</a>
             </div>
             <div class="attach-size" th:text="${#numbers.formatInteger(f.size, 0) + ' B'}">0 B</div>
           </li>
@@ -99,8 +101,7 @@
 
           <th>답변일자</th>
           <td colspan="3"
-            th:text="${it.answerDate != null ? #temporals.format(it.answerDate, 'yyyy-MM-dd HH:mm:ss') : '-'}">&nbsp;
-          </td>
+            th:text="${it.answerDate != null ? #temporals.format(it.answerDate, 'yyyy-MM-dd HH:mm:ss') : '-'}">-</td>
         </tr>
 
         <tr>
@@ -110,14 +111,13 @@
           <th>접수번호</th>
           <td th:text="${it.smgId}">-</td>
         </tr>
-
         <tr>
           <th>전화번호</th>
           <td colspan="3" th:text="${it.phoneNum != null ? it.phoneNum : '-'}">&nbsp;</td>
         </tr>
         <tr>
-          <td colspan="4" style="height:160px; line-height:1.8; background:#fff;" th:utext="${#strings.isEmpty(adminAnswerHtml) ? 
-                     '담당부서에서 처리중입니다.' : adminAnswerHtml}">
+          <td colspan="4" style="height:160px; line-height:1.8; background:#fff;"
+            th:utext="${#strings.isEmpty(adminAnswerHtml) ? '담당부서에서 처리중입니다.' : adminAnswerHtml}">
             답변
           </td>
         </tr>

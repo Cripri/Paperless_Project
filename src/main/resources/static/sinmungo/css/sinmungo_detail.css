@@ -78,7 +78,7 @@ body.site {
   border: 1.5px solid #e6dccf;
   background: #fff;
   padding: 16px;
-  border-radius: 12px;
+  /* border-radius: 12px; */
 }
 .attach-title {
   font-size: 17px;

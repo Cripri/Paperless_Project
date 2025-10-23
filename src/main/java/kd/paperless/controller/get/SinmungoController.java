@@ -51,7 +51,7 @@ public class SinmungoController {
   @GetMapping("/list")
   public String sinmungo_list(
       @RequestParam(defaultValue = "1") int page,
-      @RequestParam(defaultValue = "10") int size,  
+      @RequestParam(defaultValue = "10") int size,
       @RequestParam(required = false) String keyword,
       @RequestParam(required = false) String status,
       @RequestParam(required = false, name = "searchType") String searchType,
@@ -68,7 +68,11 @@ public class SinmungoController {
     Page<SinmungoListDto> pageResult = sinmungoRepository.search(kw, st, ft, pageable)
         .map(SinmungoListDto::from);
 
-    List<Long> writerIds = pageResult.getContent().stream()
+    List<SinmungoListDto> visibleItems = pageResult.getContent().stream()
+        .filter(it -> !isRejected(it.getStatus()))
+        .toList();
+
+    List<Long> writerIds = visibleItems.stream()
         .map(SinmungoListDto::getWriterId)
         .filter(Objects::nonNull)
         .distinct()
@@ -82,6 +86,7 @@ public class SinmungoController {
       }
     }
     model.addAttribute("writerNames", writerNames);
+
     long total = pageResult.getTotalElements();
     int totalPages = pageResult.getTotalPages();
 
@@ -89,7 +94,7 @@ public class SinmungoController {
     int start = ((page - 1) / blockSize) * blockSize + 1;
     int end = Math.min(start + blockSize - 1, Math.max(totalPages, 1));
 
-    model.addAttribute("items", pageResult.getContent());
+    model.addAttribute("items", visibleItems);
     model.addAttribute("totalCount", total);
 
     model.addAttribute("currentPage", page);
@@ -129,7 +134,6 @@ public class SinmungoController {
 
     dto.normalize();
 
-    // 1) 본문 저장
     Sinmungo s = new Sinmungo();
     s.setTitle(dto.getTitle());
     s.setContent(dto.getContent());
@@ -146,7 +150,6 @@ public class SinmungoController {
     Sinmungo saved = sinmungoRepository.save(s);
     Long smgId = saved.getSmgId();
 
-    // 2) 첨부 업로드(있으면)
     if (files != null) {
       for (MultipartFile f : files) {
         if (f == null || f.isEmpty())
@@ -154,8 +157,7 @@ public class SinmungoController {
 
         String original = Optional.ofNullable(f.getOriginalFilename()).orElse("file");
         String safeName = original.isBlank() ? "file" : original;
-        String contentType = (f.getContentType() != null) ? f.getContentType()
-            : "application/octet-stream";
+        String contentType = (f.getContentType() != null) ? f.getContentType() : "application/octet-stream";
         String objectKey = buildObjectKey(safeName);
 
         try (InputStream in = f.getInputStream()) {
@@ -194,37 +196,37 @@ public class SinmungoController {
       @RequestParam(required = false) String keyword,
       @RequestParam(required = false) String status,
       @RequestParam(required = false) String searchType,
+      @AuthenticationPrincipal(expression = "userId") Long loginUserId,
       Model model) {
 
     Sinmungo item = sinmungoRepository.findByIdWithAdmin(smgId)
         .orElseThrow(() -> new IllegalArgumentException("해당 글이 없습니다. smgId=" + smgId));
 
-    // 조회수 증가
+    boolean rejected = isRejected(item.getStatus());
+    boolean isOwner = (item.getWriterId() != null) && Objects.equals(item.getWriterId(), loginUserId);
+
+    if (rejected && !isOwner) {
+      return "redirect:/sinmungo/list";
+    }
+
     item.setViewCount(item.getViewCount() == null ? 1L : item.getViewCount() + 1);
     sinmungoRepository.save(item);
 
     SinmungoDetailDto it = SinmungoDetailDto.from(item);
 
     String contentHtml = item.getContent() == null ? ""
-        : org.springframework.web.util.HtmlUtils.htmlEscape(item.getContent()).replace("\n",
-            "<br>");
+        : org.springframework.web.util.HtmlUtils.htmlEscape(item.getContent()).replace("\n", "<br>");
     String adminAnswerHtml = item.getAdminAnswer() == null ? ""
-        : org.springframework.web.util.HtmlUtils.htmlEscape(item.getAdminAnswer()).replace("\n",
-            "<br>");
+        : org.springframework.web.util.HtmlUtils.htmlEscape(item.getAdminAnswer()).replace("\n", "<br>");
 
     Long prevId = sinmungoRepository.findPrevId(smgId);
     Long nextId = sinmungoRepository.findNextId(smgId);
 
     SinmungoPrevNextDto prev = (prevId != null)
-        ? sinmungoRepository.findById(prevId)
-            .map(e -> new SinmungoPrevNextDto(e.getSmgId(), e.getTitle()))
-            .orElse(null)
+        ? sinmungoRepository.findById(prevId).map(e -> new SinmungoPrevNextDto(e.getSmgId(), e.getTitle())).orElse(null)
         : null;
-
     SinmungoPrevNextDto next = (nextId != null)
-        ? sinmungoRepository.findById(nextId)
-            .map(e -> new SinmungoPrevNextDto(e.getSmgId(), e.getTitle()))
-            .orElse(null)
+        ? sinmungoRepository.findById(nextId).map(e -> new SinmungoPrevNextDto(e.getSmgId(), e.getTitle())).orElse(null)
         : null;
 
     List<Attachment> attachments = attachmentRepository
@@ -244,11 +246,12 @@ public class SinmungoController {
           .map(u -> maskName(u.getUserName()))
           .orElse("-");
     }
-    model.addAttribute("writerNameMasked", writerNameMasked);
 
     String adminNameMasked = (it.getAdminName() != null && !it.getAdminName().isBlank())
         ? maskName(it.getAdminName())
         : "-";
+
+    model.addAttribute("writerNameMasked", writerNameMasked);
     model.addAttribute("adminNameMasked", adminNameMasked);
 
     model.addAttribute("prev", prev);
@@ -264,7 +267,24 @@ public class SinmungoController {
     model.addAttribute("status", status == null ? "" : status);
     model.addAttribute("searchType", (searchType == null || searchType.isBlank()) ? "title" : searchType);
 
+    model.addAttribute("rejected", rejected);
+    model.addAttribute("isOwner", isOwner);
+    model.addAttribute("rejectReason", safeRejectReason(item.getRejectReason()));
+
     return "sinmungo/sinmungo_detail";
+  }
+
+  private static boolean isRejected(String s) {
+    if (s == null)
+      return false;
+    String v = s.trim();
+    return "반려".equals(v) || "REJECTED".equalsIgnoreCase(v);
+  }
+
+  private static String safeRejectReason(String reason) {
+    if (reason == null)
+      return "";
+    return org.springframework.web.util.HtmlUtils.htmlEscape(reason).replace("\n", "<br>");
   }
 
   private static String maskName(String name) {

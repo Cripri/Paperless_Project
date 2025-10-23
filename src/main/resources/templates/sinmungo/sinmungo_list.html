@@ -7,12 +7,9 @@
   <title>신문고 게시판</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
   <link rel="stylesheet" th:href="@{/sinmungo/css/sinmungo_list.css}">
-  <!-- 공통 헤더/푸터 -->
-  <link rel="stylesheet" href="/header-footer/css/header-footer.css"
-        th:href="@{/header-footer/css/header-footer.css}">
+  <link rel="stylesheet" href="/header-footer/css/header-footer.css" th:href="@{/header-footer/css/header-footer.css}">
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-  <script src="/header-footer/js/header-footer.js"
-          th:src="@{/header-footer/js/header-footer.js}" defer></script>
+  <script src="/header-footer/js/header-footer.js" th:src="@{/header-footer/js/header-footer.js}" defer></script>
 </head>
 
 <body>
@@ -29,7 +26,6 @@
 
       <form class="search-area" th:action="@{/sinmungo/list}" method="get">
         <div class="content-search-top-area">
-
           <label class="accessibility-hidden" for="pt_field">검색종류</label>
           <select id="pt_field" name="searchType" style="width:100px;" title="검색종류">
             <option value="title" th:selected="${searchType == 'title'}">제목</option>
@@ -65,8 +61,10 @@
 
       <div class="content-explain">
         <div class="tablecnt-area">
-          <div class="title">신문고 게시판 <span style="font-size:13px; font-weight:400; color:#000;"
-              th:text="'(총 ' + ${totalCount} + '건)'">(총0건)</span></div>
+          <div class="title">신문고 게시판
+            <span style="font-size:13px; font-weight:400; color:#000;"
+              th:text="'(총 ' + ${totalCount} + '건)'">(총0건)</span>
+          </div>
         </div>
       </div>
 
@@ -83,41 +81,28 @@
         </thead>
         <tbody>
           <tr th:each="it, iterStat : ${items}">
-            <td class="td-num" th:text="${totalCount - ((currentPage - 1) * pageSize) - iterStat.index}">
-              0
-            </td>
-
+            <td class="td-num" th:text="${totalCount - ((currentPage - 1) * pageSize) - iterStat.index}">0</td>
             <td class="td-list">
               <a th:href="@{|/sinmungo/detail/${it.smgId}|}" th:text="${it.title}">제목</a>
             </td>
-
             <td class="td-name"
               th:text="${writerNames != null && it.writerId != null && writerNames[it.writerId] != null ? writerNames[it.writerId] : '-'}">
-              -
+              -</td>
+            <td class="td-date" th:text="${it.createdAt != null ? #temporals.format(it.createdAt, 'yyyy-MM-dd') : ''}">-
             </td>
-
-            <td class="td-date" th:text="${it.createdAt != null ? #temporals.format(it.createdAt, 'yyyy-MM-dd') : ''}">
-              2025-09-09
-            </td>
-
             <td class="td-answer">
               <span class="state"
                 th:classappend="${it.status}=='접수' ? ' recv' : (${it.status}=='처리중' ? ' proc' : ' done')"
-                th:text="${it.status}">
-                접수
-              </span>
+                th:text="${it.status}">접수</span>
             </td>
-
             <td class="td-state" th:text="${it.viewCount}">0</td>
           </tr>
-
           <tr th:if="${#lists.isEmpty(items)}">
             <td colspan="6" style="text-align:center;">게시글이 없습니다.</td>
           </tr>
         </tbody>
       </table>
 
-      <!-- 페이징 -->
       <div class="paging" id="navigator">
         <a class="page-btn prev" title="이전 페이지" th:href="@{/sinmungo/list(
               page=${currentPage > 1 ? currentPage - 1 : 1},
