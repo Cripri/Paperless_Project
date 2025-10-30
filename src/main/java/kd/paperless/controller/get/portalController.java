@@ -8,7 +8,7 @@ public class PortalController {
   
   @GetMapping("/portal")
   public String portal() {
-    return "/main/portal";
+    return "main/portal";
   }
 
 }

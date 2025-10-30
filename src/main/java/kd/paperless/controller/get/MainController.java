@@ -23,11 +23,6 @@ public class MainController {
         List<Notice> items = noticeRepository.findPostedTop(PageRequest.of(0, 3));
         model.addAttribute("items", items);
         return "main/intro";
-    }
-
-    @GetMapping("/main/portal")
-    public String portal() {
-        return "main/portal"; 
-    }
+    }   
     
 }

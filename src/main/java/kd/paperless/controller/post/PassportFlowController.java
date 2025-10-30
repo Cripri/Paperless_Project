@@ -1,6 +1,5 @@
 package kd.paperless.controller.post;
 
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import kd.paperless.dto.PassportForm;
@@ -8,11 +7,13 @@ import kd.paperless.entity.Attachment;
 import kd.paperless.entity.PaperlessDoc;
 import kd.paperless.repository.AttachmentRepository;
 import kd.paperless.repository.PaperlessDocRepository;
-import kd.paperless.service.PassportPdfOverlayService;
+import kd.paperless.service.PassportPdfService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,109 +22,94 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
-import java.io.IOException;
-import java.nio.file.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Controller
+@RequestMapping("/passport")
+@PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
+@SessionAttributes("passportForm")
 public class PassportFlowController {
 
-    private final PassportPdfOverlayService passportPdfService;
+    private final PassportPdfService pdfService; // ← 요청대로 이 타입 사용
     private final PaperlessDocRepository docRepo;
     private final AttachmentRepository attachmentRepository;
-
     private final io.minio.MinioClient minioClient;
 
     @Value("${storage.minio.bucket}")
     private String bucket;
 
-    private static final Path PHOTO_TMP = Paths.get(System.getProperty("java.io.tmpdir"), "passport_photo");
+    @ModelAttribute("passportForm")
+    public PassportForm passportForm() { return new PassportForm(); }
 
-    /** 신청 화면 */
-    @GetMapping("/passport/apply")
-    public String apply(Model model) {
-        if (!model.containsAttribute("passportForm")) {
-            model.addAttribute("passportForm", new PassportForm());
-        }
+    // 1) 작성 폼
+    @GetMapping("/apply")
+    public String apply(Model model, @AuthenticationPrincipal(expression = "userId") Long userId) {
+        if (userId == null) return "redirect:/login";
+        if (!model.containsAttribute("passportForm")) model.addAttribute("passportForm", new PassportForm());
         return "paperless/writer/form/passport_apply";
     }
 
-    /** 미리보기 생성 */
-    @PostMapping(value = "/passport/preview", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @GetMapping("/form")
+    public String form(Model model, @AuthenticationPrincipal(expression = "userId") Long userId) {
+        return apply(model, userId);
+    }
+
+    // 2) 프리뷰 생성
+    @PostMapping(value = "/preview", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String preview(@Valid @ModelAttribute("passportForm") PassportForm form,
                           BindingResult binding,
                           Model model) {
-
-        // 유효성
-        if (binding.hasErrors()) {
-            return "paperless/writer/form/passport_apply";
-        }
-        if ("TRAVEL_CERT".equals(form.getPassportType()) && !StringUtils.hasText(form.getTravelMode())) {
+        // 필요 검증
+        if (binding.hasErrors()) return "paperless/writer/form/passport_apply";
+        if ("TRAVEL_CERT".equalsIgnoreCase(form.getPassportType())
+                && !StringUtils.hasText(form.getTravelMode())) {
             binding.rejectValue("travelMode", "required", "여행증명서 구분을 선택하세요.");
             return "paperless/writer/form/passport_apply";
         }
-        if ("Y".equals(form.getDeliveryWanted()) &&
-                (!StringUtils.hasText(form.getDeliveryPostcode()) || !StringUtils.hasText(form.getDeliveryAddress1()))) {
+        if ("Y".equalsIgnoreCase(form.getDeliveryWanted())
+                && (!StringUtils.hasText(form.getDeliveryPostcode()) || !StringUtils.hasText(form.getDeliveryAddress1()))) {
             binding.reject("delivery", "우편배송 주소를 입력하세요.");
             return "paperless/writer/form/passport_apply";
         }
 
-        // 사진 임시 저장
-        Path photoPath = null;
-        String photoUrl = null;
         try {
-            if (form.getPhotoFile() != null && !form.getPhotoFile().isEmpty()) {
-                Files.createDirectories(PHOTO_TMP);
-                String fname = System.currentTimeMillis() + "_" + form.getPhotoFile().getOriginalFilename();
-                photoPath = PHOTO_TMP.resolve(fname);
-                form.getPhotoFile().transferTo(photoPath.toFile());
-                photoUrl = "/passport/photo/" + fname;
-            }
-        } catch (IOException e) {
-            binding.rejectValue("photoFile", "uploadFail", "사진 업로드에 실패했습니다.");
+            // ★ 존재하는 함수만 사용
+            String fileId = pdfService.makePreview(form);
+            model.addAttribute("fileId", fileId);
+            model.addAttribute("passportForm", form);
+            return "paperless/writer/form/passport_preview";
+        } catch (Exception e) {
+            binding.reject("previewFail", "여권 미리보기 생성 중 오류가 발생했습니다.");
             return "paperless/writer/form/passport_apply";
         }
+    }
 
-        // 미리보기 생성
-        String fileId = passportPdfService.generatePreview(form, photoPath);
-
-        // 모델
+    // 프리뷰 페이지
+    @GetMapping("/preview/{fileId}")
+    public String previewPage(@PathVariable String fileId,
+                              @ModelAttribute("passportForm") PassportForm form,
+                              Model model) {
         model.addAttribute("fileId", fileId);
-        model.addAttribute("passportForm", form);
-        model.addAttribute("photoUrl", photoUrl);
-
         return "paperless/writer/form/passport_preview";
     }
 
-    /** 프리뷰 PDF 스트리밍 */
-    @GetMapping("/passport/preview/file/{fileId}.pdf")
-    public @ResponseBody FileSystemResource previewPdf(@PathVariable String fileId, HttpServletResponse resp) throws IOException {
-        Path path = passportPdfService.getPreviewPath(fileId);
-        if (!Files.exists(path)) {
-            resp.sendError(404);
-            return null;
-        }
-        resp.setContentType(MediaType.APPLICATION_PDF_VALUE);
-        return new FileSystemResource(path);
+    // 프리뷰 PDF 스트리밍 (loadBytes만 사용)
+    @GetMapping("/preview/file/{fileId}.pdf")
+    public ResponseEntity<byte[]> previewFile(@PathVariable String fileId) throws Exception {
+        byte[] bytes = pdfService.loadBytes(fileId);
+        if (bytes == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"passport_preview.pdf\"")
+                .body(bytes);
     }
 
-    /** 임시 사진 서빙 */
-    @GetMapping("/passport/photo/{filename}")
-    public @ResponseBody FileSystemResource previewPhoto(@PathVariable String filename, HttpServletResponse resp) throws IOException {
-        Path path = PHOTO_TMP.resolve(filename);
-        if (!Files.exists(path)) {
-            resp.sendError(404);
-            return null;
-        }
-        String low = filename.toLowerCase();
-        if (low.endsWith(".png")) resp.setContentType(MediaType.IMAGE_PNG_VALUE);
-        else if (low.endsWith(".jpg") || low.endsWith(".jpeg")) resp.setContentType(MediaType.IMAGE_JPEG_VALUE);
-        else resp.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        return new FileSystemResource(path);
-    }
-
-    /** 제출 */
-    @PostMapping("/passport/submit")
+    // 3) 제출
+    @PostMapping("/submit")
     @Transactional
     public String submit(@ModelAttribute("passportForm") PassportForm form,
                          @RequestParam(value = "fileId", required = false) String fileId,
@@ -138,38 +124,41 @@ public class PassportFlowController {
             PaperlessDoc entity = new PaperlessDoc();
             entity.setUserId(userId);
             entity.setDocType("PASSPORT");
-            docRepo.save(entity); // plId 생성
+            docRepo.save(entity);
 
-            // 2) 프리뷰 업로드 + 첨부 저장
-            if (fileId != null && !fileId.isBlank()) {
-                String objectKey = buildPassportObjectKey(entity.getPlId(), fileId);
-                long size = passportPdfService.sizeOfPreview(fileId);
-                try (java.io.InputStream in = passportPdfService.openPreviewStream(fileId)) {
-                    minioClient.putObject(
-                        io.minio.PutObjectArgs.builder()
-                            .bucket(bucket)
-                            .object(objectKey)
-                            .contentType("application/pdf")
-                            .stream(in, size, -1)
-                            .build()
-                    );
-
-                    attachmentRepository.save(Attachment.builder()
-                        .targetType("PAPERLESS_DOC")
-                        .targetId(entity.getPlId())
-                        .fileUri(objectKey)
-                        .fileName("passport_application.pdf")
-                        .mimeType("application/pdf")
-                        .fileSize(size)
-                        .build());
-                } catch (Exception e) {
-                    throw new RuntimeException("여권 PDF 업로드 실패", e);
+            // 2) 업로드 (loadBytes → ByteArrayInputStream)
+            if (StringUtils.hasText(fileId)) {
+                byte[] bytes = pdfService.loadBytes(fileId);
+                if (bytes == null || bytes.length == 0) {
+                    throw new RuntimeException("프리뷰 파일이 없습니다: " + fileId);
                 }
-                // 3) 프리뷰 정리
-                passportPdfService.cleanupPreview(fileId);
+
+                String objectKey = "paperless/" + entity.getPlId() + "/passport_" + fileId + ".pdf";
+                try (InputStream in = new ByteArrayInputStream(bytes)) {
+                    minioClient.putObject(
+                            io.minio.PutObjectArgs.builder()
+                                    .bucket(bucket)
+                                    .object(objectKey)
+                                    .contentType("application/pdf")
+                                    .stream(in, bytes.length, -1)
+                                    .build()
+                    );
+                    attachmentRepository.save(Attachment.builder()
+                            .targetType("PAPERLESS_DOC")
+                            .targetId(entity.getPlId())
+                            .fileUri(objectKey)
+                            .fileName("passport_application.pdf")
+                            .mimeType("application/pdf")
+                            .fileSize((long)bytes.length)
+                            .build());
+                }
+
+                // 3) 프리뷰 정리 (getPreviewPath만 사용)
+                Path previewPath = pdfService.getPreviewPath(fileId);
+                Files.deleteIfExists(previewPath);
             }
 
-            // 4) 세션 정리 + 리다이렉트
+            // 4) 세션 정리 + 완료 이동
             status.setComplete();
             model.addAttribute("plId", entity.getPlId());
             System.out.println("passport submit() OK fileId=" + fileId);
@@ -180,9 +169,5 @@ public class PassportFlowController {
             if (fileId != null) model.addAttribute("fileId", fileId);
             return "paperless/writer/form/passport_preview";
         }
-    }
-
-    private String buildPassportObjectKey(Long plId, String fileId) {
-        return "paperless/" + plId + "/passport_" + fileId + ".pdf";
     }
 }
