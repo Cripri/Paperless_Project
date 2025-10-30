@@ -17,14 +17,14 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
         FROM Notice n
         LEFT JOIN FETCH n.admin a
         WHERE n.status = 'POSTED'
-        AND targetAudience = 'USER'
+        AND n.targetAudience = 'USER'
         ORDER BY CASE WHEN n.isPinned = 'Y' THEN 0 ELSE 1 END,
                  n.createdAt DESC, n.noticeId DESC
       """, countQuery = """
         SELECT COUNT(n)
         FROM Notice n
         WHERE n.status = 'POSTED'
-        AND targetAudience = 'USER'
+        AND n.targetAudience = 'USER'
       """)
   Page<Notice> list(Pageable pageable);
 
@@ -39,7 +39,7 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
         FROM Notice n
         LEFT JOIN FETCH n.admin a
         WHERE n.status = 'POSTED'
-        AND targetAudience = 'USER'
+        AND n.targetAudience = 'USER'
         ORDER BY CASE WHEN n.isPinned = 'Y' THEN 0 ELSE 1 END,
                  n.createdAt DESC, n.noticeId DESC
       """)
